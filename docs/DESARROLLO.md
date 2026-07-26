@@ -38,13 +38,20 @@ Las ramas `release/*` son legado; no las uses para trabajo nuevo.
 
 ```text
 src/separador_nominas/
-├── main.py              # Entrada
-├── gui.py               # Interfaz
-├── pdf_service.py       # Separación PDF
-├── filename_service.py  # Nombres y rutas
-├── validators.py        # Validaciones
-├── exceptions.py        # Errores de dominio
-└── constants.py         # Constantes
+├── main.py
+├── gui.py
+├── pdf_service.py
+├── text_extraction_service.py
+├── recognition_rules.py
+├── employee_name_service.py
+├── name_normalization.py
+├── grouping_service.py
+├── grouped_pdf_service.py
+├── recognition_models.py
+├── filename_service.py
+├── validators.py
+├── exceptions.py
+└── constants.py
 ```
 
 Los tests viven en `tests/` y no deben depender de la GUI.

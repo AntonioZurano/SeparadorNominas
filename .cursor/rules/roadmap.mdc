@@ -10,10 +10,10 @@ alwaysApply: false
 |---------|--------|-----------|
 | 1.0.0 | Hecha | Separar PDF por páginas |
 | 1.0.1 | Hecha | Documentación para agentes de IA (`AGENTS.md`, reglas Cursor) |
-| 1.1.0 | Pendiente | Texto, detectar nombre, renombrar, preview |
+| 1.1.0 | Hecha | Texto, reconocer nombre, agrupar por trabajador, confirmación |
 | 1.2.0 | Pendiente | CSV/Excel, worker↔email, informe |
 | 2.0.0 | Pendiente | Borradores correo, Outlook/M365 |
-| Extra | Pendiente | OCR, firma exe, instalador, cifrado, i18n |
+| Extra | Pendiente | OCR, fuzzy, editor de coincidencias, firma exe, instalador, cifrado, i18n |
 
 No implementar estas versiones “por adelantado”. Solo cuando el usuario lo pida,
 versionando (`VERSION`, `CHANGELOG.md`) y actualizando tests/docs.

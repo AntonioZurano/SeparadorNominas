@@ -9,17 +9,17 @@ Entorno y convenciones de código: [`docs/DESARROLLO.md`](docs/DESARROLLO.md).
 ## Qué es este proyecto
 
 **SeparadorNominas** (`Separador de Nóminas PDF`) es una miniaplicación de
-escritorio para **Windows 10/11** que separa un PDF multipágina en **un PDF por
-página**.
+escritorio para **Windows 10/11** que separa un PDF multipágina de nóminas:
+modo **una página por archivo**, o modo **reconocer y agrupar por trabajador**.
 
 Caso de uso:
 
 1. La asesoría entrega un único PDF.
-2. Cada página es la nómina de un trabajador.
-3. El usuario elige el PDF, la carpeta de destino y un nombre base.
-4. La app genera archivos individuales sin subir nada a Internet.
+2. Cada página es la nómina de un trabajador (a veces varias del mismo).
+3. El usuario elige el PDF, la carpeta de destino y el modo de proceso.
+4. La app genera archivos individuales o agrupados **sin subir nada a Internet**.
 
-**Versión actual:** `1.0.1` (ver `VERSION`).
+**Versión actual:** `1.1.0` (ver `VERSION`).
 
 **Licencia:** MIT. Procesa documentos sensibles; el usuario es responsable del
 tratamiento conforme a la normativa de protección de datos.
@@ -37,7 +37,7 @@ tratamiento conforme a la normativa de protección de datos.
 
 Dependencias mínimas a propósito. No añadir librerías sin necesidad clara.
 
-## Alcance de la v1.0.0 (implementado)
+## Alcance de la v1.0.0 / v1.0.1 (implementado)
 
 - Seleccionar PDF y carpeta de destino.
 - Nombre base editable (sugerido desde el stem del PDF).
@@ -51,10 +51,19 @@ Dependencias mínimas a propósito. No añadir librerías sin necesidad clara.
 - Tests de lógica (no GUI).
 - Docs + scripts PowerShell (`run` / `test` / `build` / `sync-build-run`).
 
+## Alcance de la v1.1.0 (implementado)
+
+- Extracción local de texto con pypdf (sin OCR).
+- Reconocimiento de nombre por etiquetas/reglas locales.
+- Agrupación exacta por clave normalizada (sin fuzzy).
+- Un PDF por trabajador; `No_reconocidas/Pagina_XXX.pdf` para el resto.
+- Modo GUI + resumen/confirmación antes de escribir.
+
 ## Fuera de alcance (NO implementar sin petición explícita)
 
 - OCR.
-- Detección automática de nombre/DNI del trabajador.
+- Fuzzy matching entre nombres.
+- Editor interactivo de coincidencias.
 - CSV/Excel de empleados.
 - Envío de correos / Outlook / Microsoft 365.
 - Base de datos, telemetría, APIs externas, cuentas en la nube.
@@ -69,7 +78,7 @@ Detalle: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 |---------|--------|----------|
 | **1.0.0** | **Implementada** | Separar PDF página a página |
 | **1.0.1** | **Implementada** | Documentación para agentes de IA |
-| **1.1.0** | No implementada | Extraer texto, detectar nombre, renombrar, vista previa/revisión |
+| **1.1.0** | **Implementada** | Extraer texto, reconocer nombre, agrupar por trabajador |
 | **1.2.0** | No implementada | CSV/Excel, asociar trabajador↔correo, informe de coincidencias |
 | **2.0.0** | No implementada | Borradores de correo, Outlook/M365, revisión antes de enviar |
 | Mejoras | No implementadas | OCR local, firma del exe, instalador, cifrado, multidioma |
@@ -82,7 +91,13 @@ Código en `src/separador_nominas/`:
 |--------|-----------------|
 | `main.py` | Entrada + logging |
 | `gui.py` | Solo UI (Tkinter) |
-| `pdf_service.py` | Separación PDF |
+| `pdf_service.py` | Separación PDF (1 página → 1 archivo) |
+| `text_extraction_service.py` | Extracción de texto local |
+| `recognition_rules.py` / `employee_name_service.py` | Reglas y reconocimiento |
+| `name_normalization.py` | Clave / display / nombre de archivo |
+| `grouping_service.py` | Agrupación por clave exacta |
+| `grouped_pdf_service.py` | Análisis + escritura agrupada |
+| `recognition_models.py` | Dataclasses de reconocimiento |
 | `filename_service.py` | Nombres y rutas |
 | `validators.py` | Validaciones |
 | `exceptions.py` | Errores de dominio (mensajes en español) |

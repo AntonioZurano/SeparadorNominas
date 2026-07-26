@@ -8,7 +8,7 @@ diseñada para minimizar riesgos.
 
 - Todo el procesamiento se realiza en el equipo del usuario.
 - No se suben PDF ni metadatos a Internet.
-- No hay cuentas de usuario ni backend remoto en la versión 1.0.0.
+- No hay cuentas de usuario ni backend remoto en la versión 1.1.0.
 
 ## Ausencia de telemetría
 
@@ -27,10 +27,12 @@ Cualquier integración futura (por ejemplo, correo) deberá:
 
 ## Gestión de archivos
 
-- Se lee el PDF de origen y se escriben PDF de una página en la carpeta elegida.
+- Se lee el PDF de origen y se escriben PDF en la carpeta elegida
+  (una página por archivo, o un archivo por trabajador + `No_reconocidas/`).
+- El texto extraído vive solo en memoria durante el análisis; no se persiste.
 - No se crean copias innecesarias del documento completo.
 - Si se usaran temporales en el futuro, deberán eliminarse al finalizar.
-- No se almacenan rutas sensibles en configuraciones permanentes (v1.0.0).
+- No se almacenan rutas sensibles en configuraciones permanentes (v1.1.0).
 
 ## Logs
 
