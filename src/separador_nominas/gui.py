@@ -557,15 +557,48 @@ class SeparadorNominasApp:
             self._show_error("No se ha podido abrir la carpeta de destino.")
 
 
+def _running_in_wsl() -> bool:
+    """True si el proceso se ejecuta dentro de WSL."""
+    if os.environ.get("WSL_DISTRO_NAME"):
+        return True
+    try:
+        version = Path("/proc/version").read_text(encoding="utf-8").lower()
+    except OSError:
+        return False
+    return "microsoft" in version or "wsl" in version
+
+
 def open_folder(path: Path) -> None:
     """Abre una carpeta con el explorador del sistema operativo."""
     resolved = path.resolve()
     if sys.platform.startswith("win"):
         os.startfile(str(resolved))  # type: ignore[attr-defined]
-    elif sys.platform == "darwin":
+        return
+    if sys.platform == "darwin":
         subprocess.run(["open", str(resolved)], check=False)
-    else:
-        subprocess.run(["xdg-open", str(resolved)], check=False)
+        return
+    if _running_in_wsl():
+        # En WSL, xdg-open no abre el Explorador de Windows de forma fiable.
+        try:
+            win_path = subprocess.check_output(
+                ["wslpath", "-w", str(resolved)],
+                text=True,
+                stderr=subprocess.DEVNULL,
+            ).strip()
+        except (OSError, subprocess.CalledProcessError) as exc:
+            raise OSError(
+                "No se ha podido convertir la ruta para el Explorador de Windows."
+            ) from exc
+        # explorer.exe puede devolver código distinto de 0 aunque abra bien.
+        subprocess.run(
+            ["explorer.exe", win_path],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        return
+
+    subprocess.run(["xdg-open", str(resolved)], check=False)
 
 
 def run_app() -> None:
