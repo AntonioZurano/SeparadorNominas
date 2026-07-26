@@ -40,6 +40,23 @@ NEGATIVE_NAME_FRAGMENTS: tuple[str, ...] = (
     "DEDUCCIONES",
 )
 
+# Letras usadas para límites de token (evita NIE ⊂ NIETO, CIF ⊂ …).
+_LETTER_CLASS = "A-ZÁÉÍÓÚÜÑ"
+
+
+def _negative_fragment_pattern(fragment: str) -> re.Pattern[str]:
+    """Compila un patrón que exige el fragmento como token, no como subcadena."""
+    escaped = re.escape(fragment.upper())
+    return re.compile(
+        rf"(?<![{_LETTER_CLASS}]){escaped}(?![{_LETTER_CLASS}])",
+        re.IGNORECASE,
+    )
+
+
+_NEGATIVE_FRAGMENT_PATTERNS: tuple[re.Pattern[str], ...] = tuple(
+    _negative_fragment_pattern(fragment) for fragment in NEGATIVE_NAME_FRAGMENTS
+)
+
 _LABEL_PATTERN_CACHE: dict[str, re.Pattern[str]] = {}
 
 # Nombre candidato: 2 a 5 palabras con letras (permite acentos y guiones simples).
@@ -79,9 +96,13 @@ def looks_like_person_name(candidate: str) -> bool:
 
 
 def contains_negative_fragment(candidate: str) -> bool:
-    """True si el candidato parece empresa, concepto o ruido."""
-    upper = candidate.upper()
-    return any(fragment in upper for fragment in NEGATIVE_NAME_FRAGMENTS)
+    """
+    True si el candidato parece empresa, concepto o ruido.
+
+    Los fragmentos se buscan como tokens (no subcadenas), de modo que
+    ``NIE`` no rechaza el apellido ``Nieto``.
+    """
+    return any(pattern.search(candidate) for pattern in _NEGATIVE_FRAGMENT_PATTERNS)
 
 
 def extract_candidates_from_labeled_lines(text: str) -> list[str]:

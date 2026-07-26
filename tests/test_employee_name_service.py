@@ -48,3 +48,15 @@ class TestRecognizePage:
         result = recognize_page(page_index=0, page_text=text)
         assert result.confidence == "high"
         assert result.normalized_key == "maria lopez sanchez"
+
+    def test_surname_nieto_not_rejected_as_nie(self) -> None:
+        text = "TRABAJADOR: Ivan Nieto Torres"
+        result = recognize_page(page_index=0, page_text=text)
+        assert result.confidence == "high"
+        assert result.normalized_key == "ivan nieto torres"
+
+    def test_explicit_nie_token_still_rejected(self) -> None:
+        from separador_nominas.recognition_rules import contains_negative_fragment
+
+        assert contains_negative_fragment("Titular NIE extranjero")
+        assert not contains_negative_fragment("Ivan Nieto Torres")
