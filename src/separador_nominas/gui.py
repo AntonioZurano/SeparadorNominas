@@ -27,6 +27,7 @@ from separador_nominas.constants import (
     STATUS_READY,
     STATUS_WAITING_CONFIRMATION,
     STATUS_WRITING_GROUPS,
+    STATUS_WRITING_TEMPLATE,
     WINDOW_MIN_HEIGHT,
     WINDOW_MIN_WIDTH,
 )
@@ -412,6 +413,8 @@ class SeparadorNominasApp:
 
         self._status_text.set(STATUS_WRITING_GROUPS)
         self._progress_value.set(PROGRESS_IDLE)
+        self._result_text.set("Generando archivos PDF...")
+        self.root.update_idletasks()
         worker = threading.Thread(
             target=self._run_write_groups,
             args=(analysis, destination),
@@ -479,7 +482,10 @@ class SeparadorNominasApp:
         """Actualiza barra durante la escritura de archivos agrupados."""
         percent = (current / total) * PROGRESS_COMPLETE if total else PROGRESS_IDLE
         self._progress_value.set(percent)
-        self._status_text.set(STATUS_WRITING_GROUPS)
+        self._status_text.set(
+            STATUS_WRITING_TEMPLATE.format(current=current, total=total)
+        )
+        self.root.update_idletasks()
 
     def _on_split_success(self, result: SplitResult) -> None:
         """Maneja la finalización correcta del proceso de separación."""

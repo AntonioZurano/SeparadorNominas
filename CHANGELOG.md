@@ -34,6 +34,7 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 - Carpeta `No_reconocidas/` con un PDF por página no reconocida.
 - Modo GUI «Reconocer y agrupar por trabajador» con resumen y confirmación
   antes de guardar.
+- Progreso visible al crear PDF agrupados (barra + «Creando archivo i de n...»).
 - Tests sintéticos (reportlab solo en dependencias de desarrollo).
 
 ### Conservado
