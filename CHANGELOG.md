@@ -37,6 +37,7 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 - Progreso visible al crear PDF agrupados (barra + «Creando archivo i de n...»).
 - Apertura de carpeta de destino desde WSL mediante el Explorador de Windows.
 - Filtro negativo por tokens (evita rechazar apellidos como «Nieto» por «NIE»).
+- Área Resultado con barra de desplazamiento para resúmenes largos.
 - Tests sintéticos (reportlab solo en dependencias de desarrollo).
 
 ### Conservado

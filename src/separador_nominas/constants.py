@@ -63,7 +63,7 @@ DEFAULT_BASE_NAME: str = "nomina"
 
 # Interfaz
 WINDOW_MIN_WIDTH: int = 680
-WINDOW_MIN_HEIGHT: int = 620
+WINDOW_MIN_HEIGHT: int = 680
 PROGRESS_IDLE: float = 0.0
 PROGRESS_COMPLETE: float = 100.0
 

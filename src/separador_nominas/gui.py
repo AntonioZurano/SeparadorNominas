@@ -61,7 +61,6 @@ class SeparadorNominasApp:
         self._base_name = tk.StringVar(value="")
         self._process_mode = tk.StringVar(value=PROCESS_MODE_SPLIT)
         self._status_text = tk.StringVar(value=STATUS_READY)
-        self._result_text = tk.StringVar(value="")
         self._progress_value = tk.DoubleVar(value=PROGRESS_IDLE)
 
         self._is_processing = False
@@ -181,11 +180,36 @@ class SeparadorNominasApp:
         result_frame = ttk.LabelFrame(main, text="Resultado", padding=10)
         result_frame.grid(row=6, column=0, columnspan=3, sticky="nsew")
         result_frame.columnconfigure(0, weight=1)
+        result_frame.rowconfigure(0, weight=1)
         main.rowconfigure(6, weight=1)
 
-        ttk.Label(
-            result_frame, textvariable=self._result_text, wraplength=620, justify="left"
-        ).grid(row=0, column=0, sticky="ew", pady=(0, 8))
+        text_frame = ttk.Frame(result_frame)
+        text_frame.grid(row=0, column=0, sticky="nsew", pady=(0, 8))
+        text_frame.columnconfigure(0, weight=1)
+        text_frame.rowconfigure(0, weight=1)
+
+        self._result_box = tk.Text(
+            text_frame,
+            wrap=tk.WORD,
+            height=10,
+            relief=tk.SOLID,
+            borderwidth=1,
+            padx=6,
+            pady=4,
+            font=("Segoe UI", 9),
+        )
+        self._result_scroll = ttk.Scrollbar(
+            text_frame,
+            orient=tk.VERTICAL,
+            command=self._result_box.yview,
+        )
+        self._result_box.configure(yscrollcommand=self._result_scroll.set)
+        self._result_box.grid(row=0, column=0, sticky="nsew")
+        self._result_scroll.grid(row=0, column=1, sticky="ns")
+        self._result_box.configure(state=tk.DISABLED)
+        self._result_box.bind("<MouseWheel>", self._on_result_mousewheel)
+        self._result_box.bind("<Button-4>", self._on_result_mousewheel)
+        self._result_box.bind("<Button-5>", self._on_result_mousewheel)
 
         self._open_folder_button = ttk.Button(
             result_frame,
@@ -193,6 +217,23 @@ class SeparadorNominasApp:
             command=self._on_open_folder,
         )
         self._open_folder_button.grid(row=1, column=0, sticky="w")
+
+    def _on_result_mousewheel(self, event: tk.Event[tk.Misc]) -> str:
+        """Desplaza el área de resultado con la rueda del ratón."""
+        if getattr(event, "num", None) == 4 or getattr(event, "delta", 0) > 0:
+            self._result_box.yview_scroll(-1, "units")
+        elif getattr(event, "num", None) == 5 or getattr(event, "delta", 0) < 0:
+            self._result_box.yview_scroll(1, "units")
+        return "break"
+
+    def _set_result_text(self, text: str) -> None:
+        """Actualiza el área de resultado (con scroll) de forma segura."""
+        self._result_box.configure(state=tk.NORMAL)
+        self._result_box.delete("1.0", tk.END)
+        if text:
+            self._result_box.insert("1.0", text)
+        self._result_box.configure(state=tk.DISABLED)
+        self._result_box.yview_moveto(0.0)
 
     def _on_mode_changed(self) -> None:
         """Ajusta controles según el modo seleccionado."""
@@ -277,7 +318,7 @@ class SeparadorNominasApp:
         self._status_text.set(
             f"PDF seleccionado: {page_count} página{'s' if page_count != 1 else ''}."
         )
-        self._result_text.set("")
+        self._set_result_text("")
         self._progress_value.set(PROGRESS_IDLE)
         self._open_folder_button.configure(state=tk.DISABLED)
         self._last_destination = None
@@ -312,7 +353,7 @@ class SeparadorNominasApp:
         self._is_processing = True
         self._set_controls_enabled(False)
         self._progress_value.set(PROGRESS_IDLE)
-        self._result_text.set("")
+        self._set_result_text("")
         self._status_text.set(STATUS_READY)
         logger.info("Inicio del proceso de separación")
 
@@ -331,7 +372,7 @@ class SeparadorNominasApp:
         self._is_processing = True
         self._set_controls_enabled(False)
         self._progress_value.set(PROGRESS_IDLE)
-        self._result_text.set("")
+        self._set_result_text("")
         self._status_text.set(STATUS_READY)
         logger.info("Inicio del análisis de reconocimiento")
 
@@ -395,7 +436,7 @@ class SeparadorNominasApp:
         summary = format_grouping_summary(analysis)
         self._progress_value.set(PROGRESS_COMPLETE)
         self._status_text.set(STATUS_WAITING_CONFIRMATION)
-        self._result_text.set(summary)
+        self._set_result_text(summary)
 
         confirmed = messagebox.askyesno(
             APP_NAME,
@@ -413,7 +454,7 @@ class SeparadorNominasApp:
 
         self._status_text.set(STATUS_WRITING_GROUPS)
         self._progress_value.set(PROGRESS_IDLE)
-        self._result_text.set("Generando archivos PDF...")
+        self._set_result_text("Generando archivos PDF...")
         self.root.update_idletasks()
         worker = threading.Thread(
             target=self._run_write_groups,
@@ -493,7 +534,7 @@ class SeparadorNominasApp:
         self._progress_value.set(PROGRESS_COMPLETE)
         self._status_text.set(STATUS_COMPLETED)
         self._last_destination = result.destination_dir
-        self._result_text.set(
+        self._set_result_text(
             f"Se han generado {result.files_created} archivo"
             f"{'s' if result.files_created != 1 else ''}.\n"
             f"Carpeta de destino:\n{result.destination_dir}"
@@ -519,7 +560,7 @@ class SeparadorNominasApp:
             f"Archivos en No_reconocidas: {len(result.unrecognized_files)}",
             f"Carpeta de destino:\n{result.destination_dir}",
         ]
-        self._result_text.set("\n".join(summary_lines))
+        self._set_result_text("\n".join(summary_lines))
         self._set_controls_enabled(True)
         self._open_folder_button.configure(state=tk.NORMAL)
         messagebox.showinfo(
