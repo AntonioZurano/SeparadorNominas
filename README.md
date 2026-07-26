@@ -124,6 +124,14 @@ En Windows:
 .\scripts\build.ps1
 ```
 
+Para **actualizar desde GitHub, recompilar y abrir** la app (útil si desarrollas
+en WSL y pruebas en Windows):
+
+```powershell
+Set-Location C:\Dev\SeparadorNominas
+.\scripts\sync-build-run.ps1
+```
+
 Resultado esperado:
 
 ```text

@@ -14,9 +14,18 @@ $Activate = Join-Path $VenvPath "Scripts\Activate.ps1"
 
 if (-not (Test-Path $Python)) {
     Write-Host "Creando entorno virtual en .venv ..."
-    py -3.11 -m venv $VenvPath
-    if ($LASTEXITCODE -ne 0) {
-        python -m venv $VenvPath
+    $created = $false
+    if (Get-Command py -ErrorAction SilentlyContinue) {
+        & py -3.11 -m venv $VenvPath
+        if ($LASTEXITCODE -eq 0 -and (Test-Path $Python)) {
+            $created = $true
+        }
+    }
+    if (-not $created) {
+        & python -m venv $VenvPath
+    }
+    if (-not (Test-Path $Python)) {
+        throw "No se pudo crear el entorno virtual. Comprueba que Python 3.11+ esté en el PATH."
     }
 }
 

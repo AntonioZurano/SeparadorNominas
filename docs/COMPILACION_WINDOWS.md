@@ -8,6 +8,35 @@ Compila **en Windows 10 u 11**. Aunque el código Python puede desarrollarse en
 otros sistemas, el ejecutable final debe generarse en Windows para maximizar
 la compatibilidad.
 
+## Pruebas rápidas en Windows (sync + build + run)
+
+Si desarrollas en WSL y pruebas el `.exe` en Windows, usa este flujo:
+
+1. En WSL: haz commit y `git push` a `main`.
+2. En Windows (PowerShell):
+
+```powershell
+Set-Location C:\Dev\SeparadorNominas
+.\scripts\sync-build-run.ps1
+```
+
+El script:
+
+1. Actualiza el código desde GitHub (`main`), con Git o descarga ZIP.
+2. Ejecuta `scripts\build.ps1` (tests + PyInstaller).
+3. Abre `dist\SeparadorNominas.exe`.
+
+Parámetros útiles:
+
+```powershell
+.\scripts\sync-build-run.ps1 -NoLaunch      # solo sync + build
+.\scripts\sync-build-run.ps1 -SkipBuild     # sync + abrir exe existente
+.\scripts\sync-build-run.ps1 -RepoDir C:\Dev\SeparadorNominas
+```
+
+Primera instalación en `C:\Dev` (si aún no tienes la carpeta): clona o descarga el
+ZIP del repositorio en `C:\Dev\SeparadorNominas` y ejecuta el script anterior.
+
 ## 1. Instalar Python
 
 1. Descarga Python 3.11 o superior desde [python.org](https://www.python.org/).

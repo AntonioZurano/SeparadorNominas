@@ -7,8 +7,15 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Añadido
+
+- Script `scripts/sync-build-run.ps1` para sincronizar desde GitHub, recompilar
+  el `.exe` y abrir la aplicación en Windows.
+
 ### Cambiado
 
+- Creación de entorno virtual en scripts PowerShell: fallback robusto a
+  `python` cuando no existe el launcher `py`.
 - Titular de la licencia MIT: Antonio Zurano Blázquez.
 - Avisos RGPD/LOPDGDD en README y documentación de seguridad.
 - `.gitignore` ampliado (documentos de oficina y credenciales).
