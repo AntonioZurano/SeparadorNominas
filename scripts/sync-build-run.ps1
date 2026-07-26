@@ -1,11 +1,11 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
-    Sincroniza SeparadorNominas desde GitHub, recompila el .exe y abre la aplicación.
+    Sincroniza SeparadorNominas desde GitHub, recompila el .exe y abre la aplicacion.
 
 .DESCRIPTION
     Pensado para pruebas en Windows mientras el desarrollo se hace en WSL:
-    1) Actualiza el código desde la rama remota (por defecto main).
+    1) Actualiza el codigo desde la rama remota (por defecto main).
     2) Ejecuta scripts/build.ps1 (tests + PyInstaller).
     3) Abre dist/SeparadorNominas.exe.
 
@@ -19,7 +19,7 @@
     Solo sincroniza y abre el ejecutable existente (no recompila).
 
 .PARAMETER NoLaunch
-    Solo sincroniza y compila; no abre la aplicación.
+    Solo sincroniza y compila; no abre la aplicacion.
 
 .EXAMPLE
     Set-Location C:\Dev\SeparadorNominas
@@ -128,7 +128,7 @@ function Sync-WithZip {
             Where-Object { $_.Name -like "$RepoName-*" } |
             Select-Object -First 1
         if (-not $extracted) {
-            throw "No se encontró la carpeta extraída del ZIP."
+            throw "No se encontro la carpeta extraida del ZIP."
         }
 
         # Preservar .venv entre actualizaciones ZIP.
@@ -197,7 +197,7 @@ function Initialize-Repository {
 
 # --- Principal ---
 
-Write-Host "SeparadorNominas — sync + build + run" -ForegroundColor Green
+Write-Host "SeparadorNominas - sync + build + run" -ForegroundColor Green
 Write-Host "Repo: $RepoOwner/$RepoName  Rama: $Branch"
 Write-Host "Carpeta: $RepoDir"
 
@@ -206,13 +206,13 @@ if ($gitExe) {
     Write-Host "Git detectado: $gitExe"
 }
 else {
-    Write-Host "Git no detectado en PATH; se usará descarga ZIP si hace falta."
+    Write-Host "Git no detectado en PATH; se usara descarga ZIP si hace falta."
 }
 
 Initialize-Repository -Directory $RepoDir -BranchName $Branch -GitExe $gitExe
 
 if (-not (Test-Path (Join-Path $RepoDir "scripts\build.ps1"))) {
-    throw "No se encontró scripts\build.ps1 en $RepoDir"
+    throw "No se encontro scripts\build.ps1 en $RepoDir"
 }
 
 Set-Location $RepoDir
@@ -223,11 +223,11 @@ if (-not $SkipBuild) {
     Write-Step "Compilando con scripts\build.ps1 ..."
     & (Join-Path $RepoDir "scripts\build.ps1")
     if ($LASTEXITCODE -ne 0) {
-        throw "La compilación ha fallado (código $LASTEXITCODE). No se abrirá la aplicación."
+        throw "La compilacion ha fallado (codigo $LASTEXITCODE). No se abrira la aplicacion."
     }
 }
 else {
-    Write-Step "Omitiendo compilación (-SkipBuild)."
+    Write-Step "Omitiendo compilacion (-SkipBuild)."
 }
 
 if (-not (Test-Path $exePath)) {
@@ -237,10 +237,10 @@ if (-not (Test-Path $exePath)) {
 if (-not $NoLaunch) {
     Write-Step "Abriendo SeparadorNominas.exe ..."
     Start-Process -FilePath $exePath
-    Write-Host "Aplicación lanzada."
+    Write-Host "Aplicacion lanzada."
 }
 else {
-    Write-Step "Compilación lista (-NoLaunch). Ejecutable:"
+    Write-Step "Compilacion lista (-NoLaunch). Ejecutable:"
     Write-Host "  $exePath"
 }
 
