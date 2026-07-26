@@ -40,6 +40,8 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 - Área Resultado con barra de desplazamiento para resúmenes largos.
 - Feedback al abrir PDF grandes: validación en segundo plano con barra
   indeterminada («Abriendo y validando el PDF...»).
+- Confirmación de escritura embebida (Generar/Cancelar junto a la barra)
+  sin diálogo modal, para poder revisar el resumen con scroll.
 - Tests sintéticos (reportlab solo en dependencias de desarrollo).
 
 ### Conservado

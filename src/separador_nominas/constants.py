@@ -74,7 +74,10 @@ STATUS_PROCESSING_TEMPLATE: str = "Procesando página {current} de {total}..."
 STATUS_ANALYZING_TEMPLATE: str = "Analizando página {current} de {total}..."
 STATUS_WRITING_GROUPS: str = "Escribiendo archivos agrupados..."
 STATUS_WRITING_TEMPLATE: str = "Creando archivo {current} de {total}..."
-STATUS_WAITING_CONFIRMATION: str = "Revisa el resumen y confirma para guardar."
+STATUS_WAITING_CONFIRMATION: str = (
+    "Revisa el resumen y pulsa Generar o Cancelar."
+)
+STATUS_CONFIRM_PROMPT: str = "¿Generar archivos?"
 STATUS_COMPLETED: str = "Proceso completado correctamente."
 STATUS_ERROR: str = "Se ha producido un error."
 STATUS_CANCELLED_SELECTION: str = "Selección cancelada."

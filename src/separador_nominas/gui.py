@@ -22,6 +22,7 @@ from separador_nominas.constants import (
     STATUS_ANALYZING_TEMPLATE,
     STATUS_CANCELLED_BY_USER,
     STATUS_COMPLETED,
+    STATUS_CONFIRM_PROMPT,
     STATUS_ERROR,
     STATUS_OPENING_PDF,
     STATUS_PROCESSING_TEMPLATE,
@@ -65,6 +66,9 @@ class SeparadorNominasApp:
         self._progress_value = tk.DoubleVar(value=PROGRESS_IDLE)
 
         self._is_processing = False
+        self._awaiting_confirm = False
+        self._pending_analysis: GroupingAnalysis | None = None
+        self._pending_destination: str | None = None
         self._page_count: int | None = None
         self._last_destination: Path | None = None
 
@@ -165,13 +169,41 @@ class SeparadorNominasApp:
         )
         self._split_button.grid(row=0, column=0, sticky="w", pady=(0, 8))
 
+        progress_row = ttk.Frame(process_frame)
+        progress_row.grid(row=1, column=0, sticky="ew", pady=(0, 8))
+        progress_row.columnconfigure(0, weight=1)
+
         self._progress = ttk.Progressbar(
-            process_frame,
+            progress_row,
             variable=self._progress_value,
             maximum=PROGRESS_COMPLETE,
             mode="determinate",
         )
-        self._progress.grid(row=1, column=0, sticky="ew", pady=(0, 8))
+        self._progress.grid(row=0, column=0, sticky="ew", padx=(0, 8))
+
+        self._confirm_frame = ttk.Frame(progress_row)
+        self._confirm_frame.grid(row=0, column=1, sticky="e")
+        self._confirm_summary = tk.StringVar(value="")
+        ttk.Label(
+            self._confirm_frame,
+            textvariable=self._confirm_summary,
+            foreground="#333333",
+        ).grid(row=0, column=0, padx=(0, 8))
+        self._confirm_accept_button = ttk.Button(
+            self._confirm_frame,
+            text="Generar",
+            command=self._on_confirm_accept,
+            width=10,
+        )
+        self._confirm_accept_button.grid(row=0, column=1, padx=(0, 4))
+        self._confirm_cancel_button = ttk.Button(
+            self._confirm_frame,
+            text="Cancelar",
+            command=self._on_confirm_cancel,
+            width=10,
+        )
+        self._confirm_cancel_button.grid(row=0, column=2)
+        self._hide_confirm_actions()
 
         ttk.Label(process_frame, textvariable=self._status_text).grid(
             row=2, column=0, sticky="w"
@@ -218,6 +250,63 @@ class SeparadorNominasApp:
             command=self._on_open_folder,
         )
         self._open_folder_button.grid(row=1, column=0, sticky="w")
+
+    def _hide_confirm_actions(self) -> None:
+        """Oculta el panel de confirmación embebido."""
+        self._awaiting_confirm = False
+        self._pending_analysis = None
+        self._pending_destination = None
+        self._confirm_summary.set("")
+        self._confirm_frame.grid_remove()
+        self._confirm_accept_button.configure(state=tk.DISABLED)
+        self._confirm_cancel_button.configure(state=tk.DISABLED)
+
+    def _show_confirm_actions(
+        self, analysis: GroupingAnalysis, destination: str
+    ) -> None:
+        """Muestra Generar/Cancelar junto a la barra sin diálogo modal."""
+        self._pending_analysis = analysis
+        self._pending_destination = destination
+        self._awaiting_confirm = True
+        self._confirm_summary.set(
+            f"{STATUS_CONFIRM_PROMPT}  "
+            f"{len(analysis.groups)} trab. / "
+            f"{len(analysis.unrecognized_page_numbers)} no rec."
+        )
+        self._confirm_frame.grid()
+        self._confirm_accept_button.configure(state=tk.NORMAL)
+        self._confirm_cancel_button.configure(state=tk.NORMAL)
+
+    def _on_confirm_accept(self) -> None:
+        """Confirma la escritura de PDF agrupados."""
+        if not self._awaiting_confirm:
+            return
+        analysis = self._pending_analysis
+        destination = self._pending_destination
+        if analysis is None or destination is None:
+            return
+
+        self._hide_confirm_actions()
+        self._status_text.set(STATUS_WRITING_GROUPS)
+        self._progress_value.set(PROGRESS_IDLE)
+        self._set_result_text("Generando archivos PDF...")
+        self.root.update_idletasks()
+        worker = threading.Thread(
+            target=self._run_write_groups,
+            args=(analysis, destination),
+            daemon=True,
+        )
+        worker.start()
+
+    def _on_confirm_cancel(self) -> None:
+        """Cancela la escritura tras el análisis."""
+        if not self._awaiting_confirm:
+            return
+        self._hide_confirm_actions()
+        self._is_processing = False
+        self._status_text.set(STATUS_CANCELLED_BY_USER)
+        self._set_controls_enabled(True)
+        logger.info("Escritura cancelada por el usuario")
 
     def _on_result_mousewheel(self, event: tk.Event[tk.Misc]) -> str:
         """Desplaza el área de resultado con la rueda del ratón."""
@@ -271,6 +360,13 @@ class SeparadorNominasApp:
             self._open_folder_button.configure(state=tk.NORMAL)
         elif not enabled:
             self._open_folder_button.configure(state=tk.DISABLED)
+        # El panel de confirmación solo se habilita en _show_confirm_actions.
+        if not self._awaiting_confirm:
+            self._confirm_accept_button.configure(state=tk.DISABLED)
+            self._confirm_cancel_button.configure(state=tk.DISABLED)
+        else:
+            self._confirm_accept_button.configure(state=tk.NORMAL)
+            self._confirm_cancel_button.configure(state=tk.NORMAL)
 
     def _set_widget_tree_state(self, widget: tk.Misc, state: str) -> None:
         """Aplica estado a botones de forma recursiva (excepto progreso)."""
@@ -398,6 +494,7 @@ class SeparadorNominasApp:
 
         self._is_processing = True
         self._set_controls_enabled(False)
+        self._hide_confirm_actions()
         self._stop_indeterminate_progress()
         self._progress_value.set(PROGRESS_IDLE)
         self._set_result_text("")
@@ -418,6 +515,7 @@ class SeparadorNominasApp:
 
         self._is_processing = True
         self._set_controls_enabled(False)
+        self._hide_confirm_actions()
         self._stop_indeterminate_progress()
         self._progress_value.set(PROGRESS_IDLE)
         self._set_result_text("")
@@ -480,36 +578,14 @@ class SeparadorNominasApp:
     def _on_analysis_ready(
         self, analysis: GroupingAnalysis, destination: str
     ) -> None:
-        """Muestra el resumen y pide confirmación antes de guardar."""
+        """Muestra el resumen y el panel de confirmación (sin modal)."""
         summary = format_grouping_summary(analysis)
+        self._stop_indeterminate_progress()
         self._progress_value.set(PROGRESS_COMPLETE)
         self._status_text.set(STATUS_WAITING_CONFIRMATION)
         self._set_result_text(summary)
-
-        confirmed = messagebox.askyesno(
-            APP_NAME,
-            "Se ha completado el análisis.\n\n"
-            f"Trabajadores reconocidos: {len(analysis.groups)}\n"
-            f"Páginas no reconocidas: {len(analysis.unrecognized_page_numbers)}\n\n"
-            "¿Generar los archivos PDF en la carpeta de destino?",
-        )
-        if not confirmed:
-            self._is_processing = False
-            self._status_text.set(STATUS_CANCELLED_BY_USER)
-            self._set_controls_enabled(True)
-            logger.info("Escritura cancelada por el usuario")
-            return
-
-        self._status_text.set(STATUS_WRITING_GROUPS)
-        self._progress_value.set(PROGRESS_IDLE)
-        self._set_result_text("Generando archivos PDF...")
+        self._show_confirm_actions(analysis, destination)
         self.root.update_idletasks()
-        worker = threading.Thread(
-            target=self._run_write_groups,
-            args=(analysis, destination),
-            daemon=True,
-        )
-        worker.start()
 
     def _run_write_groups(
         self, analysis: GroupingAnalysis, destination: str
@@ -597,6 +673,7 @@ class SeparadorNominasApp:
 
     def _on_group_success(self, result: GroupingProcessResult) -> None:
         """Maneja la finalización correcta del modo agrupar."""
+        self._hide_confirm_actions()
         self._is_processing = False
         self._progress_value.set(PROGRESS_COMPLETE)
         self._status_text.set(STATUS_COMPLETED)
@@ -620,6 +697,8 @@ class SeparadorNominasApp:
 
     def _on_process_error(self, message: str) -> None:
         """Maneja un error durante el proceso."""
+        self._hide_confirm_actions()
+        self._stop_indeterminate_progress()
         self._is_processing = False
         self._status_text.set(STATUS_ERROR)
         self._set_controls_enabled(True)
