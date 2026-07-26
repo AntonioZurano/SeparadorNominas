@@ -5,6 +5,14 @@ Todas las modificaciones relevantes de este proyecto se documentan en este archi
 El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
+## [Unreleased]
+
+### Cambiado
+
+- Titular de la licencia MIT: Antonio Zurano Blázquez.
+- Avisos RGPD/LOPDGDD en README y documentación de seguridad.
+- `.gitignore` ampliado (documentos de oficina y credenciales).
+
 ## [1.0.1] - 2026-07-26
 
 ### Añadido

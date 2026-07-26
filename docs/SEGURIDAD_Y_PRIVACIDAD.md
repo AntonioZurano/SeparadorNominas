@@ -58,10 +58,23 @@ El usuario de la aplicación es el responsable de:
 
 - custodiar los PDF de nóminas;
 - limitar el acceso a carpetas de destino;
-- cumplir RGPD y normativa aplicable;
+- cumplir el **RGPD** y la **LOPDGDD** (España), y cualquier normativa aplicable;
 - eliminar o archivar documentos cuando proceda.
 
 La licencia MIT no exime de estas obligaciones legales.
+
+### Repositorio público
+
+Este proyecto puede publicarse en GitHub u otros foros de código abierto
+únicamente como **código y documentación**.
+
+- **No** debe incluirse nunca en el repositorio ningún fichero con datos
+  personales (nóminas, DNI, listados de empleados, capturas no anonimizadas,
+  logs con rutas o nombres, etc.).
+- Si se sube material sensible por error, debe eliminarse del historial,
+  rotar lo que proceda y reportarlo de inmediato.
+- Los tests deben usar únicamente PDF sintéticos generados en tiempo de
+  ejecución, sin datos reales.
 
 ## Recomendaciones operativas
 

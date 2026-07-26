@@ -28,7 +28,17 @@ pip-wheel-metadata/
 venv/
 ENV/
 env/
-.env/
+
+# Credenciales y secretos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*
+secrets*
+*secret*
+*credential*
 
 # PyInstaller
 *.manifest
@@ -73,9 +83,14 @@ Zone.Identifier
 *.log
 logs/
 
-# PDFs locales y salidas (no versionar nóminas reales)
+# Documentos y datos locales (no versionar datos personales / nóminas)
 *.pdf
-!tests/**/*.pdf
+*.xlsx
+*.xls
+*.csv
+*.ods
+*.docx
+*.doc
 *_separadas/
 salida/
 output/

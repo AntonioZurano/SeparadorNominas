@@ -161,6 +161,20 @@ SeparadorNominas/
 
 Más detalle en [docs/SEGURIDAD_Y_PRIVACIDAD.md](docs/SEGURIDAD_Y_PRIVACIDAD.md).
 
+## Aviso de protección de datos
+
+Este repositorio público contiene **únicamente código fuente y documentación**.
+**No incluye nóminas reales ni otros datos personales.**
+
+La aplicación puede usarse para procesar documentos laborales sensibles en el
+equipo del usuario. Quien la utilice con ficheros reales actúa como
+responsable (o encargado, según el caso) del tratamiento y debe cumplir el
+**RGPD** y la **LOPDGDD** (España), así como cualquier normativa aplicable.
+
+La licencia MIT regula el uso del software; **no sustituye** las obligaciones
+de protección de datos. Consulta
+[docs/SEGURIDAD_Y_PRIVACIDAD.md](docs/SEGURIDAD_Y_PRIVACIDAD.md).
+
 ## Limitaciones actuales
 
 - No realiza OCR.
@@ -184,8 +198,13 @@ Detalle completo en [docs/ROADMAP.md](docs/ROADMAP.md).
 
 Distribuido bajo licencia **MIT**. Consulta el archivo [LICENSE](LICENSE).
 
-Esta aplicación procesa documentos sensibles. El usuario es responsable de
-utilizarla conforme a la normativa de protección de datos aplicable.
+Copyright (c) 2026 Antonio Zurano Blázquez.
+
+El software se proporciona «tal cual» (*as is*), sin garantías. Este
+repositorio **no incluye datos personales**. Si utilizas la aplicación con
+nóminas u otros documentos con datos personales, eres responsable de su
+tratamiento conforme al **RGPD** y la **LOPDGDD**, y a cualquier otra
+normativa aplicable. La licencia MIT no exime de esas obligaciones.
 
 ## Versión actual
 
