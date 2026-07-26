@@ -1,0 +1,16 @@
+---
+description: Flujo Git obligatorio — ramas, merges, tags y pushes
+alwaysApply: true
+---
+
+# Flujo Git (SeparadorNominas)
+
+- Leer `AGENTS.md` y `CONTRIBUTING.md` antes de cualquier cambio.
+- Partir siempre de `development` (nunca commits de trabajo en `main`).
+- No implementar directamente sobre `development`: crear una rama por tarea
+  (`feature/`, `fix/`, `refactor/`, `docs/`, `test/` + kebab-case).
+- No realizar merges, tags o pushes sin autorización expresa del usuario.
+- No usar `reset --hard`, force push ni reescribir historial sin orden.
+- Ejecutar tests antes de dar una tarea por terminada.
+- Actualizar documentación afectada y `CHANGELOG.md`.
+- Detenerse tras completar y probar la rama; esperar orden de merge.

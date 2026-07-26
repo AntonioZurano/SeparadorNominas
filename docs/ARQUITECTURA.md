@@ -82,4 +82,7 @@ Reglas:
 
 - Mantener la separación GUI / lógica.
 - Añadir tests para cada comportamiento nuevo.
-- Actualizar `VERSION`, `CHANGELOG.md` y documentación afectada.
+- Actualizar `CHANGELOG.md` y documentación afectada; versión solo con orden expresa.
+- Evolucionar el código en ramas hijas de `development` (ver
+  [`CONTRIBUTING.md`](../CONTRIBUTING.md) y [`AGENTS.md`](../AGENTS.md)).
+  No trabajar directamente sobre `main`.
