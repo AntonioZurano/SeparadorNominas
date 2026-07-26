@@ -12,7 +12,9 @@ la compatibilidad.
 
 Si desarrollas en WSL y pruebas el `.exe` en Windows, usa este flujo:
 
-1. En WSL: haz commit y `git push` a `main`.
+1. En WSL: integra el trabajo en `development` y, cuando esté **aprobado para
+   producción**, fusiona a `main` (solo con autorización expresa). El script
+   de sync descarga la rama **`main`** (versión estable).
 2. En Windows (PowerShell):
 
 ```powershell
@@ -22,9 +24,13 @@ Set-Location C:\Dev\SeparadorNominas
 
 El script:
 
-1. Actualiza el código desde GitHub (`main`), con Git o descarga ZIP.
+1. Actualiza el código desde GitHub (`main` estable), con Git o descarga ZIP.
 2. Ejecuta `scripts\build.ps1` (tests + PyInstaller).
 3. Abre `dist\SeparadorNominas.exe`.
+
+El desarrollo diario de features se hace en ramas desde `development`
+(ver [`CONTRIBUTING.md`](../CONTRIBUTING.md)). `sync-build-run.ps1` no sustituye
+ese flujo: sirve para probar el **estable** en Windows.
 
 Parámetros útiles:
 

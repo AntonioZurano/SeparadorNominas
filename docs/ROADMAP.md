@@ -51,5 +51,8 @@ Las versiones siguientes están **expresamente no implementadas**.
 - Conservar la arquitectura modular.
 - No romper la separación PDF de la v1.0.0.
 - Añadir tests y documentación con cada cambio.
-- Versionar de forma semántica (`VERSION` + `CHANGELOG.md`).
+- Versionar de forma semántica (`VERSION` + `CHANGELOG.md`) **cuando se ordene**.
 - Mantener el procesamiento local y la privacidad como requisito no negociable.
+- Integrar cada versión del roadmap mediante el flujo Git
+  (`development` → pruebas → `main`); ver [`CONTRIBUTING.md`](../CONTRIBUTING.md).
+- No implementar ítems del roadmap sin petición explícita.

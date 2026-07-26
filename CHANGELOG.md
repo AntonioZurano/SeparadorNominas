@@ -9,6 +9,8 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ### Añadido
 
+- Documentación del flujo Git (`main` / `development` / ramas de trabajo):
+  `AGENTS.md`, `CONTRIBUTING.md`, `.cursor/rules/git-workflow.mdc`.
 - Script `scripts/sync-build-run.ps1` para sincronizar desde GitHub, recompilar
   el `.exe` y abrir la aplicación en Windows.
 
