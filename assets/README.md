@@ -4,14 +4,16 @@ Esta carpeta contiene recursos estáticos de la aplicación.
 
 ## Icono de la aplicación
 
-En la versión 1.0.0 la compilación usa el icono estándar si no existe un
-archivo propio.
+El archivo `assets/icon.ico` se usa automáticamente al compilar con
+`scripts/build.ps1` (PyInstaller `--icon`).
 
-Para añadir un icono personalizado en futuras versiones:
+Si se elimina o no existe, la compilación usará el icono estándar de
+Python/Windows.
 
-1. Coloca un archivo `icon.ico` en esta carpeta (`assets/icon.ico`).
+Para sustituirlo:
+
+1. Reemplaza `assets/icon.ico` por un nuevo `.ico`.
 2. Vuelve a ejecutar `scripts/build.ps1`.
-3. El script detectará el icono automáticamente y lo incluirá en el `.exe`.
 
 Recomendaciones del icono:
 
