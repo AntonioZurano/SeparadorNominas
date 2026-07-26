@@ -688,12 +688,6 @@ class SeparadorNominasApp:
         self._set_result_text("\n".join(summary_lines))
         self._set_controls_enabled(True)
         self._open_folder_button.configure(state=tk.NORMAL)
-        messagebox.showinfo(
-            APP_NAME,
-            "Proceso completado correctamente.\n\n"
-            f"Trabajadores: {result.recognized_worker_count}\n"
-            f"No reconocidas: {len(result.unrecognized_files)}",
-        )
 
     def _on_process_error(self, message: str) -> None:
         """Maneja un error durante el proceso."""

@@ -42,6 +42,7 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
   indeterminada («Abriendo y validando el PDF...»).
 - Confirmación de escritura embebida (Generar/Cancelar junto a la barra)
   sin diálogo modal, para poder revisar el resumen con scroll.
+- Sin diálogo final en modo agrupar: el resumen queda solo en Resultado.
 - Tests sintéticos (reportlab solo en dependencias de desarrollo).
 
 ### Conservado
