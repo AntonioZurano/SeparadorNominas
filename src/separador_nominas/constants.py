@@ -69,6 +69,7 @@ PROGRESS_COMPLETE: float = 100.0
 
 # Mensajes de estado (interfaz)
 STATUS_READY: str = "Preparado para comenzar."
+STATUS_OPENING_PDF: str = "Abriendo y validando el PDF..."
 STATUS_PROCESSING_TEMPLATE: str = "Procesando página {current} de {total}..."
 STATUS_ANALYZING_TEMPLATE: str = "Analizando página {current} de {total}..."
 STATUS_WRITING_GROUPS: str = "Escribiendo archivos agrupados..."

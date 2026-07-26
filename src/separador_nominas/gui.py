@@ -23,6 +23,7 @@ from separador_nominas.constants import (
     STATUS_CANCELLED_BY_USER,
     STATUS_COMPLETED,
     STATUS_ERROR,
+    STATUS_OPENING_PDF,
     STATUS_PROCESSING_TEMPLATE,
     STATUS_READY,
     STATUS_WAITING_CONFIRMATION,
@@ -43,7 +44,7 @@ from separador_nominas.grouped_pdf_service import (
 )
 from separador_nominas.pdf_service import SplitResult, split_pdf
 from separador_nominas.recognition_models import GroupingAnalysis, GroupingProcessResult
-from separador_nominas.validators import get_pdf_page_count, validate_pdf_path
+from separador_nominas.validators import inspect_pdf
 
 logger = logging.getLogger(LOGGER_NAME)
 
@@ -281,6 +282,18 @@ class SeparadorNominasApp:
         for child in widget.winfo_children():
             self._set_widget_tree_state(child, state)
 
+    def _start_indeterminate_progress(self) -> None:
+        """Activa la barra en modo indeterminado (espera sin porcentaje)."""
+        self._progress.stop()
+        self._progress.configure(mode="indeterminate")
+        self._progress.start(12)
+
+    def _stop_indeterminate_progress(self) -> None:
+        """Restaura la barra a modo determinado al 0 %."""
+        self._progress.stop()
+        self._progress.configure(mode="determinate")
+        self._progress_value.set(PROGRESS_IDLE)
+
     def _on_select_pdf(self) -> None:
         """Abre el diálogo de selección de PDF."""
         if self._is_processing:
@@ -294,23 +307,49 @@ class SeparadorNominasApp:
             self._status_text.set(STATUS_READY)
             return
 
+        self._is_processing = True
+        self._set_controls_enabled(False)
+        self._set_result_text("")
+        self._status_text.set(STATUS_OPENING_PDF)
+        self._start_indeterminate_progress()
+        logger.info("Validando PDF seleccionado en segundo plano")
+
+        worker = threading.Thread(
+            target=self._run_inspect_pdf,
+            args=(selected,),
+            daemon=True,
+        )
+        worker.start()
+
+    def _run_inspect_pdf(self, selected: str) -> None:
+        """Valida el PDF fuera del hilo de la interfaz."""
         try:
-            path = validate_pdf_path(selected)
-            page_count = get_pdf_page_count(path)
+            path, page_count = inspect_pdf(selected)
+            self.root.after(
+                0,
+                lambda: self._on_pdf_inspect_success(path, page_count),
+            )
         except SeparadorNominasError as exc:
-            self._show_error(exc.user_message)
-            return
+            message = exc.user_message
+            self.root.after(0, lambda: self._on_pdf_inspect_error(message))
         except Exception as exc:  # noqa: BLE001
             logger.exception(
                 "Error inesperado al seleccionar PDF: %s",
                 type(exc).__name__,
             )
-            self._show_error(
-                "No se ha podido abrir el PDF seleccionado.\n"
-                "Comprueba que el archivo no esté dañado ni protegido con contraseña."
+            self.root.after(
+                0,
+                lambda: self._on_pdf_inspect_error(
+                    "No se ha podido abrir el PDF seleccionado.\n"
+                    "Comprueba que el archivo no esté dañado "
+                    "ni protegido con contraseña."
+                ),
             )
-            return
 
+    def _on_pdf_inspect_success(self, path: Path, page_count: int) -> None:
+        """Aplica en la UI el resultado de la validación del PDF."""
+        self._stop_indeterminate_progress()
+        self._is_processing = False
         self._pdf_path.set(str(path))
         self._page_count = page_count
         self._base_name.set(suggest_base_name_from_pdf(path))
@@ -318,10 +357,17 @@ class SeparadorNominasApp:
         self._status_text.set(
             f"PDF seleccionado: {page_count} página{'s' if page_count != 1 else ''}."
         )
-        self._set_result_text("")
-        self._progress_value.set(PROGRESS_IDLE)
-        self._open_folder_button.configure(state=tk.DISABLED)
         self._last_destination = None
+        self._set_controls_enabled(True)
+        self._open_folder_button.configure(state=tk.DISABLED)
+
+    def _on_pdf_inspect_error(self, message: str) -> None:
+        """Maneja un error al validar el PDF seleccionado."""
+        self._stop_indeterminate_progress()
+        self._is_processing = False
+        self._status_text.set(STATUS_ERROR)
+        self._set_controls_enabled(True)
+        self._show_error(message)
 
     def _on_select_folder(self) -> None:
         """Abre el diálogo de selección de carpeta."""
@@ -352,6 +398,7 @@ class SeparadorNominasApp:
 
         self._is_processing = True
         self._set_controls_enabled(False)
+        self._stop_indeterminate_progress()
         self._progress_value.set(PROGRESS_IDLE)
         self._set_result_text("")
         self._status_text.set(STATUS_READY)
@@ -371,6 +418,7 @@ class SeparadorNominasApp:
 
         self._is_processing = True
         self._set_controls_enabled(False)
+        self._stop_indeterminate_progress()
         self._progress_value.set(PROGRESS_IDLE)
         self._set_result_text("")
         self._status_text.set(STATUS_READY)

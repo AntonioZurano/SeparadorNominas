@@ -38,6 +38,8 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 - Apertura de carpeta de destino desde WSL mediante el Explorador de Windows.
 - Filtro negativo por tokens (evita rechazar apellidos como «Nieto» por «NIE»).
 - Área Resultado con barra de desplazamiento para resúmenes largos.
+- Feedback al abrir PDF grandes: validación en segundo plano con barra
+  indeterminada («Abriendo y validando el PDF...»).
 - Tests sintéticos (reportlab solo en dependencias de desarrollo).
 
 ### Conservado
