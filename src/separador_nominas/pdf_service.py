@@ -49,7 +49,7 @@ class SplitResult:
         return len(self.output_files)
 
 
-def _open_reader(pdf_path: Path) -> PdfReader:
+def open_pdf_reader(pdf_path: Path) -> PdfReader:
     """Abre un PdfReader gestionando cifrado y errores de lectura."""
     try:
         reader = PdfReader(str(pdf_path))
@@ -121,7 +121,7 @@ def split_pdf(
     )
     clean_base = validate_base_name(base_name)
 
-    reader = _open_reader(pdf_path)
+    reader = open_pdf_reader(pdf_path)
     try:
         total_pages = len(reader.pages)
     except Exception as exc:  # noqa: BLE001

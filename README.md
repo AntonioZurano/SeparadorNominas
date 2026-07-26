@@ -1,9 +1,10 @@
 # Separador de Nóminas PDF
 
 Miniaplicación de escritorio para **Windows 10 y Windows 11** que separa un
-archivo PDF multipágina en un PDF independiente por cada página.
+archivo PDF multipágina de nóminas: **una página por archivo** o **agrupación
+por trabajador** tras reconocer el nombre en el texto del PDF.
 
-**Versión actual: 1.0.1**
+**Versión actual: 1.1.0**
 
 ## Para agentes de IA
 
@@ -30,9 +31,17 @@ Esta aplicación permite:
 
 1. Abrir el PDF completo.
 2. Elegir una carpeta de destino.
-3. Generar automáticamente un archivo por página.
+3. Separar una página por archivo **o** reconocer y agrupar por trabajador.
 
 Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
+
+## Funciones de la versión 1.1.0
+
+- Todo lo de la 1.0.x (separación página a página).
+- Modo **Reconocer y agrupar por trabajador** (texto seleccionable, sin OCR).
+- Resumen y confirmación antes de guardar los PDF agrupados.
+- Un PDF por trabajador; páginas no reconocidas en `No_reconocidas/`.
+- Protección frente a sobrescritura accidental de archivos.
 
 ## Funciones de la versión 1.0.0
 
@@ -43,7 +52,6 @@ Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
 - Numeración automática con ceros a la izquierda según el total de páginas.
 - Barra de progreso y mensajes de estado en español.
 - Aviso al finalizar y botón para abrir la carpeta de destino.
-- Protección frente a sobrescritura accidental de archivos.
 - Validaciones y mensajes de error comprensibles.
 
 ## Esquema de la interfaz
@@ -58,15 +66,16 @@ Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
 │  Carpeta de destino                                      │
 │  [ C:\...\Nominas_Julio_2026_separadas    ] [Seleccionar]│
 ├──────────────────────────────────────────────────────────┤
-│  Nombre base de los archivos                             │
+│  Modo: (•) Separar una página / ( ) Agrupar trabajador   │
+├──────────────────────────────────────────────────────────┤
+│  Nombre base (solo modo separación)                      │
 │  [ Nominas_Julio_2026                                    ]│
 ├──────────────────────────────────────────────────────────┤
-│  [ Separar nóminas ]                                     │
+│  [ Separar / Reconocer y agrupar ]                       │
 │  [████████████░░░░░░░░░░░░]                              │
-│  Procesando página 4 de 18...                            │
+│  Analizando página 4 de 18...                            │
 ├──────────────────────────────────────────────────────────┤
-│  Resultado                                               │
-│  Se han generado 18 archivos.                            │
+│  Resultado / resumen de reconocimiento                   │
 │  [ Abrir carpeta de destino ]                            │
 └──────────────────────────────────────────────────────────┘
 ```
@@ -195,18 +204,17 @@ de protección de datos. Consulta
 
 ## Limitaciones actuales
 
-- No realiza OCR.
-- No detecta automáticamente el nombre del trabajador.
+- No realiza OCR (PDFs escaneados no permiten reconocer el nombre).
+- No usa fuzzy matching: solo clave de nombre normalizada exacta.
+- No incluye editor interactivo de coincidencias.
 - No envía correos ni se integra con Outlook / Microsoft 365.
 - No incluye instalador ni firma digital del ejecutable.
-- Pensada para PDFs con texto o contenido vectorial; los escaneados se
-  separan página a página, pero sin reconocimiento de texto.
 
 ## Roadmap resumido
 
 | Versión | Objetivo |
 |---------|----------|
-| 1.1.0   | Detección de nombre del trabajador y renombrado |
+| 1.1.0   | Reconocimiento y agrupación por trabajador (**implementada**) |
 | 1.2.0   | Asociación trabajador ↔ correo (CSV/Excel) |
 | 2.0.0   | Borradores de correo con Outlook / Microsoft 365 |
 
@@ -226,4 +234,4 @@ normativa aplicable. La licencia MIT no exime de esas obligaciones.
 
 ## Versión actual
 
-`1.0.1` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
+`1.1.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).

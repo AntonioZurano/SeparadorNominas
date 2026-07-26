@@ -1,9 +1,10 @@
 # Roadmap
 
-Estado actual: **versión 1.0.1**.
+Estado actual: **versión 1.1.0** (en rama de feature hasta merge autorizado).
 
 La funcionalidad de separación PDF corresponde a la **1.0.0**.
 La **1.0.1** añade documentación orientada a agentes de IA.
+La **1.1.0** añade reconocimiento local de texto y agrupación por trabajador.
 
 Las versiones siguientes están **expresamente no implementadas**.
 
@@ -13,13 +14,17 @@ Las versiones siguientes están **expresamente no implementadas**.
 - Reglas Cursor en `.cursor/rules/`.
 - `docs/CONTEXTO_IA.md`.
 
-## Versión 1.1.0 (no implementada)
+## Versión 1.1.0 (implementada)
 
-- Extraer texto de cada página.
-- Detectar nombre del trabajador cuando el PDF contenga texto seleccionable.
-- Renombrar automáticamente los archivos.
-- Vista previa de nombres detectados.
-- Revisión manual de coincidencias.
+- Extraer texto seleccionable de cada página (pypdf, sin OCR).
+- Reconocer el nombre del trabajador mediante reglas locales (etiquetas).
+- Agrupar páginas por nombre normalizado exacto.
+- Generar un PDF por trabajador; páginas no reconocidas en `No_reconocidas/`.
+- Resumen y confirmación antes de escribir archivos.
+- Conservar el modo «una página por archivo» de la 1.0.0.
+
+Fuera de 1.1.0 (siguen pendientes): OCR, editor interactivo de coincidencias,
+DNI como clave, fuzzy matching.
 
 ## Versión 1.2.0 (no implementada)
 
@@ -45,6 +50,7 @@ Las versiones siguientes están **expresamente no implementadas**.
 - Protección mediante contraseña.
 - Cifrado opcional de archivos.
 - Soporte multidioma.
+- Revisión manual editable de nombres detectados.
 
 ## Principios de evolución
 

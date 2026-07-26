@@ -19,6 +19,7 @@ from separador_nominas.exceptions import (
 )
 from separador_nominas.validators import (
     get_pdf_page_count,
+    inspect_pdf,
     validate_base_name,
     validate_destination_dir,
     validate_pdf_path,
@@ -62,6 +63,12 @@ class TestValidatePdfPath:
         result = validate_pdf_path(pdf)
         assert result == pdf.resolve()
         assert get_pdf_page_count(pdf) == 2
+
+    def test_inspect_pdf_returns_path_and_count(self, tmp_path: Path) -> None:
+        pdf = _write_blank_pdf(tmp_path / "varios.pdf", pages=5)
+        path, count = inspect_pdf(pdf)
+        assert path == pdf.resolve()
+        assert count == 5
 
     def test_corrupted_pdf(self, tmp_path: Path) -> None:
         bad = tmp_path / "roto.pdf"

@@ -25,22 +25,11 @@ from separador_nominas.exceptions import (
 from separador_nominas.filename_service import sanitize_base_name
 
 
-def validate_pdf_path(pdf_path: Path | str | None) -> Path:
+def inspect_pdf(pdf_path: Path | str | None) -> tuple[Path, int]:
     """
-    Valida que la ruta apunte a un archivo PDF existente y legible.
+    Valida un PDF y devuelve su ruta absoluta y el número de páginas.
 
-    Returns:
-        Ruta absoluta del PDF validado.
-
-    Raises:
-        PdfNotSelectedError: Si no se ha indicado ruta.
-        PdfNotFoundError: Si no existe o no es un archivo.
-        InvalidPdfExtensionError: Si la extensión no es PDF.
-        PermissionDeniedError: Si no se puede leer.
-        PasswordProtectedPdfError: Si requiere contraseña.
-        EmptyPdfError: Si no tiene páginas.
-        CorruptedPdfError: Si está dañado.
-        PdfReadError: Ante otros errores de lectura.
+    Abre el archivo una sola vez (importante en PDF muy grandes).
     """
     if pdf_path is None or str(pdf_path).strip() == "":
         raise PdfNotSelectedError("No se ha seleccionado ningún archivo PDF.")
@@ -113,7 +102,28 @@ def validate_pdf_path(pdf_path: Path | str | None) -> Path:
     if page_count < 1:
         raise EmptyPdfError("El PDF seleccionado no contiene páginas.")
 
-    return path.resolve()
+    return path.resolve(), page_count
+
+
+def validate_pdf_path(pdf_path: Path | str | None) -> Path:
+    """
+    Valida que la ruta apunte a un archivo PDF existente y legible.
+
+    Returns:
+        Ruta absoluta del PDF validado.
+
+    Raises:
+        PdfNotSelectedError: Si no se ha indicado ruta.
+        PdfNotFoundError: Si no existe o no es un archivo.
+        InvalidPdfExtensionError: Si la extensión no es PDF.
+        PermissionDeniedError: Si no se puede leer.
+        PasswordProtectedPdfError: Si requiere contraseña.
+        EmptyPdfError: Si no tiene páginas.
+        CorruptedPdfError: Si está dañado.
+        PdfReadError: Ante otros errores de lectura.
+    """
+    path, _page_count = inspect_pdf(pdf_path)
+    return path
 
 
 def get_pdf_page_count(pdf_path: Path | str) -> int:
@@ -123,11 +133,8 @@ def get_pdf_page_count(pdf_path: Path | str) -> int:
     Raises:
         Las mismas excepciones que :func:`validate_pdf_path`.
     """
-    path = validate_pdf_path(pdf_path)
-    reader = PdfReader(str(path))
-    if getattr(reader, "is_encrypted", False):
-        reader.decrypt("")
-    return len(reader.pages)
+    _path, page_count = inspect_pdf(pdf_path)
+    return page_count
 
 
 def validate_destination_dir(
