@@ -70,7 +70,8 @@ En el modo agrupar, el nombre del archivo sale del trabajador reconocido.
 
 1. Pulsa **Separar nóminas** o **Reconocer y agrupar**.
 2. Espera a que avance la barra de progreso.
-3. En modo agrupar, revisa el resumen y confirma si deseas generar los archivos.
+3. En modo agrupar, revisa el resumen (con scroll si es largo) y pulsa
+   **Generar** o **Cancelar** junto a la barra de progreso.
 4. Cuando termine, verás el mensaje de finalización.
 
 Durante el proceso no inicies otra operación: los controles permanecen
