@@ -6,7 +6,11 @@ técnicos.
 ## ¿Para qué sirve?
 
 Si tienes un PDF grande donde **cada página es la nómina de una persona**,
-esta aplicación crea un archivo PDF distinto por cada página.
+puedes:
+
+- **Separar** un archivo PDF distinto por cada página; o
+- **Reconocer y agrupar** las páginas del mismo trabajador en un solo PDF
+  (cuando el PDF tiene texto seleccionable).
 
 ## Antes de empezar
 
@@ -44,7 +48,13 @@ Si quieres otra carpeta:
 
 Si la carpeta no existe, la aplicación intentará crearla al procesar.
 
-### 4. Revisar el nombre base
+### 4. Elegir el modo de proceso
+
+- **Separar una página por archivo**: comportamiento clásico (v1.0).
+- **Reconocer y agrupar por trabajador**: analiza el texto, agrupa por nombre
+  y pide confirmación antes de guardar.
+
+### 5. Revisar el nombre base (solo modo separación)
 
 En **Nombre base de los archivos** puedes dejar el sugerido o cambiarlo.
 
@@ -54,19 +64,27 @@ Ejemplo:
 - Nombre base: `Nominas_Julio_2026`
 - Resultados: `Nominas_Julio_2026_01.pdf`, `Nominas_Julio_2026_02.pdf`, …
 
-### 5. Separar las nóminas
+En el modo agrupar, el nombre del archivo sale del trabajador reconocido.
 
-1. Pulsa **Separar nóminas**.
+### 6. Ejecutar el proceso
+
+1. Pulsa **Separar nóminas** o **Reconocer y agrupar**.
 2. Espera a que avance la barra de progreso.
-3. Cuando termine, verás el mensaje de finalización y el número de archivos
-   generados.
+3. En modo agrupar, revisa el resumen y confirma si deseas generar los archivos.
+4. Cuando termine, verás el mensaje de finalización.
 
-Durante el proceso no inicies otra separación: el botón permanece desactivado.
+Durante el proceso no inicies otra operación: los controles permanecen
+desactivados.
 
-### 6. Abrir los resultados
+### 7. Abrir los resultados
 
 Pulsa **Abrir carpeta de destino** para ver los PDF generados en el Explorador
 de Windows.
+
+En modo agrupar:
+
+- un PDF por trabajador reconocido;
+- páginas sin nombre fiable en la subcarpeta `No_reconocidas/`.
 
 ## Si algo sale mal
 
@@ -77,19 +95,9 @@ La aplicación mostrará un mensaje claro. Ejemplos habituales:
 | No has elegido PDF | Selecciona un archivo PDF. |
 | PDF dañado o con contraseña | Pide a la asesoría un PDF sin protección o no dañado. |
 | Sin permisos de escritura | Elige otra carpeta (por ejemplo, Documentos). |
-| Nombre base vacío | Escribe un nombre válido. |
+| Nombre base vacío | Escribe un nombre válido (modo separación). |
+| Muchas páginas no reconocidas | El PDF puede estar escaneado (sin texto) o con formato distinto. |
 
-## Consejos prácticos
+## Privacidad
 
-- No cierres la ventana mientras se procesa.
-- Si vuelves a separar el mismo PDF en la misma carpeta, no se borrarán los
-  archivos anteriores: se crearán nombres alternativos (`_2`, `_3`, …).
-- Trata las nóminas como documentos confidenciales.
-
-## Qué no hace todavía esta versión
-
-- No lee el nombre del trabajador.
-- No renombra automáticamente con el DNI o el nombre.
-- No envía correos.
-
-Esas funciones están previstas para versiones futuras.
+Todo ocurre en tu ordenador. La aplicación no envía las nóminas a Internet.

@@ -22,6 +22,24 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 - Avisos RGPD/LOPDGDD en README y documentación de seguridad.
 - `.gitignore` ampliado (documentos de oficina y credenciales).
 
+## [1.1.0] - 2026-07-26
+
+### Añadido
+
+- Extracción local de texto de páginas PDF (`text_extraction_service`).
+- Reconocimiento de nombre de trabajador por reglas/etiquetas locales
+  (sin OCR, sin servicios externos, sin fuzzy matching).
+- Normalización de nombres (`display` / clave de agrupación / nombre de archivo).
+- Agrupación exacta por clave normalizada y escritura de un PDF por trabajador.
+- Carpeta `No_reconocidas/` con un PDF por página no reconocida.
+- Modo GUI «Reconocer y agrupar por trabajador» con resumen y confirmación
+  antes de guardar.
+- Tests sintéticos (reportlab solo en dependencias de desarrollo).
+
+### Conservado
+
+- Modo «Separar una página por archivo» de la 1.0.x sin cambios de comportamiento.
+
 ## [1.0.1] - 2026-07-26
 
 ### Añadido
