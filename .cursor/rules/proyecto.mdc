@@ -10,12 +10,15 @@ nóminas multipágina en **un PDF por página**. Todo local, sin red ni telemetr
 
 - **Versión actual:** 1.0.1 (`VERSION`)
 - **Briefing completo:** `AGENTS.md`
+- **Flujo Git:** `main` / `development` / ramas de trabajo — ver `AGENTS.md` y `CONTRIBUTING.md`
 - **Roadmap:** `docs/ROADMAP.md` (1.1 nombres, 1.2 correos, 2.0 Outlook — **no implementadas**)
 
 ## Antes de cambiar código
 
-1. Leer `AGENTS.md` y no implementar funciones del roadmap sin petición explícita.
-2. Mantener separación GUI (`gui.py`) / lógica (`pdf_service`, `filename_service`, `validators`).
-3. Tests + docs + `CHANGELOG.md`; si cambia versión → `VERSION` y `pyproject.toml`.
-4. UI y errores en español; nunca loguear contenido de nóminas ni datos personales.
-5. No añadir dependencias innecesarias ni PDFs reales al repositorio.
+1. Leer `AGENTS.md`; partir de `development` y crear una rama de trabajo.
+2. No implementar funciones del roadmap sin petición explícita.
+3. Mantener separación GUI (`gui.py`) / lógica (`pdf_service`, `filename_service`, `validators`).
+4. Tests + docs + `CHANGELOG.md`; versión solo si el usuario lo indica.
+5. UI y errores en español; nunca loguear contenido de nóminas ni datos personales.
+6. No añadir dependencias innecesarias ni PDFs reales al repositorio.
+7. No merge / tag / push sin autorización; detenerse al terminar la rama.

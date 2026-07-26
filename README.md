@@ -8,9 +8,18 @@ archivo PDF multipágina en un PDF independiente por cada página.
 ## Para agentes de IA
 
 Si eres un asistente o agente que abre este repositorio, empieza por
-**[`AGENTS.md`](AGENTS.md)**: describe el propósito, el alcance de la 1.0.0, el
-roadmap (qué no está implementado) y las reglas de arquitectura/privacidad.
-También hay reglas en [`.cursor/rules/`](.cursor/rules/) para Cursor.
+**[`AGENTS.md`](AGENTS.md)**: describe el propósito, el alcance, el roadmap, la
+arquitectura/privacidad y el **flujo Git obligatorio**. También hay reglas en
+[`.cursor/rules/`](.cursor/rules/) para Cursor.
+
+## Contribuir / flujo Git
+
+- `main`: solo versiones estables.
+- `development`: integración y pruebas.
+- Cada tarea: rama hija de `development` (`feature/…`, `fix/…`, etc.).
+- Merges, tags y pushes: solo con autorización expresa.
+
+Detalle: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Problema que resuelve
 
@@ -146,6 +155,7 @@ Detalles en [docs/COMPILACION_WINDOWS.md](docs/COMPILACION_WINDOWS.md).
 ```text
 SeparadorNominas/
 ├── AGENTS.md                # Briefing para IAs / agentes
+├── CONTRIBUTING.md          # Flujo Git y contribución
 ├── .cursor/rules/           # Reglas Cursor (contexto persistente)
 ├── src/separador_nominas/   # Código de la aplicación
 ├── tests/                   # Tests unitarios

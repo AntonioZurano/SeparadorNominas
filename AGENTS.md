@@ -1,7 +1,10 @@
 # AGENTS.md — Contexto para agentes de IA
 
-Documento de arranque para cualquier IA o asistente que abra este repositorio.
-Léelo **antes** de modificar código o proponer funciones nuevas.
+Documento de arranque para **Cursor y cualquier otra IA** que abra este
+repositorio. Léelo **antes** de modificar código, proponer funciones o tocar Git.
+
+Detalle humano del flujo Git: [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Entorno y convenciones de código: [`docs/DESARROLLO.md`](docs/DESARROLLO.md).
 
 ## Qué es este proyecto
 
@@ -46,7 +49,7 @@ Dependencias mínimas a propósito. No añadir librerías sin necesidad clara.
 - Abrir carpeta al terminar.
 - Validaciones y excepciones de dominio.
 - Tests de lógica (no GUI).
-- Docs + scripts PowerShell (`run` / `test` / `build`).
+- Docs + scripts PowerShell (`run` / `test` / `build` / `sync-build-run`).
 
 ## Fuera de alcance (NO implementar sin petición explícita)
 
@@ -96,18 +99,110 @@ Reglas duras:
 Detalle: [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md),
 [`docs/SEGURIDAD_Y_PRIVACIDAD.md`](docs/SEGURIDAD_Y_PRIVACIDAD.md).
 
-## Cómo evolucionar el proyecto
+## Modelo de ramas (obligatorio)
 
-Antes de cada cambio:
+```text
+main                 # solo versiones estables
+└── development      # integración y pruebas
+    ├── feature/...
+    ├── fix/...
+    ├── refactor/...
+    ├── docs/...
+    └── test/...
+```
 
-1. Leer este archivo, `VERSION`, `CHANGELOG.md` y el código/docs afectados.
-2. No romper la separación PDF de la 1.0.0.
-3. No implementar requisitos no pedidos (sobre todo del roadmap futuro).
-4. Añadir/actualizar tests.
-5. Actualizar docs afectadas, `CHANGELOG.md` y, si aplica, `VERSION` + `pyproject.toml` + `constants.APP_VERSION`.
-6. Explicar si se cambia la arquitectura.
+- **`main`**: únicamente versiones estables. Nunca commits de trabajo directo.
+- **`development`**: integración. No implementar la tarea directamente sobre ella.
+- **Ramas de trabajo**: siempre creadas **desde `development`**, nunca desde `main`.
+- Las ramas históricas `release/*` son **legado**; el flujo activo es el anterior.
 
-Convención de ramas de release: `release/X.Y.Z`.
+## Flujo obligatorio para cualquier tarea
+
+```text
+1. Leer AGENTS.md y la documentación relevante.
+2. Comprobar el estado de Git.
+3. Cambiar a development.
+4. Crear una rama de trabajo.
+5. Implementar un cambio pequeño.
+6. Añadir o actualizar tests.
+7. Ejecutar las pruebas.
+8. Actualizar documentación.
+9. Mostrar resultados.
+10. Esperar autorización antes de hacer merge.
+```
+
+Comandos orientativos:
+
+```bash
+git switch development
+git status
+git switch -c feature/nombre-de-la-feature
+```
+
+Antes de modificar archivos: explicar brevemente el alcance.
+
+Desarrollo incremental: un alcance pequeño por rama; actualizar
+`CHANGELOG.md` (Unreleased); detenerse tras probar. **No fusionar
+automáticamente.**
+
+## Integración (solo con orden expresa)
+
+### Hacia `development`
+
+Cuando el usuario apruebe integrar una rama:
+
+1. Tests + lint disponibles en la rama de trabajo.
+2. Working tree limpio.
+3. `git switch development` y `git merge --no-ff <rama>` (sin squash salvo orden).
+4. Volver a ejecutar tests.
+5. Actualizar versión/tag **solo si el usuario lo indica**.
+6. **No push** sin autorización.
+
+### Hacia `main`
+
+Solo cuando el usuario ordene una versión de producción:
+
+1. Tests en `development`.
+2. Changelog y versión documentados.
+3. `git switch main` y `git merge --no-ff development`.
+4. Tests de nuevo; tag estable solo si se ordena.
+5. **No push** sin autorización.
+
+### Tags
+
+- Prueba en `development`: p. ej. `v1.1.0-dev.1`, `v1.1.0-rc.1` (proponer antes; no decidir solos).
+- Estable en `main`: p. ej. `v1.1.0`.
+- Versionado semántico `MAJOR.MINOR.PATCH`. No cambiar `VERSION` sin indicación expresa.
+
+## Acciones prohibidas sin autorización
+
+```text
+- Merge a development.
+- Merge a main.
+- Crear tags.
+- Hacer push.
+- Eliminar ramas.
+- Reescribir historial.
+- Usar reset --hard.
+- Usar force push.
+- Modificar secretos o credenciales.
+```
+
+Tampoco: `git rebase` sin orden; eliminar archivos o comandos destructivos sin
+autorización; implementar funciones del roadmap no pedidas.
+
+## Commits
+
+Pequeños, una responsabilidad. Conventional Commits (español), p. ej.:
+
+```text
+feat: añade vista previa de archivos
+fix: corrige validación de PDF protegido
+docs: documenta flujo de ramas
+```
+
+Antes de committear (si se solicita): informar archivos, tests, resultado y
+mensaje propuesto. No commits automáticos no solicitados.
 
 ## Comandos útiles
 
@@ -121,7 +216,8 @@ pytest -q
 # Windows
 .\scripts\run.ps1
 .\scripts\test.ps1
-.\scripts\build.ps1   # → dist\SeparadorNominas.exe
+.\scripts\build.ps1
+.\scripts\sync-build-run.ps1   # sync main estable + build + abrir
 ```
 
 ## Mapa de documentación
@@ -129,11 +225,12 @@ pytest -q
 | Documento | Para qué |
 |-----------|----------|
 | `README.md` | Visión general humana |
-| `AGENTS.md` | Este briefing para IAs |
+| `AGENTS.md` | Este briefing para IAs (fuente de verdad) |
+| `CONTRIBUTING.md` | Flujo Git y contribución |
 | `docs/CONTEXTO_IA.md` | Puntero corto hacia AGENTS.md |
 | `docs/ARQUITECTURA.md` | Módulos y diseño |
 | `docs/FUNCIONAMIENTO.md` | Manual de usuario |
-| `docs/DESARROLLO.md` | Entorno y convenciones |
+| `docs/DESARROLLO.md` | Entorno y convenciones de código |
 | `docs/COMPILACION_WINDOWS.md` | PyInstaller / `.exe` |
 | `docs/PRUEBAS.md` | Estrategia de tests |
 | `docs/SEGURIDAD_Y_PRIVACIDAD.md` | Datos sensibles |
@@ -141,8 +238,6 @@ pytest -q
 | `CHANGELOG.md` | Historial de cambios |
 
 ## Restricciones de privacidad (críticas)
-
-Al trabajar con este código:
 
 - No incluir nóminas reales ni datos personales en el repo ni en tests.
 - Generar PDFs sintéticos en tests (`tmp_path` + `pypdf`).
