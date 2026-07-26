@@ -66,6 +66,8 @@ coverage.xml
 .DS_Store
 Thumbs.db
 desktop.ini
+*:Zone.Identifier
+Zone.Identifier
 
 # Logs
 *.log
