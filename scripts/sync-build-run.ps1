@@ -116,6 +116,11 @@ function Sync-WithZip {
         New-Item -ItemType Directory -Force -Path $parent | Out-Null
     }
 
+    # Evitar bloqueo si PowerShell esta dentro de RepoDir.
+    if ((Get-Location).Path -like "$Directory*") {
+        Set-Location $parent
+    }
+
     $tempRoot = Join-Path $env:TEMP ("SeparadorNominas_sync_" + [guid]::NewGuid().ToString("N"))
     $zipPath = Join-Path $tempRoot "repo.zip"
     New-Item -ItemType Directory -Force -Path $tempRoot | Out-Null
@@ -131,25 +136,29 @@ function Sync-WithZip {
             throw "No se encontro la carpeta extraida del ZIP."
         }
 
-        # Preservar .venv entre actualizaciones ZIP.
-        $venvBackup = $null
-        $venvPath = Join-Path $Directory ".venv"
-        if (Test-Path $venvPath) {
-            $venvBackup = Join-Path $tempRoot "venv_backup"
-            Write-Host "Preservando .venv existente..."
-            Move-Item -Path $venvPath -Destination $venvBackup
+        if (-not (Test-Path $Directory)) {
+            New-Item -ItemType Directory -Force -Path $Directory | Out-Null
         }
 
-        if (Test-Path $Directory) {
-            Remove-Item -Recurse -Force $Directory
+        # Copiar contenido sobre la carpeta existente (preserva .venv).
+        $excludeDirs = @(".venv", "dist", "build", ".git")
+        Get-ChildItem -Path $extracted.FullName -Force | ForEach-Object {
+            if ($excludeDirs -contains $_.Name) {
+                return
+            }
+            $target = Join-Path $Directory $_.Name
+            if ($_.PSIsContainer) {
+                if (Test-Path $target) {
+                    Remove-Item -Recurse -Force $target -ErrorAction SilentlyContinue
+                }
+                Copy-Item -Path $_.FullName -Destination $target -Recurse -Force
+            }
+            else {
+                Copy-Item -Path $_.FullName -Destination $target -Force
+            }
         }
 
-        Move-Item -Path $extracted.FullName -Destination $Directory
-
-        if ($venvBackup -and (Test-Path $venvBackup)) {
-            Move-Item -Path $venvBackup -Destination $venvPath
-            Write-Host "Entorno .venv restaurado."
-        }
+        Write-Host "Codigo actualizado desde ZIP (se conserva .venv si existia)."
     }
     finally {
         if (Test-Path $tempRoot) {
