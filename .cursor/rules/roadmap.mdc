@@ -1,0 +1,19 @@
+---
+description: Roadmap y lo que NO está implementado aún
+globs: docs/ROADMAP.md,CHANGELOG.md,VERSION,AGENTS.md
+alwaysApply: false
+---
+
+# Roadmap
+
+| Versión | Estado | Contenido |
+|---------|--------|-----------|
+| 1.0.0 | Hecha | Separar PDF por páginas |
+| 1.0.1 | Hecha | Documentación para agentes de IA (`AGENTS.md`, reglas Cursor) |
+| 1.1.0 | Pendiente | Texto, detectar nombre, renombrar, preview |
+| 1.2.0 | Pendiente | CSV/Excel, worker↔email, informe |
+| 2.0.0 | Pendiente | Borradores correo, Outlook/M365 |
+| Extra | Pendiente | OCR, firma exe, instalador, cifrado, i18n |
+
+No implementar estas versiones “por adelantado”. Solo cuando el usuario lo pida,
+versionando (`VERSION`, `CHANGELOG.md`) y actualizando tests/docs.

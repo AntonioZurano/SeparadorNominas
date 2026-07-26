@@ -1,0 +1,21 @@
+---
+description: Contexto del proyecto SeparadorNominas — qué es, versión y reglas base
+alwaysApply: true
+---
+
+# SeparadorNominas
+
+App de escritorio Windows (Python ≥3.11, Tkinter, pypdf) que separa un PDF de
+nóminas multipágina en **un PDF por página**. Todo local, sin red ni telemetría.
+
+- **Versión actual:** 1.0.1 (`VERSION`)
+- **Briefing completo:** `AGENTS.md`
+- **Roadmap:** `docs/ROADMAP.md` (1.1 nombres, 1.2 correos, 2.0 Outlook — **no implementadas**)
+
+## Antes de cambiar código
+
+1. Leer `AGENTS.md` y no implementar funciones del roadmap sin petición explícita.
+2. Mantener separación GUI (`gui.py`) / lógica (`pdf_service`, `filename_service`, `validators`).
+3. Tests + docs + `CHANGELOG.md`; si cambia versión → `VERSION` y `pyproject.toml`.
+4. UI y errores en español; nunca loguear contenido de nóminas ni datos personales.
+5. No añadir dependencias innecesarias ni PDFs reales al repositorio.

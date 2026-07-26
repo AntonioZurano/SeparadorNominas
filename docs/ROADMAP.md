@@ -1,8 +1,17 @@
 # Roadmap
 
-Estado actual: **versión 1.0.0 implementada**.
+Estado actual: **versión 1.0.1**.
+
+La funcionalidad de separación PDF corresponde a la **1.0.0**.
+La **1.0.1** añade documentación orientada a agentes de IA.
 
 Las versiones siguientes están **expresamente no implementadas**.
+
+## Versión 1.0.1 (implementada)
+
+- `AGENTS.md` y contexto para agentes de IA.
+- Reglas Cursor en `.cursor/rules/`.
+- `docs/CONTEXTO_IA.md`.
 
 ## Versión 1.1.0 (no implementada)
 

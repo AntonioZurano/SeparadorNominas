@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "separador-nominas"
-version = "1.0.0"
+version = "1.0.1"
 description = "Aplicación de escritorio para separar un PDF de nóminas en un archivo por página."
 readme = "README.md"
 license = { text = "MIT" }

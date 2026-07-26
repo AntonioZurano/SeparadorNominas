@@ -4,7 +4,7 @@ from __future__ import annotations
 
 APP_NAME: str = "Separador de Nóminas PDF"
 APP_EXECUTABLE_NAME: str = "SeparadorNominas"
-APP_VERSION: str = "1.0.0"
+APP_VERSION: str = "1.0.1"
 
 # Extensiones y nombres
 PDF_EXTENSION: str = ".pdf"

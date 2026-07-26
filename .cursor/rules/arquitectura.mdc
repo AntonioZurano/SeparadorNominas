@@ -1,0 +1,23 @@
+---
+description: Arquitectura modular y cómo ampliar SeparadorNominas
+globs: src/separador_nominas/**/*.py
+alwaysApply: false
+---
+
+# Arquitectura del código
+
+| Módulo | Rol |
+|--------|-----|
+| `main.py` | Entrada y logging |
+| `gui.py` | Solo Tkinter / UX |
+| `pdf_service.py` | Separar páginas con pypdf |
+| `filename_service.py` | Nombres, padding, anti-sobrescritura |
+| `validators.py` | Validar PDF, carpeta, nombre base |
+| `exceptions.py` | Errores de dominio |
+| `constants.py` | Constantes |
+
+- La GUI no escribe PDF; la lógica no importa Tkinter.
+- Colisiones: `Nomina_001.pdf` → `Nomina_001_2.pdf`.
+- Padding: 1 / 2 / 3+ dígitos según `len(str(total_pages))`.
+- Ampliaciones futuras (OCR, nombres, correo) → módulos nuevos, no hinchar `pdf_service`.
+- Detalle: `docs/ARQUITECTURA.md`.

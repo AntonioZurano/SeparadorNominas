@@ -3,7 +3,14 @@
 Miniaplicación de escritorio para **Windows 10 y Windows 11** que separa un
 archivo PDF multipágina en un PDF independiente por cada página.
 
-**Versión actual: 1.0.0**
+**Versión actual: 1.0.1**
+
+## Para agentes de IA
+
+Si eres un asistente o agente que abre este repositorio, empieza por
+**[`AGENTS.md`](AGENTS.md)**: describe el propósito, el alcance de la 1.0.0, el
+roadmap (qué no está implementado) y las reglas de arquitectura/privacidad.
+También hay reglas en [`.cursor/rules/`](.cursor/rules/) para Cursor.
 
 ## Problema que resuelve
 
@@ -130,10 +137,12 @@ Detalles en [docs/COMPILACION_WINDOWS.md](docs/COMPILACION_WINDOWS.md).
 
 ```text
 SeparadorNominas/
+├── AGENTS.md                # Briefing para IAs / agentes
+├── .cursor/rules/           # Reglas Cursor (contexto persistente)
 ├── src/separador_nominas/   # Código de la aplicación
 ├── tests/                   # Tests unitarios
 ├── assets/                  # Recursos (icono opcional)
-├── docs/                    # Documentación
+├── docs/                    # Documentación (incluye ROADMAP)
 ├── scripts/                 # Scripts PowerShell
 ├── requirements.txt
 ├── requirements-dev.txt
@@ -180,4 +189,4 @@ utilizarla conforme a la normativa de protección de datos aplicable.
 
 ## Versión actual
 
-`1.0.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
+`1.0.1` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).

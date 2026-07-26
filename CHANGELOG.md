@@ -5,6 +5,14 @@ Todas las modificaciones relevantes de este proyecto se documentan en este archi
 El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
+## [1.0.1] - 2026-07-26
+
+### Añadido
+
+- `AGENTS.md` y reglas en `.cursor/rules/` para que agentes de IA comprendan
+  el propósito, la arquitectura y el roadmap al abrir el proyecto.
+- `docs/CONTEXTO_IA.md` como puntero al briefing para agentes.
+
 ## [1.0.0] - 2026-07-26
 
 ### Añadido
