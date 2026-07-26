@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "separador-nominas"
-version = "1.0.1"
-description = "Aplicación de escritorio para separar un PDF de nóminas en un archivo por página."
+version = "1.1.0"
+description = "Aplicación de escritorio para separar y agrupar nóminas PDF por trabajador."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"
@@ -24,6 +24,7 @@ dev = [
     "pyinstaller>=6.0.0",
     "ruff>=0.6.0",
     "mypy>=1.11.0",
+    "reportlab>=4.0.0",
 ]
 
 [project.scripts]
