@@ -1,10 +1,10 @@
 # Separador de Nóminas PDF
 
 Miniaplicación de escritorio para **Windows 10 y Windows 11** que separa un
-archivo PDF multipágina de nóminas: **una página por archivo** o **agrupación
-por trabajador** tras reconocer el nombre en el texto del PDF.
+archivo PDF multipágina de nóminas: **una página por archivo**, **agrupación
+por trabajador** o **clasificación en grupos** (DNI/NIE + departamentos).
 
-**Versión actual: 1.1.0**
+**Versión actual: 1.1.0** (clasificación por grupos en desarrollo hacia 2.0.0)
 
 ## Para agentes de IA
 
@@ -31,9 +31,16 @@ Esta aplicación permite:
 
 1. Abrir el PDF completo.
 2. Elegir una carpeta de destino.
-3. Separar una página por archivo **o** reconocer y agrupar por trabajador.
+3. Separar una página por archivo, reconocer y agrupar por trabajador, **o**
+   clasificar trabajadores en grupos (DNI/NIE).
 
 Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
+
+## En desarrollo hacia 2.0.0
+
+- Modo **Clasificar trabajadores en grupos** (sesión solo en memoria).
+- Detección de DNI/NIE, grupos/reglas, exportación separada o conjunta.
+- Guía: [`docs/CLASIFICACION_NOMINAS.md`](docs/CLASIFICACION_NOMINAS.md).
 
 ## Funciones de la versión 1.1.0
 

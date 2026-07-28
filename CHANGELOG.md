@@ -9,6 +9,30 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ### Añadido
 
+- Modo **Clasificar trabajadores en grupos** (objetivo v2.0.0, sin bump de
+  `VERSION` aún): detección DNI/NIE, consolidación por documento, grupos en
+  memoria, exportación separada o conjunta, UI de dos paneles.
+- Módulos: `document_identifier_service`, `worker_recognition_service`,
+  `classification_models`, `classification_service`, `group_export_service`,
+  `session_service`, `temporary_files_service`, `classification_view`.
+- Documentación: `docs/CLASIFICACION_NOMINAS.md`; roadmap reordenado (2.0 =
+  clasificación; correo → 3.0).
+- Tests unitarios e integración de clasificación (PDFs sintéticos).
+- Script `scripts/generate_synthetic_classification_pdf.py` para generar un
+  PDF sintético de 1500 páginas con casos de clasificación (salida en
+  `pruebas/`, PDFs ignorados por Git).
+
+### Corregido
+
+- Selección de trabajadores en modo clasificación: fondo azul visible,
+  «Seleccionar todos» / clic múltiple sincronizados; «Añadir al grupo» solo
+  actúa sobre las filas resaltadas.
+- Confirmación al pulsar de nuevo «Analizar y clasificar» si ya hay sesión
+  (evita borrar grupos por error); numeración de pasos 1–7 en el flujo.
+- Modal al añadir trabajadores: indica nombre(s) y el grupo de destino.
+
+### Añadido (previo)
+
 - Documentación del flujo Git (`main` / `development` / ramas de trabajo):
   `AGENTS.md`, `CONTRIBUTING.md`, `.cursor/rules/git-workflow.mdc`.
 - Script `scripts/sync-build-run.ps1` para sincronizar desde GitHub, recompilar
@@ -21,6 +45,7 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 - Titular de la licencia MIT: Antonio Zurano Blázquez.
 - Avisos RGPD/LOPDGDD en README y documentación de seguridad.
 - `.gitignore` ampliado (documentos de oficina y credenciales).
+- Roadmap: la v2.0.0 pasa a clasificación por grupos; Outlook/correo a 3.0.0.
 
 ## [1.1.0] - 2026-07-26
 
