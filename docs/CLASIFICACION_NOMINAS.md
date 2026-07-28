@@ -51,6 +51,7 @@ archivos; analizar de nuevo no genera PDF.
 | Reanalizar borraba grupos sin avisar | Modal de confirmación antes de perder la sesión |
 | Confusión entre Analizar y Generar | Pasos numerados 1–7 y texto de orden sugerido |
 | El modal de alta no decía a qué grupo | Mensaje con nombre del trabajador y del **grupo** |
+| Tras el aviso de reanálisis desaparecía Generar | Se restaura si cancelas; tras reanalizar vuelve al terminar |
 
 ## Identificación de trabajadores
 

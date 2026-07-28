@@ -40,6 +40,8 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
   sugerido, para evitar confusiones de flujo.
 - **Modal al añadir trabajadores:** indica el/los nombre(s) y el **grupo de
   destino** (p. ej. «Añadido … al grupo «Almacen»»).
+- **Botón Generar tras el aviso de reanálisis:** si se cancela el modal, se
+  restaura «6. Generar»; tras reanalizar, vuelve a mostrarse al terminar.
 
 ### Añadido (previo)
 

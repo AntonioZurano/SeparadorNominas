@@ -523,8 +523,11 @@ class SeparadorNominasApp:
             self._confirm_accept_button.configure(state=tk.DISABLED)
             self._confirm_cancel_button.configure(state=tk.DISABLED)
         else:
+            self._confirm_frame.grid()
             self._confirm_accept_button.configure(state=tk.NORMAL)
             self._confirm_cancel_button.configure(state=tk.NORMAL)
+            if self._process_mode.get() == PROCESS_MODE_CLASSIFY:
+                self._confirm_accept_button.configure(text="6. Generar", width=12)
 
     def _set_widget_tree_state(self, widget: tk.Misc, state: str) -> None:
         """Aplica estado a botones de forma recursiva (excepto progreso)."""
@@ -703,19 +706,36 @@ class SeparadorNominasApp:
         pdf = self._pdf_path.get().strip()
         destination = self._destination_path.get().strip()
 
+        # Conservar el panel Generar si el usuario cancela el reanálisis
+        # (evita perderlo por click-through del modal sobre Cancelar).
+        restore_confirm = (
+            self._awaiting_confirm
+            and self._pending_classify_export
+            and self._pending_destination
+        )
+        saved_destination = self._pending_destination or destination
+
         if self._session_service.has_session():
             session = self._session_service.session
-            has_groups = bool(session and session.groups)
-            has_assignments = bool(
+            has_work = bool(
                 session
-                and any(group.worker_ids for group in session.groups.values())
+                and (
+                    session.groups
+                    or session.workers
+                    or any(g.worker_ids for g in session.groups.values())
+                )
             )
-            # Cualquier sesión previa se perderá al reanalizar.
-            if has_groups or has_assignments or (session and session.workers):
+            if has_work:
+                if restore_confirm:
+                    self._confirm_accept_button.configure(state=tk.DISABLED)
+                    self._confirm_cancel_button.configure(state=tk.DISABLED)
+                self.root.update_idletasks()
                 if not messagebox.askyesno(
                     APP_NAME,
                     STATUS_REANALYZE_CLASSIFY_CONFIRM,
                 ):
+                    if restore_confirm:
+                        self._restore_classify_generate_button(saved_destination)
                     return
 
         self._is_processing = True
@@ -734,6 +754,28 @@ class SeparadorNominasApp:
             daemon=True,
         )
         worker.start()
+
+    def _restore_classify_generate_button(self, destination: str) -> None:
+        """Vuelve a mostrar «6. Generar» tras cancelar el reanálisis."""
+        session = self._session_service.session
+        if session is None:
+            self._hide_confirm_actions()
+            return
+        label = (
+            f"{STATUS_CONFIRM_PROMPT}  "
+            f"{len(session.groups)} grupos / "
+            f"{len(session.workers)} trab."
+        )
+        self._show_classification_area()
+        self._show_confirm_actions(
+            None,
+            destination,
+            classify=True,
+            summary_label=label,
+        )
+        if self._process_mode.get() == PROCESS_MODE_CLASSIFY:
+            self._confirm_accept_button.configure(text="6. Generar", width=12)
+        self._status_text.set(STATUS_CLASSIFYING)
 
     def _run_classify_analyze(self, pdf: str, destination: str) -> None:
         """Analiza el PDF para clasificación."""
@@ -772,19 +814,8 @@ class SeparadorNominasApp:
         self._show_classification_area()
         self._clear_session_button.grid()
         self._set_controls_enabled(True)
-        summary = self._classification_view.build_export_summary()
-        self._show_confirm_actions(
-            None,
-            destination,
-            classify=True,
-            summary_label=(
-                f"{STATUS_CONFIRM_PROMPT}  "
-                f"{len(session.workers)} trab. detectados"
-            ),
-        )
-        # El resumen detallado vive en el panel; se regenera al pulsar Generar
-        # si el usuario quiere verlo en el área de texto tras exportar.
-        _ = summary
+        # Mostrar Generar DESPUÉS de reactivar controles (mode_changed no lo oculta).
+        self._restore_classify_generate_button(destination)
         self.root.update_idletasks()
 
     def _run_write_classification(self, destination: str) -> None:
