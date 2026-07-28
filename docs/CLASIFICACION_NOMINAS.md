@@ -122,3 +122,28 @@ Salida típica:
 - El modo «Reconocer y agrupar por trabajador» (v1.1) sigue agrupando por
   **nombre**, no por DNI.
 - `VERSION` permanece en 1.1.0 hasta autorización expresa del bump a 2.0.0.
+
+## Resumen de cambios en la rama `feature/clasificacion-nominas-por-reglas`
+
+### Funcionalidad
+
+- Detección/validación DNI-NIE y consolidación de páginas por documento.
+- Grupos en memoria (crear, renombrar, eliminar, multi-asignación).
+- Exportación por grupo: un PDF por trabajador o PDF conjunto.
+- Sesión solo en memoria + limpieza al cerrar / cambiar PDF / limpiar sesión.
+- UI de dos paneles (`classification_view`) integrada en `gui.py`.
+- Tests unitarios e integración; generador de PDF sintético de 1500 páginas.
+
+### Fixes de usabilidad
+
+- Selección con fondo azul y contador; añadir/quitar solo lo resaltado.
+- Confirmación al reanalizar; pasos numerados 1–7.
+- Modal de alta con nombre(s) y grupo de destino.
+- Restauración de «6. Generar» si se cancela el reanálisis o al terminar uno nuevo.
+
+### Documentación tocada
+
+`CLASIFICACION_NOMINAS.md`, `ARQUITECTURA`, `FUNCIONAMIENTO`, `PRUEBAS`,
+`ROADMAP`, `SEGURIDAD_Y_PRIVACIDAD`, `AGENTS.md`, `README.md`, `CHANGELOG.md`.
+
+Commits de la rama (sobre `development`): ver `git log development..HEAD`.

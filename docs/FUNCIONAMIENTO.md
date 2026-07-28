@@ -83,6 +83,8 @@ En los modos agrupar y clasificar, el nombre del archivo no usa ese campo.
    - Crea grupos, añade con el botón 5 (el aviso indica a qué grupo) y pulsa
      **6. Generar** para escribir PDF.
    - Si pulsas otra vez **Analizar**, te avisará antes de borrar grupos.
+     Si cancelas ese aviso, **6. Generar** sigue disponible; si aceptas,
+     Generar reaparece al terminar el nuevo análisis.
    - **Limpiar sesión** borra de la memoria trabajadores y grupos (no elimina
      PDF ya generados).
 5. Cuando termine, verás el mensaje de finalización.
