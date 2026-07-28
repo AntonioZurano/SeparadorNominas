@@ -11,23 +11,30 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
+from separador_nominas.classification_view import ClassificationView
 from separador_nominas.constants import (
     APP_NAME,
     APP_VERSION,
     LOGGER_NAME,
+    PROCESS_MODE_CLASSIFY,
     PROCESS_MODE_GROUP,
     PROCESS_MODE_SPLIT,
     PROGRESS_COMPLETE,
     PROGRESS_IDLE,
     STATUS_ANALYZING_TEMPLATE,
     STATUS_CANCELLED_BY_USER,
+    STATUS_CLASSIFYING,
+    STATUS_CLEAR_SESSION_CONFIRM,
+    STATUS_CLASSIFY_STEPS_HINT,
     STATUS_COMPLETED,
     STATUS_CONFIRM_PROMPT,
     STATUS_ERROR,
     STATUS_OPENING_PDF,
     STATUS_PROCESSING_TEMPLATE,
     STATUS_READY,
+    STATUS_REANALYZE_CLASSIFY_CONFIRM,
     STATUS_WAITING_CONFIRMATION,
+    STATUS_WRITING_CLASSIFICATION,
     STATUS_WRITING_GROUPS,
     STATUS_WRITING_TEMPLATE,
     WINDOW_MIN_HEIGHT,
@@ -38,6 +45,7 @@ from separador_nominas.filename_service import (
     suggest_base_name_from_pdf,
     suggest_output_directory,
 )
+from separador_nominas.group_export_service import export_classification_session
 from separador_nominas.grouped_pdf_service import (
     analyze_payroll_pdf,
     format_grouping_summary,
@@ -45,7 +53,9 @@ from separador_nominas.grouped_pdf_service import (
 )
 from separador_nominas.pdf_service import SplitResult, split_pdf
 from separador_nominas.recognition_models import GroupingAnalysis, GroupingProcessResult
+from separador_nominas.session_service import SessionService
 from separador_nominas.validators import inspect_pdf
+from separador_nominas.worker_recognition_service import analyze_classification_pdf
 
 logger = logging.getLogger(LOGGER_NAME)
 
@@ -69,10 +79,13 @@ class SeparadorNominasApp:
         self._awaiting_confirm = False
         self._pending_analysis: GroupingAnalysis | None = None
         self._pending_destination: str | None = None
+        self._pending_classify_export = False
         self._page_count: int | None = None
         self._last_destination: Path | None = None
+        self._session_service = SessionService()
 
         self._build_ui()
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close)
         self._on_mode_changed()
         self._set_controls_enabled(True)
         self._open_folder_button.configure(state=tk.DISABLED)
@@ -99,9 +112,10 @@ class SeparadorNominasApp:
         ttk.Entry(
             source_frame, textvariable=self._pdf_path, state="readonly"
         ).grid(row=1, column=0, columnspan=2, sticky="ew", padx=(0, 8))
-        ttk.Button(
+        self._pdf_button = ttk.Button(
             source_frame, text="Seleccionar PDF", command=self._on_select_pdf
-        ).grid(row=1, column=2, sticky="e")
+        )
+        self._pdf_button.grid(row=1, column=2, sticky="e")
 
         # --- Carpeta de destino ---
         dest_frame = ttk.LabelFrame(main, text="Carpeta de destino", padding=10)
@@ -114,9 +128,10 @@ class SeparadorNominasApp:
         ttk.Entry(
             dest_frame, textvariable=self._destination_path, state="readonly"
         ).grid(row=1, column=0, columnspan=2, sticky="ew", padx=(0, 8))
-        ttk.Button(
+        self._folder_button = ttk.Button(
             dest_frame, text="Seleccionar carpeta", command=self._on_select_folder
-        ).grid(row=1, column=2, sticky="e")
+        )
+        self._folder_button.grid(row=1, column=2, sticky="e")
 
         # --- Modo de proceso ---
         mode_frame = ttk.LabelFrame(main, text="Modo de proceso", padding=10)
@@ -136,6 +151,13 @@ class SeparadorNominasApp:
             value=PROCESS_MODE_GROUP,
             command=self._on_mode_changed,
         ).grid(row=1, column=0, sticky="w", pady=(4, 0))
+        ttk.Radiobutton(
+            mode_frame,
+            text="Clasificar trabajadores en grupos",
+            variable=self._process_mode,
+            value=PROCESS_MODE_CLASSIFY,
+            command=self._on_mode_changed,
+        ).grid(row=2, column=0, sticky="w", pady=(4, 0))
 
         # --- Configuración de nombres ---
         names_frame = ttk.LabelFrame(
@@ -162,15 +184,36 @@ class SeparadorNominasApp:
         process_frame.grid(row=5, column=0, columnspan=3, sticky="ew", pady=(0, 10))
         process_frame.columnconfigure(0, weight=1)
 
+        process_buttons = ttk.Frame(process_frame)
+        process_buttons.grid(row=0, column=0, sticky="ew", pady=(0, 8))
+        process_buttons.columnconfigure(0, weight=1)
+
         self._split_button = ttk.Button(
-            process_frame,
+            process_buttons,
             text="Separar nóminas",
             command=self._on_start,
         )
-        self._split_button.grid(row=0, column=0, sticky="w", pady=(0, 8))
+        self._split_button.grid(row=0, column=0, sticky="w")
+
+        self._clear_session_button = ttk.Button(
+            process_buttons,
+            text="Limpiar sesión",
+            command=self._on_clear_session,
+        )
+        self._clear_session_button.grid(row=0, column=1, sticky="e")
+        self._clear_session_button.grid_remove()
+
+        self._steps_hint = ttk.Label(
+            process_frame,
+            text="",
+            foreground="#555555",
+            wraplength=640,
+        )
+        self._steps_hint.grid(row=1, column=0, sticky="w", pady=(0, 6))
+        self._steps_hint.grid_remove()
 
         progress_row = ttk.Frame(process_frame)
-        progress_row.grid(row=1, column=0, sticky="ew", pady=(0, 8))
+        progress_row.grid(row=2, column=0, sticky="ew", pady=(0, 8))
         progress_row.columnconfigure(0, weight=1)
 
         self._progress = ttk.Progressbar(
@@ -206,10 +249,10 @@ class SeparadorNominasApp:
         self._hide_confirm_actions()
 
         ttk.Label(process_frame, textvariable=self._status_text).grid(
-            row=2, column=0, sticky="w"
+            row=3, column=0, sticky="w"
         )
 
-        # --- Resultado ---
+        # --- Resultado / clasificación ---
         result_frame = ttk.LabelFrame(main, text="Resultado", padding=10)
         result_frame.grid(row=6, column=0, columnspan=3, sticky="nsew")
         result_frame.columnconfigure(0, weight=1)
@@ -220,6 +263,7 @@ class SeparadorNominasApp:
         text_frame.grid(row=0, column=0, sticky="nsew", pady=(0, 8))
         text_frame.columnconfigure(0, weight=1)
         text_frame.rowconfigure(0, weight=1)
+        self._result_text_frame = text_frame
 
         self._result_box = tk.Text(
             text_frame,
@@ -244,6 +288,13 @@ class SeparadorNominasApp:
         self._result_box.bind("<Button-4>", self._on_result_mousewheel)
         self._result_box.bind("<Button-5>", self._on_result_mousewheel)
 
+        self._classification_view = ClassificationView(
+            result_frame,
+            on_changed=self._on_classification_changed,
+        )
+        self._classification_view.grid(row=0, column=0, sticky="nsew", pady=(0, 8))
+        self._classification_view.grid_remove()
+
         self._open_folder_button = ttk.Button(
             result_frame,
             text="Abrir carpeta de destino",
@@ -256,34 +307,76 @@ class SeparadorNominasApp:
         self._awaiting_confirm = False
         self._pending_analysis = None
         self._pending_destination = None
+        self._pending_classify_export = False
         self._confirm_summary.set("")
         self._confirm_frame.grid_remove()
         self._confirm_accept_button.configure(state=tk.DISABLED)
         self._confirm_cancel_button.configure(state=tk.DISABLED)
 
     def _show_confirm_actions(
-        self, analysis: GroupingAnalysis, destination: str
+        self,
+        analysis: GroupingAnalysis | None,
+        destination: str,
+        *,
+        classify: bool = False,
+        summary_label: str = "",
     ) -> None:
         """Muestra Generar/Cancelar junto a la barra sin diálogo modal."""
         self._pending_analysis = analysis
         self._pending_destination = destination
+        self._pending_classify_export = classify
         self._awaiting_confirm = True
-        self._confirm_summary.set(
-            f"{STATUS_CONFIRM_PROMPT}  "
-            f"{len(analysis.groups)} trab. / "
-            f"{len(analysis.unrecognized_page_numbers)} no rec."
-        )
+        if summary_label:
+            self._confirm_summary.set(summary_label)
+        elif analysis is not None:
+            self._confirm_summary.set(
+                f"{STATUS_CONFIRM_PROMPT}  "
+                f"{len(analysis.groups)} trab. / "
+                f"{len(analysis.unrecognized_page_numbers)} no rec."
+            )
+        else:
+            self._confirm_summary.set(STATUS_CONFIRM_PROMPT)
         self._confirm_frame.grid()
         self._confirm_accept_button.configure(state=tk.NORMAL)
         self._confirm_cancel_button.configure(state=tk.NORMAL)
 
     def _on_confirm_accept(self) -> None:
-        """Confirma la escritura de PDF agrupados."""
+        """Confirma la escritura de PDF agrupados o clasificación."""
         if not self._awaiting_confirm:
             return
-        analysis = self._pending_analysis
         destination = self._pending_destination
-        if analysis is None or destination is None:
+        if destination is None:
+            return
+
+        if self._pending_classify_export:
+            session = self._session_service.session
+            if session is None:
+                return
+            summary = self._classification_view.build_export_summary()
+            if not messagebox.askyesno(
+                APP_NAME,
+                f"{summary}\n\n¿Generar los archivos PDF ahora?",
+            ):
+                return
+            destination_local = destination
+            self._hide_confirm_actions()
+            self._status_text.set(STATUS_WRITING_CLASSIFICATION)
+            self._progress_value.set(PROGRESS_IDLE)
+            self._is_processing = True
+            self._set_controls_enabled(False)
+            self._show_result_text_area()
+            self._set_result_text("Generando archivos PDF...")
+            self.root.update_idletasks()
+            worker = threading.Thread(
+                target=self._run_write_classification,
+                args=(destination_local,),
+                daemon=True,
+            )
+            worker.start()
+            return
+
+        analysis = self._pending_analysis
+        if analysis is None:
             return
 
         self._hide_confirm_actions()
@@ -327,8 +420,8 @@ class SeparadorNominasApp:
 
     def _on_mode_changed(self) -> None:
         """Ajusta controles según el modo seleccionado."""
-        group_mode = self._process_mode.get() == PROCESS_MODE_GROUP
-        if group_mode:
+        mode = self._process_mode.get()
+        if mode == PROCESS_MODE_GROUP:
             self._split_button.configure(text="Reconocer y agrupar")
             self._names_hint.configure(
                 text=(
@@ -338,13 +431,78 @@ class SeparadorNominasApp:
             )
             if not self._is_processing:
                 self._base_name_entry.configure(state=tk.DISABLED)
+            self._clear_session_button.grid_remove()
+            self._set_classify_step_labels(False)
+            if not self._session_service.has_session():
+                self._show_result_text_area()
+        elif mode == PROCESS_MODE_CLASSIFY:
+            self._names_hint.configure(
+                text=(
+                    "Detecta DNI/NIE y nombre, crea grupos (p. ej. departamentos) "
+                    "y exporta por trabajador o en un PDF conjunto por grupo."
+                )
+            )
+            if not self._is_processing:
+                self._base_name_entry.configure(state=tk.DISABLED)
+            self._set_classify_step_labels(True)
+            if self._session_service.has_session():
+                self._clear_session_button.grid()
+                self._show_classification_area()
+            else:
+                self._clear_session_button.grid_remove()
+                self._show_result_text_area()
         else:
-            self._split_button.configure(text="Separar nóminas")
             self._names_hint.configure(
                 text="Ejemplo: Nominas_Julio_2026 → Nominas_Julio_2026_001.pdf"
             )
             if not self._is_processing:
                 self._base_name_entry.configure(state=tk.NORMAL)
+            self._clear_session_button.grid_remove()
+            self._set_classify_step_labels(False)
+            self._show_result_text_area()
+
+    def _set_classify_step_labels(self, enabled: bool) -> None:
+        """Numera botones del flujo de clasificación (pasos 1–7)."""
+        if enabled:
+            self._pdf_button.configure(text="1. Seleccionar PDF")
+            self._folder_button.configure(text="2. Seleccionar carpeta")
+            self._split_button.configure(text="3. Analizar y clasificar")
+            self._confirm_accept_button.configure(text="6. Generar", width=12)
+            self._open_folder_button.configure(text="7. Abrir carpeta de destino")
+            self._steps_hint.configure(text=STATUS_CLASSIFY_STEPS_HINT)
+            self._steps_hint.grid()
+            self._classification_view.set_step_labels(True)
+        else:
+            self._pdf_button.configure(text="Seleccionar PDF")
+            self._folder_button.configure(text="Seleccionar carpeta")
+            if self._process_mode.get() == PROCESS_MODE_GROUP:
+                self._split_button.configure(text="Reconocer y agrupar")
+            else:
+                self._split_button.configure(text="Separar nóminas")
+            self._confirm_accept_button.configure(text="Generar", width=10)
+            self._open_folder_button.configure(text="Abrir carpeta de destino")
+            self._steps_hint.configure(text="")
+            self._steps_hint.grid_remove()
+            self._classification_view.set_step_labels(False)
+
+    def _show_result_text_area(self) -> None:
+        self._classification_view.grid_remove()
+        self._result_text_frame.grid()
+
+    def _show_classification_area(self) -> None:
+        self._result_text_frame.grid_remove()
+        self._classification_view.grid()
+
+    def _on_classification_changed(self) -> None:
+        """Actualiza el resumen de confirmación si está visible."""
+        if self._awaiting_confirm and self._pending_classify_export:
+            session = self._session_service.session
+            if session is not None:
+                self._confirm_summary.set(
+                    f"{STATUS_CONFIRM_PROMPT}  "
+                    f"{len(session.groups)} grupos / "
+                    f"{len(session.workers)} trab."
+                )
 
     def _set_controls_enabled(self, enabled: bool) -> None:
         """Activa o desactiva los controles durante el proceso."""
@@ -446,6 +604,11 @@ class SeparadorNominasApp:
         """Aplica en la UI el resultado de la validación del PDF."""
         self._stop_indeterminate_progress()
         self._is_processing = False
+        if self._session_service.has_session():
+            self._session_service.clear_session()
+            self._classification_view.set_session(None)
+            self._clear_session_button.grid_remove()
+            self._hide_confirm_actions()
         self._pdf_path.set(str(path))
         self._page_count = page_count
         self._base_name.set(suggest_base_name_from_pdf(path))
@@ -456,6 +619,8 @@ class SeparadorNominasApp:
         self._last_destination = None
         self._set_controls_enabled(True)
         self._open_folder_button.configure(state=tk.DISABLED)
+        self._show_result_text_area()
+        self._set_result_text("")
 
     def _on_pdf_inspect_error(self, message: str) -> None:
         """Maneja un error al validar el PDF seleccionado."""
@@ -481,8 +646,11 @@ class SeparadorNominasApp:
         if self._is_processing:
             return
 
-        if self._process_mode.get() == PROCESS_MODE_GROUP:
+        mode = self._process_mode.get()
+        if mode == PROCESS_MODE_GROUP:
             self._start_group_process()
+        elif mode == PROCESS_MODE_CLASSIFY:
+            self._start_classify_process()
         else:
             self._start_split_process()
 
@@ -518,6 +686,7 @@ class SeparadorNominasApp:
         self._hide_confirm_actions()
         self._stop_indeterminate_progress()
         self._progress_value.set(PROGRESS_IDLE)
+        self._show_result_text_area()
         self._set_result_text("")
         self._status_text.set(STATUS_READY)
         logger.info("Inicio del análisis de reconocimiento")
@@ -528,6 +697,172 @@ class SeparadorNominasApp:
             daemon=True,
         )
         worker.start()
+
+    def _start_classify_process(self) -> None:
+        """Inicia el análisis de clasificación en un hilo de fondo."""
+        pdf = self._pdf_path.get().strip()
+        destination = self._destination_path.get().strip()
+
+        if self._session_service.has_session():
+            session = self._session_service.session
+            has_groups = bool(session and session.groups)
+            has_assignments = bool(
+                session
+                and any(group.worker_ids for group in session.groups.values())
+            )
+            # Cualquier sesión previa se perderá al reanalizar.
+            if has_groups or has_assignments or (session and session.workers):
+                if not messagebox.askyesno(
+                    APP_NAME,
+                    STATUS_REANALYZE_CLASSIFY_CONFIRM,
+                ):
+                    return
+
+        self._is_processing = True
+        self._set_controls_enabled(False)
+        self._hide_confirm_actions()
+        self._stop_indeterminate_progress()
+        self._progress_value.set(PROGRESS_IDLE)
+        self._show_result_text_area()
+        self._set_result_text("")
+        self._status_text.set(STATUS_READY)
+        logger.info("Inicio del análisis de clasificación")
+
+        worker = threading.Thread(
+            target=self._run_classify_analyze,
+            args=(pdf, destination),
+            daemon=True,
+        )
+        worker.start()
+
+    def _run_classify_analyze(self, pdf: str, destination: str) -> None:
+        """Analiza el PDF para clasificación."""
+        try:
+            session = analyze_classification_pdf(
+                pdf,
+                progress_callback=self._schedule_analyze_progress,
+            )
+            self.root.after(
+                0,
+                lambda: self._on_classify_analysis_ready(session, destination),
+            )
+        except SeparadorNominasError as exc:
+            logger.error("Error de dominio: %s", type(exc).__name__)
+            message = exc.user_message
+            self.root.after(0, lambda: self._on_process_error(message))
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("Error inesperado: %s", type(exc).__name__)
+            message = UnexpectedError(
+                "Se ha producido un error inesperado.\n"
+                "Inténtalo de nuevo o contacta con el administrador."
+            ).user_message
+            self.root.after(0, lambda: self._on_process_error(message))
+
+    def _on_classify_analysis_ready(self, session: object, destination: str) -> None:
+        """Muestra el panel de clasificación tras el análisis."""
+        from separador_nominas.classification_models import ClassificationSession
+
+        assert isinstance(session, ClassificationSession)
+        self._session_service.set_session(session)
+        self._classification_view.set_session(session)
+        self._stop_indeterminate_progress()
+        self._progress_value.set(PROGRESS_COMPLETE)
+        self._status_text.set(STATUS_CLASSIFYING)
+        self._is_processing = False
+        self._show_classification_area()
+        self._clear_session_button.grid()
+        self._set_controls_enabled(True)
+        summary = self._classification_view.build_export_summary()
+        self._show_confirm_actions(
+            None,
+            destination,
+            classify=True,
+            summary_label=(
+                f"{STATUS_CONFIRM_PROMPT}  "
+                f"{len(session.workers)} trab. detectados"
+            ),
+        )
+        # El resumen detallado vive en el panel; se regenera al pulsar Generar
+        # si el usuario quiere verlo en el área de texto tras exportar.
+        _ = summary
+        self.root.update_idletasks()
+
+    def _run_write_classification(self, destination: str) -> None:
+        """Exporta la clasificación fuera del hilo de la interfaz."""
+        session = self._session_service.session
+        if session is None:
+            self.root.after(
+                0,
+                lambda: self._on_process_error(
+                    "No hay una sesión de clasificación activa."
+                ),
+            )
+            return
+        try:
+            result = export_classification_session(
+                session,
+                destination,
+                progress_callback=self._schedule_write_progress,
+                create_destination=True,
+            )
+            self.root.after(0, lambda: self._on_classify_success(result))
+        except SeparadorNominasError as exc:
+            logger.error("Error de dominio: %s", type(exc).__name__)
+            message = exc.user_message
+            self.root.after(0, lambda: self._on_process_error(message))
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("Error inesperado: %s", type(exc).__name__)
+            message = UnexpectedError(
+                "Se ha producido un error inesperado.\n"
+                "Inténtalo de nuevo o contacta con el administrador."
+            ).user_message
+            self.root.after(0, lambda: self._on_process_error(message))
+
+    def _on_classify_success(self, result: object) -> None:
+        """Finalización correcta de la exportación por grupos."""
+        from separador_nominas.classification_models import ClassificationExportResult
+
+        assert isinstance(result, ClassificationExportResult)
+        self._hide_confirm_actions()
+        self._is_processing = False
+        self._progress_value.set(PROGRESS_COMPLETE)
+        self._status_text.set(STATUS_COMPLETED)
+        self._last_destination = result.destination_dir
+        self._show_result_text_area()
+        lines = [
+            f"Archivos generados: {result.files_created}",
+            f"Archivos de grupos: {len(result.group_files)}",
+            f"Archivos en No_reconocidas: {len(result.unrecognized_files)}",
+            f"Reconocidos sin asignar omitidos: {result.unassigned_recognized_count}",
+            f"Carpeta de destino:\n{result.destination_dir}",
+        ]
+        self._set_result_text("\n".join(lines))
+        self._set_controls_enabled(True)
+        self._open_folder_button.configure(state=tk.NORMAL)
+        if self._session_service.has_session():
+            self._clear_session_button.grid()
+
+    def _on_clear_session(self) -> None:
+        """Pide confirmación y limpia la sesión de clasificación."""
+        if self._is_processing:
+            return
+        if not self._session_service.has_session():
+            return
+        if not messagebox.askyesno(APP_NAME, STATUS_CLEAR_SESSION_CONFIRM):
+            return
+        self._session_service.clear_session()
+        self._classification_view.set_session(None)
+        self._hide_confirm_actions()
+        self._clear_session_button.grid_remove()
+        self._show_result_text_area()
+        self._set_result_text("")
+        self._status_text.set(STATUS_READY)
+        logger.info("Sesión limpiada por el usuario")
+
+    def _on_close(self) -> None:
+        """Limpia la sesión en memoria al cerrar la ventana."""
+        self._session_service.clear_session()
+        self.root.destroy()
 
     def _run_split(self, pdf: str, destination: str, base_name: str) -> None:
         """Ejecuta la separación fuera del hilo de la interfaz."""
