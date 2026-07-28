@@ -1,12 +1,10 @@
 # Roadmap
 
-Estado actual: **versión 1.1.0** (en rama de feature hasta merge autorizado).
+Estado actual: **versión 2.0.0** (estable). Incluye separación, agrupación por
+trabajador y clasificación por grupos (DNI/NIE).
 
-La funcionalidad de separación PDF corresponde a la **1.0.0**.
-La **1.0.1** añade documentación orientada a agentes de IA.
-La **1.1.0** añade reconocimiento local de texto y agrupación por trabajador.
-
-Las versiones siguientes están **expresamente no implementadas**.
+Las versiones siguientes están **expresamente no implementadas** en `main`
+hasta su integración.
 
 ## Versión 1.0.1 (implementada)
 
@@ -23,17 +21,29 @@ Las versiones siguientes están **expresamente no implementadas**.
 - Resumen y confirmación antes de escribir archivos.
 - Conservar el modo «una página por archivo» de la 1.0.0.
 
-Fuera de 1.1.0 (siguen pendientes): OCR, editor interactivo de coincidencias,
-DNI como clave, fuzzy matching.
+## Versión 2.0.0 (implementada — clasificación por grupos)
 
-## Versión 1.2.0 (no implementada)
+- Detectar DNI/NIE y nombre; consolidar páginas por documento.
+- Pantalla de clasificación (grupos ↔ trabajadores).
+- Asignación manual a grupos/reglas (multi-asignación permitida).
+- Exportación por grupo: un PDF por trabajador o un PDF conjunto.
+- Sesión solo en memoria; sin persistencia de datos personales.
+- Conservar los modos de separación y agrupación por nombre de 1.0/1.1.
+
+Detalle: [`CLASIFICACION_NOMINAS.md`](CLASIFICACION_NOMINAS.md).
+
+## Versión 2.1.0 / posterior (no implementada — listados)
+
+Antes: roadmap 1.2.0. Aplazada tras priorizar la clasificación.
 
 - Importar listado CSV o Excel de trabajadores.
 - Asociar trabajador y correo electrónico.
 - Validar trabajadores sin correo.
 - Generar informe de coincidencias.
 
-## Versión 2.0.0 (no implementada)
+## Versión 3.0.0 (no implementada — correo)
+
+Antes: roadmap 2.0.0 (Outlook). Reordenada al priorizar clasificación.
 
 - Crear borradores de correo.
 - Integración segura con Outlook o Microsoft 365.
@@ -44,6 +54,7 @@ DNI como clave, fuzzy matching.
 ## Posibles mejoras (no implementadas)
 
 - OCR local para PDFs escaneados.
+- Orden manual o alfabético en PDF conjunto.
 - Firma digital del ejecutable.
 - Instalador para Windows.
 - Actualizaciones controladas.
@@ -55,7 +66,7 @@ DNI como clave, fuzzy matching.
 ## Principios de evolución
 
 - Conservar la arquitectura modular.
-- No romper la separación PDF de la v1.0.0.
+- No romper la separación PDF de la v1.0.0 ni la agrupación por nombre 1.1.0.
 - Añadir tests y documentación con cada cambio.
 - Versionar de forma semántica (`VERSION` + `CHANGELOG.md`) **cuando se ordene**.
 - Mantener el procesamiento local y la privacidad como requisito no negociable.

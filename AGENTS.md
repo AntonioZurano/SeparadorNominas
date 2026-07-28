@@ -10,7 +10,8 @@ Entorno y convenciones de código: [`docs/DESARROLLO.md`](docs/DESARROLLO.md).
 
 **SeparadorNominas** (`Separador de Nóminas PDF`) es una miniaplicación de
 escritorio para **Windows 10/11** que separa un PDF multipágina de nóminas:
-modo **una página por archivo**, o modo **reconocer y agrupar por trabajador**.
+modo **una página por archivo**, **reconocer y agrupar por trabajador**, o
+**clasificar trabajadores en grupos** (DNI/NIE + departamentos/reglas).
 
 Caso de uso:
 
@@ -19,7 +20,7 @@ Caso de uso:
 3. El usuario elige el PDF, la carpeta de destino y el modo de proceso.
 4. La app genera archivos individuales o agrupados **sin subir nada a Internet**.
 
-**Versión actual:** `1.1.0` (ver `VERSION`).
+**Versión actual:** `2.0.0` (ver `VERSION`).
 
 **Licencia:** MIT. Procesa documentos sensibles; el usuario es responsable del
 tratamiento conforme a la normativa de protección de datos.
@@ -59,11 +60,19 @@ Dependencias mínimas a propósito. No añadir librerías sin necesidad clara.
 - Un PDF por trabajador; `No_reconocidas/Pagina_XXX.pdf` para el resto.
 - Modo GUI + resumen/confirmación antes de escribir.
 
+## Alcance de la v2.0.0 (implementado)
+
+- Detección y validación de DNI/NIE; consolidación por documento.
+- Pantalla de clasificación (grupos ↔ trabajadores); sesión solo en memoria.
+- Exportación por grupo: separado o conjunto; multi-asignación permitida.
+- UX: selección azul, pasos 1–7, confirmación al reanalizar.
+- Detalle: [`docs/CLASIFICACION_NOMINAS.md`](docs/CLASIFICACION_NOMINAS.md).
+
 ## Fuera de alcance (NO implementar sin petición explícita)
 
 - OCR.
 - Fuzzy matching entre nombres.
-- Editor interactivo de coincidencias.
+- Persistencia de grupos, DNI o listados entre sesiones.
 - CSV/Excel de empleados.
 - Envío de correos / Outlook / Microsoft 365.
 - Base de datos, telemetría, APIs externas, cuentas en la nube.
@@ -79,8 +88,9 @@ Detalle: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 | **1.0.0** | **Implementada** | Separar PDF página a página |
 | **1.0.1** | **Implementada** | Documentación para agentes de IA |
 | **1.1.0** | **Implementada** | Extraer texto, reconocer nombre, agrupar por trabajador |
-| **1.2.0** | No implementada | CSV/Excel, asociar trabajador↔correo, informe de coincidencias |
-| **2.0.0** | No implementada | Borradores de correo, Outlook/M365, revisión antes de enviar |
+| **2.0.0** | **Implementada** | Clasificación por grupos / DNI-NIE |
+| **2.1.0+** | No implementada | CSV/Excel, asociar trabajador↔correo |
+| **3.0.0** | No implementada | Borradores de correo, Outlook/M365 |
 | Mejoras | No implementadas | OCR local, firma del exe, instalador, cifrado, multidioma |
 
 ## Arquitectura (obligatoria)
@@ -98,6 +108,13 @@ Código en `src/separador_nominas/`:
 | `grouping_service.py` | Agrupación por clave exacta |
 | `grouped_pdf_service.py` | Análisis + escritura agrupada |
 | `recognition_models.py` | Dataclasses de reconocimiento |
+| `document_identifier_service.py` | DNI/NIE: detectar, normalizar, validar |
+| `worker_recognition_service.py` | Consolidar trabajadores + análisis clasificación |
+| `classification_models.py` | Dataclasses de sesión / grupos / trabajadores |
+| `classification_service.py` | CRUD de grupos y asignaciones en memoria |
+| `group_export_service.py` | Exportación separada o conjunta por grupo |
+| `session_service.py` / `temporary_files_service.py` | Sesión en memoria y limpieza |
+| `classification_view.py` | UI del modo clasificación (Tkinter) |
 | `filename_service.py` | Nombres y rutas |
 | `validators.py` | Validaciones |
 | `exceptions.py` | Errores de dominio (mensajes en español) |
@@ -185,8 +202,8 @@ Solo cuando el usuario ordene una versión de producción:
 
 ### Tags
 
-- Prueba en `development`: p. ej. `v1.1.0-dev.1`, `v1.1.0-rc.1` (proponer antes; no decidir solos).
-- Estable en `main`: p. ej. `v1.1.0`.
+- Prueba en `development`: p. ej. `v2.0.0-dev.1`, `v2.0.0-rc.1` (proponer antes; no decidir solos).
+- Estable en `main`: p. ej. `v2.0.0`.
 - Versionado semántico `MAJOR.MINOR.PATCH`. No cambiar `VERSION` sin indicación expresa.
 
 ## Acciones prohibidas sin autorización
@@ -248,7 +265,9 @@ pytest -q
 | `docs/DESARROLLO.md` | Entorno y convenciones de código |
 | `docs/COMPILACION_WINDOWS.md` | PyInstaller / `.exe` |
 | `docs/PRUEBAS.md` | Estrategia de tests |
+| `docs/PRUEBAS_UI.md` | Checklist manual de GUI |
 | `docs/SEGURIDAD_Y_PRIVACIDAD.md` | Datos sensibles |
+| `docs/CLASIFICACION_NOMINAS.md` | Modo clasificación por grupos (v2.0) |
 | `docs/ROADMAP.md` | Versiones futuras |
 | `CHANGELOG.md` | Historial de cambios |
 

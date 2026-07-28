@@ -1,10 +1,10 @@
 # Separador de Nóminas PDF
 
 Miniaplicación de escritorio para **Windows 10 y Windows 11** que separa un
-archivo PDF multipágina de nóminas: **una página por archivo** o **agrupación
-por trabajador** tras reconocer el nombre en el texto del PDF.
+archivo PDF multipágina de nóminas: **una página por archivo**, **agrupación
+por trabajador** o **clasificación en grupos** (DNI/NIE + departamentos).
 
-**Versión actual: 1.1.0**
+**Versión actual: 2.0.0** (clasificación por grupos / DNI-NIE)
 
 ## Para agentes de IA
 
@@ -31,9 +31,18 @@ Esta aplicación permite:
 
 1. Abrir el PDF completo.
 2. Elegir una carpeta de destino.
-3. Separar una página por archivo **o** reconocer y agrupar por trabajador.
+3. Separar una página por archivo, reconocer y agrupar por trabajador, **o**
+   clasificar trabajadores en grupos (DNI/NIE).
 
 Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
+
+## Funciones de la versión 2.0.0
+
+- Modo **Clasificar trabajadores en grupos** (sesión solo en memoria).
+- Detección de DNI/NIE, grupos/reglas, exportación separada o conjunta.
+- UX: selección con fondo azul, pasos 1–7, confirmación al reanalizar,
+  modal al añadir que indica el grupo.
+- Guía: [`docs/CLASIFICACION_NOMINAS.md`](docs/CLASIFICACION_NOMINAS.md).
 
 ## Funciones de la versión 1.1.0
 
@@ -215,8 +224,9 @@ de protección de datos. Consulta
 | Versión | Objetivo |
 |---------|----------|
 | 1.1.0   | Reconocimiento y agrupación por trabajador (**implementada**) |
-| 1.2.0   | Asociación trabajador ↔ correo (CSV/Excel) |
-| 2.0.0   | Borradores de correo con Outlook / Microsoft 365 |
+| 2.0.0   | Clasificación por grupos / DNI-NIE (**implementada**) |
+| 2.1.0+  | Asociación trabajador ↔ correo (CSV/Excel) |
+| 3.0.0   | Borradores de correo con Outlook / Microsoft 365 |
 
 Detalle completo en [docs/ROADMAP.md](docs/ROADMAP.md).
 
@@ -234,4 +244,4 @@ normativa aplicable. La licencia MIT no exime de esas obligaciones.
 
 ## Versión actual
 
-`1.1.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
+`2.0.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).

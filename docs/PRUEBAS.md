@@ -2,16 +2,18 @@
 
 ## Estrategia de testing
 
-La versión 1.1.0 prioriza tests unitarios e integración sintética de la lógica:
+La versión actual prioriza tests unitarios e integración sintética de la lógica:
 
 - generación de nombres;
 - validaciones;
 - separación de PDF;
 - extracción de texto;
 - normalización y reconocimiento;
-- agrupación y escritura agrupada.
+- agrupación y escritura agrupada;
+- DNI/NIE, consolidación, grupos, exportación de clasificación, sesión.
 
-Los tests de interfaz gráfica no son obligatorios en esta versión.
+Los tests de interfaz gráfica no son obligatorios en pytest. El checklist
+manual de GUI está en [`PRUEBAS_UI.md`](PRUEBAS_UI.md).
 
 ## Qué módulos se prueban
 
@@ -25,6 +27,12 @@ Los tests de interfaz gráfica no son obligatorios en esta versión.
 | `employee_name_service.py` | `tests/test_employee_name_service.py` |
 | `grouping_service.py` | `tests/test_grouping_service.py` |
 | `grouped_pdf_service.py` | `tests/test_grouped_pdf_service.py` |
+| `document_identifier_service.py` | `tests/test_document_identifier_service.py` |
+| `worker_recognition_service.py` | `tests/test_worker_recognition_service.py` |
+| `classification_service.py` | `tests/test_classification_service.py` |
+| `group_export_service.py` | `tests/test_group_export_service.py` |
+| `session_service.py` | `tests/test_session_service.py` |
+| Integración clasificación | `tests/test_classification_integration.py` |
 
 Coberturas clave:
 
@@ -35,7 +43,10 @@ Coberturas clave:
 - PDF corrupto o inexistente;
 - creación de carpeta de destino;
 - un archivo de salida = una página (modo separación);
-- agrupación por clave exacta y carpeta `No_reconocidas/`.
+- agrupación por clave exacta y carpeta `No_reconocidas/`;
+- DNI/NIE válidos e inválidos; consolidación multi-página;
+- exportación combined/separate y anti-colisión;
+- limpieza de sesión y temporales.
 
 ## Qué no se prueba todavía
 
