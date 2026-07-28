@@ -121,7 +121,7 @@ Salida típica:
   original).
 - El modo «Reconocer y agrupar por trabajador» (v1.1) sigue agrupando por
   **nombre**, no por DNI.
-- `VERSION` permanece en 1.1.0 hasta autorización expresa del bump a 2.0.0.
+- Disponible desde la versión **2.0.0**.
 
 ## Resumen de cambios en la rama `feature/clasificacion-nominas-por-reglas`
 

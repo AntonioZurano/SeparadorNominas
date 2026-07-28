@@ -1,7 +1,7 @@
 # Roadmap
 
-Estado actual: **versión 1.1.0** (estable). La clasificación por grupos se
-desarrolla como objetivo **2.0.0** en rama de feature hasta merge autorizado.
+Estado actual: **versión 2.0.0** (estable). Incluye separación, agrupación por
+trabajador y clasificación por grupos (DNI/NIE).
 
 Las versiones siguientes están **expresamente no implementadas** en `main`
 hasta su integración.
@@ -21,7 +21,7 @@ hasta su integración.
 - Resumen y confirmación antes de escribir archivos.
 - Conservar el modo «una página por archivo» de la 1.0.0.
 
-## Versión 2.0.0 (en desarrollo — clasificación por grupos)
+## Versión 2.0.0 (implementada — clasificación por grupos)
 
 - Detectar DNI/NIE y nombre; consolidar páginas por documento.
 - Pantalla de clasificación (grupos ↔ trabajadores).
