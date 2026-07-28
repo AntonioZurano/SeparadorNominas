@@ -9,6 +9,8 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ### Añadido
 
+- Checklist de pruebas manuales de GUI: `docs/PRUEBAS_UI.md`, con informe de
+  ejecución asistida (post PR #4 en `development`).
 - Modo **Clasificar trabajadores en grupos** (objetivo v2.0.0, sin bump de
   `VERSION` aún): detección DNI/NIE, consolidación por documento, grupos en
   memoria, exportación separada o conjunta, UI de dos paneles.

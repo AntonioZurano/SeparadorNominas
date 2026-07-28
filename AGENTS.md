@@ -265,6 +265,7 @@ pytest -q
 | `docs/DESARROLLO.md` | Entorno y convenciones de código |
 | `docs/COMPILACION_WINDOWS.md` | PyInstaller / `.exe` |
 | `docs/PRUEBAS.md` | Estrategia de tests |
+| `docs/PRUEBAS_UI.md` | Checklist manual de GUI |
 | `docs/SEGURIDAD_Y_PRIVACIDAD.md` | Datos sensibles |
 | `docs/CLASIFICACION_NOMINAS.md` | Modo clasificación por grupos (v2.0) |
 | `docs/ROADMAP.md` | Versiones futuras |
