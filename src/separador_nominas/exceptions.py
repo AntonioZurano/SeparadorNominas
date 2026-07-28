@@ -65,3 +65,23 @@ class SelectionCancelledError(SeparadorNominasError):
 
 class UnexpectedError(SeparadorNominasError):
     """Error inesperado no clasificado."""
+
+
+class EmptyGroupNameError(SeparadorNominasError):
+    """El nombre del grupo está vacío."""
+
+
+class InvalidGroupNameError(SeparadorNominasError):
+    """El nombre del grupo no es válido o el grupo no existe."""
+
+
+class DuplicateGroupNameError(SeparadorNominasError):
+    """Ya existe un grupo con el mismo nombre."""
+
+
+class WorkerNotFoundError(SeparadorNominasError):
+    """El trabajador no está en la sesión de clasificación."""
+
+
+class ClassificationExportError(SeparadorNominasError):
+    """Error al exportar la clasificación."""

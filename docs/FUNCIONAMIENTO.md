@@ -8,9 +8,11 @@ técnicos.
 Si tienes un PDF grande donde **cada página es la nómina de una persona**,
 puedes:
 
-- **Separar** un archivo PDF distinto por cada página; o
+- **Separar** un archivo PDF distinto por cada página;
 - **Reconocer y agrupar** las páginas del mismo trabajador en un solo PDF
-  (cuando el PDF tiene texto seleccionable).
+  (cuando el PDF tiene texto seleccionable); o
+- **Clasificar en grupos** (departamentos/reglas) detectando DNI/NIE y nombre,
+  con exportación por trabajador o en un PDF conjunto por grupo.
 
 ## Antes de empezar
 
@@ -53,6 +55,8 @@ Si la carpeta no existe, la aplicación intentará crearla al procesar.
 - **Separar una página por archivo**: comportamiento clásico (v1.0).
 - **Reconocer y agrupar por trabajador**: analiza el texto, agrupa por nombre
   y pide confirmación antes de guardar.
+- **Clasificar trabajadores en grupos**: detecta DNI/NIE y nombre, permite
+  crear grupos y exportar (ver [`CLASIFICACION_NOMINAS.md`](CLASIFICACION_NOMINAS.md)).
 
 ### 5. Revisar el nombre base (solo modo separación)
 
@@ -64,15 +68,26 @@ Ejemplo:
 - Nombre base: `Nominas_Julio_2026`
 - Resultados: `Nominas_Julio_2026_01.pdf`, `Nominas_Julio_2026_02.pdf`, …
 
-En el modo agrupar, el nombre del archivo sale del trabajador reconocido.
+En los modos agrupar y clasificar, el nombre del archivo no usa ese campo.
 
 ### 6. Ejecutar el proceso
 
-1. Pulsa **Separar nóminas** o **Reconocer y agrupar**.
+1. Pulsa **Separar nóminas**, **Reconocer y agrupar** o **Analizar y clasificar**.
 2. Espera a que avance la barra de progreso.
-3. En modo agrupar, revisa el resumen (con scroll si es largo) y pulsa
-   **Generar** o **Cancelar** junto a la barra de progreso.
-4. Cuando termine, verás el mensaje de finalización.
+3. En modo agrupar, revisa el resumen y pulsa **Generar** o **Cancelar**.
+4. En modo clasificar (detalle en
+   [`CLASIFICACION_NOMINAS.md`](CLASIFICACION_NOMINAS.md)):
+   - Los botones van numerados (1 PDF → … → 6 Generar → 7 Abrir carpeta).
+   - Selecciona trabajadores con clic / Ctrl+clic / «Seleccionar todos»
+     (fondo azul).
+   - Crea grupos, añade con el botón 5 (el aviso indica a qué grupo) y pulsa
+     **6. Generar** para escribir PDF.
+   - Si pulsas otra vez **Analizar**, te avisará antes de borrar grupos.
+     Si cancelas ese aviso, **6. Generar** sigue disponible; si aceptas,
+     Generar reaparece al terminar el nuevo análisis.
+   - **Limpiar sesión** borra de la memoria trabajadores y grupos (no elimina
+     PDF ya generados).
+5. Cuando termine, verás el mensaje de finalización.
 
 Durante el proceso no inicies otra operación: los controles permanecen
 desactivados.

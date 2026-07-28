@@ -9,6 +9,42 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ### Añadido
 
+- Modo **Clasificar trabajadores en grupos** (objetivo v2.0.0, sin bump de
+  `VERSION` aún): detección DNI/NIE, consolidación por documento, grupos en
+  memoria, exportación separada o conjunta, UI de dos paneles.
+- Módulos: `document_identifier_service`, `worker_recognition_service`,
+  `classification_models`, `classification_service`, `group_export_service`,
+  `session_service`, `temporary_files_service`, `classification_view`.
+- Documentación: `docs/CLASIFICACION_NOMINAS.md`; roadmap reordenado (2.0 =
+  clasificación; correo → 3.0).
+- Tests unitarios e integración de clasificación (PDFs sintéticos).
+- Script `scripts/generate_synthetic_classification_pdf.py` para generar un
+  PDF sintético de 1500 páginas con casos de clasificación (salida en
+  `pruebas/`, PDFs ignorados por Git).
+
+### Corregido
+
+- **Selección visual en clasificación:** las filas seleccionadas se resaltan
+  con fondo azul (Treeview nativo). «Seleccionar todos» / «Deseleccionar
+  todos» y Ctrl+A actualizan esa selección; el contador muestra
+  «Seleccionados: N». Antes la selección era interna (marcas ☑) y no se veía,
+  pero «Añadir al grupo» podía afectar a todos los IDs internos.
+- **Añadir / quitar del grupo:** solo actúan sobre las filas con fondo azul
+  (selección visible), no sobre un set oculto.
+- **Reanalizar con sesión activa:** si se pulsa de nuevo «Analizar y
+  clasificar» habiendo grupos o trabajadores en memoria, un modal advierte
+  que se borrarán asignaciones y recuerda que los PDF se escriben con
+  «Generar», no al reanalizar.
+- **Pasos numerados (modo clasificar):** botones 1–7 (PDF, carpeta, analizar,
+  crear grupo, añadir, generar, abrir carpeta) y texto de ayuda con el orden
+  sugerido, para evitar confusiones de flujo.
+- **Modal al añadir trabajadores:** indica el/los nombre(s) y el **grupo de
+  destino** (p. ej. «Añadido … al grupo «Almacen»»).
+- **Botón Generar tras el aviso de reanálisis:** si se cancela el modal, se
+  restaura «6. Generar»; tras reanalizar, vuelve a mostrarse al terminar.
+
+### Añadido (previo)
+
 - Documentación del flujo Git (`main` / `development` / ramas de trabajo):
   `AGENTS.md`, `CONTRIBUTING.md`, `.cursor/rules/git-workflow.mdc`.
 - Script `scripts/sync-build-run.ps1` para sincronizar desde GitHub, recompilar
@@ -21,6 +57,7 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 - Titular de la licencia MIT: Antonio Zurano Blázquez.
 - Avisos RGPD/LOPDGDD en README y documentación de seguridad.
 - `.gitignore` ampliado (documentos de oficina y credenciales).
+- Roadmap: la v2.0.0 pasa a clasificación por grupos; Outlook/correo a 3.0.0.
 
 ## [1.1.0] - 2026-07-26
 

@@ -17,6 +17,11 @@ UNRECOGNIZED_PAGE_PREFIX: str = "Pagina"
 # Modos de procesamiento (GUI)
 PROCESS_MODE_SPLIT: str = "split"
 PROCESS_MODE_GROUP: str = "group"
+PROCESS_MODE_CLASSIFY: str = "classify"
+
+# Exportación por grupo (modo clasificación)
+EXPORT_MODE_SEPARATE: str = "separate"
+EXPORT_MODE_COMBINED: str = "combined"
 
 # Etiquetas típicas de nómina (orden de prioridad)
 EMPLOYEE_NAME_LABELS: tuple[str, ...] = (
@@ -62,8 +67,8 @@ MAX_BASE_NAME_LENGTH: int = 180
 DEFAULT_BASE_NAME: str = "nomina"
 
 # Interfaz
-WINDOW_MIN_WIDTH: int = 680
-WINDOW_MIN_HEIGHT: int = 680
+WINDOW_MIN_WIDTH: int = 900
+WINDOW_MIN_HEIGHT: int = 720
 PROGRESS_IDLE: float = 0.0
 PROGRESS_COMPLETE: float = 100.0
 
@@ -82,6 +87,24 @@ STATUS_COMPLETED: str = "Proceso completado correctamente."
 STATUS_ERROR: str = "Se ha producido un error."
 STATUS_CANCELLED_SELECTION: str = "Selección cancelada."
 STATUS_CANCELLED_BY_USER: str = "Proceso cancelado. No se ha guardado ningún archivo."
+STATUS_CLASSIFYING: str = "Clasifica los trabajadores en grupos y pulsa Generar."
+STATUS_CLEAR_SESSION_CONFIRM: str = (
+    "Se eliminarán de la memoria todos los trabajadores, grupos y asignaciones "
+    "de esta sesión. Los PDFs ya generados no se eliminarán."
+)
+STATUS_WRITING_CLASSIFICATION: str = "Escribiendo archivos de clasificación..."
+STATUS_REANALYZE_CLASSIFY_CONFIRM: str = (
+    "Ya hay una clasificación en memoria.\n\n"
+    "Si continúas, se borrarán todos los grupos y asignaciones actuales "
+    "y se volverá a analizar el PDF.\n\n"
+    "Recuerda: para generar los archivos PDF debes pulsar «6. Generar», "
+    "no «3. Analizar y clasificar».\n\n"
+    "¿Quieres reanalizar y perder los grupos?"
+)
+STATUS_CLASSIFY_STEPS_HINT: str = (
+    "Orden sugerido: 1 PDF → 2 Carpeta → 3 Analizar → 4 Crear grupo → "
+    "5 Añadir al grupo → 6 Generar → 7 Abrir carpeta"
+)
 
 # Logging
 LOG_FORMAT: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
