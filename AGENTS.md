@@ -20,7 +20,7 @@ Caso de uso:
 3. El usuario elige el PDF, la carpeta de destino y el modo de proceso.
 4. La app genera archivos individuales o agrupados **sin subir nada a Internet**.
 
-**Versión actual:** `1.1.0` (ver `VERSION`).
+**Versión actual:** `2.0.0` (ver `VERSION`).
 
 **Licencia:** MIT. Procesa documentos sensibles; el usuario es responsable del
 tratamiento conforme a la normativa de protección de datos.
@@ -60,13 +60,13 @@ Dependencias mínimas a propósito. No añadir librerías sin necesidad clara.
 - Un PDF por trabajador; `No_reconocidas/Pagina_XXX.pdf` para el resto.
 - Modo GUI + resumen/confirmación antes de escribir.
 
-## Alcance de la v2.0.0 (en desarrollo en feature)
+## Alcance de la v2.0.0 (implementado)
 
 - Detección y validación de DNI/NIE; consolidación por documento.
 - Pantalla de clasificación (grupos ↔ trabajadores); sesión solo en memoria.
 - Exportación por grupo: separado o conjunto; multi-asignación permitida.
+- UX: selección azul, pasos 1–7, confirmación al reanalizar.
 - Detalle: [`docs/CLASIFICACION_NOMINAS.md`](docs/CLASIFICACION_NOMINAS.md).
-- **No** subir `VERSION` a 2.0.0 sin autorización expresa.
 
 ## Fuera de alcance (NO implementar sin petición explícita)
 
@@ -88,7 +88,7 @@ Detalle: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 | **1.0.0** | **Implementada** | Separar PDF página a página |
 | **1.0.1** | **Implementada** | Documentación para agentes de IA |
 | **1.1.0** | **Implementada** | Extraer texto, reconocer nombre, agrupar por trabajador |
-| **2.0.0** | En desarrollo | Clasificación por grupos / DNI-NIE |
+| **2.0.0** | **Implementada** | Clasificación por grupos / DNI-NIE |
 | **2.1.0+** | No implementada | CSV/Excel, asociar trabajador↔correo |
 | **3.0.0** | No implementada | Borradores de correo, Outlook/M365 |
 | Mejoras | No implementadas | OCR local, firma del exe, instalador, cifrado, multidioma |
@@ -202,8 +202,8 @@ Solo cuando el usuario ordene una versión de producción:
 
 ### Tags
 
-- Prueba en `development`: p. ej. `v1.1.0-dev.1`, `v1.1.0-rc.1` (proponer antes; no decidir solos).
-- Estable en `main`: p. ej. `v1.1.0`.
+- Prueba en `development`: p. ej. `v2.0.0-dev.1`, `v2.0.0-rc.1` (proponer antes; no decidir solos).
+- Estable en `main`: p. ej. `v2.0.0`.
 - Versionado semántico `MAJOR.MINOR.PATCH`. No cambiar `VERSION` sin indicación expresa.
 
 ## Acciones prohibidas sin autorización

@@ -4,7 +4,7 @@ Miniaplicación de escritorio para **Windows 10 y Windows 11** que separa un
 archivo PDF multipágina de nóminas: **una página por archivo**, **agrupación
 por trabajador** o **clasificación en grupos** (DNI/NIE + departamentos).
 
-**Versión actual: 1.1.0** (clasificación por grupos en desarrollo hacia 2.0.0)
+**Versión actual: 2.0.0** (clasificación por grupos / DNI-NIE)
 
 ## Para agentes de IA
 
@@ -36,7 +36,7 @@ Esta aplicación permite:
 
 Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
 
-## En desarrollo hacia 2.0.0
+## Funciones de la versión 2.0.0
 
 - Modo **Clasificar trabajadores en grupos** (sesión solo en memoria).
 - Detección de DNI/NIE, grupos/reglas, exportación separada o conjunta.
@@ -224,7 +224,7 @@ de protección de datos. Consulta
 | Versión | Objetivo |
 |---------|----------|
 | 1.1.0   | Reconocimiento y agrupación por trabajador (**implementada**) |
-| 2.0.0   | Clasificación por grupos / DNI-NIE (**en desarrollo**) |
+| 2.0.0   | Clasificación por grupos / DNI-NIE (**implementada**) |
 | 2.1.0+  | Asociación trabajador ↔ correo (CSV/Excel) |
 | 3.0.0   | Borradores de correo con Outlook / Microsoft 365 |
 
@@ -244,4 +244,4 @@ normativa aplicable. La licencia MIT no exime de esas obligaciones.
 
 ## Versión actual
 
-`1.1.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
+`2.0.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
