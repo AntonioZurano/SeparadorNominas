@@ -24,12 +24,22 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ### Corregido
 
-- Selección de trabajadores en modo clasificación: fondo azul visible,
-  «Seleccionar todos» / clic múltiple sincronizados; «Añadir al grupo» solo
-  actúa sobre las filas resaltadas.
-- Confirmación al pulsar de nuevo «Analizar y clasificar» si ya hay sesión
-  (evita borrar grupos por error); numeración de pasos 1–7 en el flujo.
-- Modal al añadir trabajadores: indica nombre(s) y el grupo de destino.
+- **Selección visual en clasificación:** las filas seleccionadas se resaltan
+  con fondo azul (Treeview nativo). «Seleccionar todos» / «Deseleccionar
+  todos» y Ctrl+A actualizan esa selección; el contador muestra
+  «Seleccionados: N». Antes la selección era interna (marcas ☑) y no se veía,
+  pero «Añadir al grupo» podía afectar a todos los IDs internos.
+- **Añadir / quitar del grupo:** solo actúan sobre las filas con fondo azul
+  (selección visible), no sobre un set oculto.
+- **Reanalizar con sesión activa:** si se pulsa de nuevo «Analizar y
+  clasificar» habiendo grupos o trabajadores en memoria, un modal advierte
+  que se borrarán asignaciones y recuerda que los PDF se escriben con
+  «Generar», no al reanalizar.
+- **Pasos numerados (modo clasificar):** botones 1–7 (PDF, carpeta, analizar,
+  crear grupo, añadir, generar, abrir carpeta) y texto de ayuda con el orden
+  sugerido, para evitar confusiones de flujo.
+- **Modal al añadir trabajadores:** indica el/los nombre(s) y el **grupo de
+  destino** (p. ej. «Añadido … al grupo «Almacen»»).
 
 ### Añadido (previo)
 

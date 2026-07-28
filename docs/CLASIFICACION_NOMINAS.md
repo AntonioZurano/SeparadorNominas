@@ -42,6 +42,16 @@ Si ya hay una sesión de clasificación y se vuelve a pulsar
 grupos y asignaciones. Recuerda que **Generar** es el paso que escribe
 archivos; analizar de nuevo no genera PDF.
 
+## Mejoras de usabilidad (fixes)
+
+| Problema | Solución |
+|----------|----------|
+| «Seleccionar todos» no se veía en la lista | Selección nativa del listado con **fondo azul** + contador |
+| «Añadir al grupo» metía trabajadores no marcados visualmente | Solo se añaden/quitan las filas resaltadas en azul |
+| Reanalizar borraba grupos sin avisar | Modal de confirmación antes de perder la sesión |
+| Confusión entre Analizar y Generar | Pasos numerados 1–7 y texto de orden sugerido |
+| El modal de alta no decía a qué grupo | Mensaje con nombre del trabajador y del **grupo** |
+
 ## Identificación de trabajadores
 
 - Clave preferente: **DNI o NIE** normalizado (mayúsculas, sin espacios ni

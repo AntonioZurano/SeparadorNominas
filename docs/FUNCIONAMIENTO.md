@@ -75,9 +75,16 @@ En los modos agrupar y clasificar, el nombre del archivo no usa ese campo.
 1. Pulsa **Separar nóminas**, **Reconocer y agrupar** o **Analizar y clasificar**.
 2. Espera a que avance la barra de progreso.
 3. En modo agrupar, revisa el resumen y pulsa **Generar** o **Cancelar**.
-4. En modo clasificar, crea grupos, asigna trabajadores y pulsa **Generar**
-   (verás un resumen antes de escribir). Puedes **Limpiar sesión** para
-   borrar de la memoria trabajadores y grupos (no elimina PDF ya generados).
+4. En modo clasificar (detalle en
+   [`CLASIFICACION_NOMINAS.md`](CLASIFICACION_NOMINAS.md)):
+   - Los botones van numerados (1 PDF → … → 6 Generar → 7 Abrir carpeta).
+   - Selecciona trabajadores con clic / Ctrl+clic / «Seleccionar todos»
+     (fondo azul).
+   - Crea grupos, añade con el botón 5 (el aviso indica a qué grupo) y pulsa
+     **6. Generar** para escribir PDF.
+   - Si pulsas otra vez **Analizar**, te avisará antes de borrar grupos.
+   - **Limpiar sesión** borra de la memoria trabajadores y grupos (no elimina
+     PDF ya generados).
 5. Cuando termine, verás el mensaje de finalización.
 
 Durante el proceso no inicies otra operación: los controles permanecen
