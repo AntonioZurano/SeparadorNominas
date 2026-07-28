@@ -1,0 +1,36 @@
+PDF sintético para clasificación (datos ficticios).
+Total páginas: 1500
+Semilla: 20260728
+
+Grupos sugeridos para la prueba manual:
+  - Almacen
+  - Administracion
+  - Produccion
+  - Direccion
+  - Reparto
+  - Delegacion_Murcia
+  - Delegacion_Almeria
+
+Casos incluidos:
+  - DNI+nombre (mayoría), repartidos por DEPARTAMENTO REF
+  - Varias páginas del mismo DNI (nómina + paga extra)
+  - Mismo DNI con nombres distintos (advertencia name_mismatch)
+  - Mismo nombre con DNI distinto (dos trabajadores)
+  - NIE X/Y/Z
+  - DNI con espacios/guiones
+  - Letra de control incorrecta
+  - Solo nombre (sin DNI) → TEMP/parcial
+  - Página en blanco / ruido sin trabajador
+  - Varios documentos en la misma página
+
+Distribución aproximada de DEPARTAMENTO REF (para agrupar):
+  - (sin hint / especial): 200 páginas (aprox.)
+  - Administracion: 186 páginas (aprox.)
+  - Almacen: 187 páginas (aprox.)
+  - Delegacion_Almeria: 181 páginas (aprox.)
+  - Delegacion_Murcia: 188 páginas (aprox.)
+  - Direccion: 174 páginas (aprox.)
+  - Produccion: 201 páginas (aprox.)
+  - Reparto: 183 páginas (aprox.)
+
+Nota: DEPARTAMENTO REF es solo ayuda visual en el PDF; la app no agrupa automáticamente por ese campo. Debes crear los grupos a mano.
