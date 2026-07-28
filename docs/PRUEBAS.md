@@ -12,7 +12,8 @@ La versión actual prioriza tests unitarios e integración sintética de la lóg
 - agrupación y escritura agrupada;
 - DNI/NIE, consolidación, grupos, exportación de clasificación, sesión.
 
-Los tests de interfaz gráfica no son obligatorios.
+Los tests de interfaz gráfica no son obligatorios en pytest. El checklist
+manual de GUI está en [`PRUEBAS_UI.md`](PRUEBAS_UI.md).
 
 ## Qué módulos se prueban
 
