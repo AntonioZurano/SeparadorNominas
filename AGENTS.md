@@ -131,6 +131,9 @@ Código en `src/separador_nominas/`:
 | `department_normalization.py` | Clave / carpeta de departamentos |
 | `department_assignment_service.py` | Cruce Excel↔PDF y auto-grupos |
 | `spreadsheet_import_view.py` | UI del modo Excel |
+| `excel_summary_dialog.py` | Modal de resumen tras Analizar con Excel |
+| `summary_confirm_dialog.py` | Modal maximizado de confirmación Generar |
+| `ui_geometry.py` | Maximizar ventanas Tk |
 | `filename_service.py` | Nombres y rutas |
 | `validators.py` | Validaciones |
 | `exceptions.py` | Errores de dominio (mensajes en español) |

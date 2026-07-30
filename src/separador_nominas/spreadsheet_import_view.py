@@ -85,7 +85,9 @@ class SpreadsheetImportView(ttk.Frame):
             command=self._notify,
         ).grid(row=1, column=0, sticky="w")
 
-        summary = ttk.LabelFrame(self, text="Vista previa", padding=8)
+        summary = ttk.LabelFrame(
+            self, text="Vista previa (también en ventana)", padding=8
+        )
         summary.grid(row=2, column=0, sticky="nsew")
         summary.columnconfigure(0, weight=1)
         summary.rowconfigure(0, weight=1)
@@ -93,7 +95,7 @@ class SpreadsheetImportView(ttk.Frame):
         self._summary_box = tk.Text(
             summary,
             wrap=tk.WORD,
-            height=8,
+            height=6,
             relief=tk.SOLID,
             borderwidth=1,
             padx=6,

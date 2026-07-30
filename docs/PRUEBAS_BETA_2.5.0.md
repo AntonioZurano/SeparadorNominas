@@ -28,6 +28,8 @@ Relacionado: [`IMPORTACION_EXCEL.md`](IMPORTACION_EXCEL.md),
 - [ ] Seleccionar PDF + Excel `.xlsx`
 - [ ] Detectar hoja/columnas (o elegirlas)
 - [ ] Resumen de coincidencias comprensible
+- [ ] Tras analizar: **ventana modal maximizada** con departamentos y DNI/nombres/páginas
+- [ ] Al Generar: resumen de confirmación en **ventana maximizada**
 - [ ] Generar: un PDF (o carpeta) por departamento
 - [ ] Páginas en orden original del PDF en exportación conjunta
 - [ ] Abrir carpeta al terminar
