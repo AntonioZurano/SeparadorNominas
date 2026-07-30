@@ -136,15 +136,25 @@ try {
     Assert-GitClean
 
     & git fetch origin --tags 1>$null 2>$null
-    if (-not (Test-RemoteTagExists -TagName $tagName)) {
-        Write-Error ("La tag {0} no existe. Debe crearse y publicarse previamente con autorización expresa." -f $tagName)
-        exit 1
+    $tagExistsRemote = Test-RemoteTagExists -TagName $tagName
+    if (-not $tagExistsRemote) {
+        if ($DryRun) {
+            Write-Host ("AVISO DryRun: la tag {0} aún no existe en origin (esperado antes de autorizar el tag)." -f $tagName)
+        }
+        else {
+            Write-Error ("La tag {0} no existe. Debe crearse y publicarse previamente con autorización expresa." -f $tagName)
+            exit 1
+        }
     }
 
-    # Coherencia: la tag debe resolverse localmente tras el fetch.
-    $tagCommit = & git rev-list -n 1 $tagName 2>$null
-    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($tagCommit)) {
-        throw ("No se ha podido resolver el commit de la tag local {0} tras fetch." -f $tagName)
+    $tagCommit = "(pendiente de crear)"
+    if ($tagExistsRemote) {
+        # Coherencia: la tag debe resolverse localmente tras el fetch.
+        $resolvedTag = & git rev-list -n 1 $tagName 2>$null
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($resolvedTag)) {
+            throw ("No se ha podido resolver el commit de la tag local {0} tras fetch." -f $tagName)
+        }
+        $tagCommit = $resolvedTag
     }
     $headCommit = & git rev-parse HEAD
     if ($LASTEXITCODE -ne 0) {
@@ -160,11 +170,14 @@ try {
     if ($Draft) { $releaseType = "Borrador (draft)" }
     elseif ($Prerelease) { $releaseType = "Prerelease" }
 
-    $releaseExists = Test-ReleaseExists -TagName $tagName
-    if ($releaseExists) {
-        foreach ($assetName in @($names.ExeName, $names.ChecksumName)) {
-            if (Test-ReleaseAssetExists -TagName $tagName -AssetName $assetName) {
-                throw ("Ya existe un asset con el nombre '{0}' en la Release {1}. No se reemplaza automáticamente. Consulta docs/PUBLICACION_GITHUB.md para el reemplazo manual autorizado." -f $assetName, $tagName)
+    $releaseExists = $false
+    if ($tagExistsRemote) {
+        $releaseExists = Test-ReleaseExists -TagName $tagName
+        if ($releaseExists) {
+            foreach ($assetName in @($names.ExeName, $names.ChecksumName)) {
+                if (Test-ReleaseAssetExists -TagName $tagName -AssetName $assetName) {
+                    throw ("Ya existe un asset con el nombre '{0}' en la Release {1}. No se reemplaza automáticamente. Consulta docs/PUBLICACION_GITHUB.md para el reemplazo manual autorizado." -f $assetName, $tagName)
+                }
             }
         }
     }
@@ -181,8 +194,11 @@ try {
     if ($releaseExists) {
         Write-Host "Acción prevista: subir assets a Release existente (sin sobrescribir)."
     }
-    else {
+    elseif ($tagExistsRemote) {
         Write-Host "Acción prevista: crear Release nueva y adjuntar assets."
+    }
+    else {
+        Write-Host "Acción prevista (tras crear tag): crear Release nueva y adjuntar assets."
     }
     if ($DryRun) {
         Write-Host ""
