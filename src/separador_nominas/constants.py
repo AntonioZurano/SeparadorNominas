@@ -4,9 +4,9 @@ from __future__ import annotations
 
 APP_NAME: str = "Separador de Nóminas PDF"
 APP_EXECUTABLE_NAME: str = "SeparadorNominas"
-APP_VERSION: str = "2.5.0-beta.1"
+APP_VERSION: str = "2.5.0-beta.2"
 APP_CHANNEL_LABEL: str = "BETA"
-APP_VERSION_DISPLAY: str = "2.5.0-beta.1"
+APP_VERSION_DISPLAY: str = "2.5.0-beta.2"
 APP_IS_PRERELEASE: bool = True
 
 # Extensiones y nombres

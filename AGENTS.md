@@ -20,7 +20,7 @@ Caso de uso:
 3. El usuario elige el PDF, la carpeta de destino y el modo de proceso.
 4. La app genera archivos individuales o agrupados **sin subir nada a Internet**.
 
-**Versión actual:** `2.5.0-beta.1` en preparación (ver `VERSION`).
+**Versión actual:** `2.5.0-beta.2` (prerelease; ver `VERSION`).
 Estable en `main`: `2.0.0`.
 
 **Licencia:** MIT. Procesa documentos sensibles; el usuario es responsable del
@@ -73,8 +73,7 @@ Dependencias mínimas a propósito. No añadir librerías sin necesidad clara.
 
 - Clasificación automática mediante Excel (DNI/NIE → departamento).
 - Lectura local `.xlsx` / `.xls`; grupos automáticos; `No_clasificadas/`.
-- Código integrado en `development`; prerelease `2.5.0-beta.1` en rama
-  `release/2.5.0-beta.1`.
+- Código integrado en `development`; prerelease `2.5.0-beta.2`.
 - Detalle: [`docs/IMPORTACION_EXCEL.md`](docs/IMPORTACION_EXCEL.md).
 - Pruebas beta: [`docs/PRUEBAS_BETA_2.5.0.md`](docs/PRUEBAS_BETA_2.5.0.md).
 
@@ -100,7 +99,7 @@ Detalle: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 | **1.0.1** | **Implementada** | Documentación para agentes de IA |
 | **1.1.0** | **Implementada** | Extraer texto, reconocer nombre, agrupar por trabajador |
 | **2.0.0** | **Implementada** | Clasificación por grupos / DNI-NIE |
-| **2.5.0** | Beta `2.5.0-beta.1` | Clasificación automática mediante Excel |
+| **2.5.0** | Beta `2.5.0-beta.2` | Clasificación automática mediante Excel |
 | **2.1.0+** | No implementada | CSV/Excel con correo, asociar trabajador↔correo |
 | **3.0.0** | No implementada | Borradores de correo, Outlook/M365 |
 | Mejoras | No implementadas | OCR local, firma del exe, instalador, cifrado, multidioma |

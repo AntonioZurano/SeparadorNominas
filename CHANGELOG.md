@@ -7,15 +7,19 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+## [2.5.0-beta.2] - 2026-07-30
+
 ### Corregido
 
 - La ventana principal se abre **maximizada** al arrancar, para que quepan
   los controles de clasificación y del modo Excel sin quedar fuera de vista.
-  Documentado en `docs/FUNCIONAMIENTO.md` y checklists de pruebas UI/beta.
 - Tras **Analizar con Excel**, se muestra una **ventana modal maximizada**
   con el resumen de departamentos y trabajadores (DNI/NIE, nombre, páginas),
-  similar al panel de clasificación por grupos. La confirmación al pulsar
-  **Generar** también usa una ventana maximizada con el resumen.
+  similar al panel de clasificación por grupos.
+- La confirmación al pulsar **Generar** también usa una ventana maximizada
+  con el resumen (en lugar del diálogo pequeño).
+- Scripts de publicación: tolerancia a stderr de `git`/`gh` en PowerShell
+  para no abortar DryRun/publicación cuando la Release aún no existe.
 
 ## [2.5.0-beta.1] - 2026-07-30
 
