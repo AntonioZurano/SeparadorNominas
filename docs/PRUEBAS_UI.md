@@ -38,7 +38,7 @@ Anotar: **OK** / **KO** / **N/A** + nota. Prioridad: P0 / P1 / P2.
 
 | ID | Caso | Esperado | Resultado |
 |----|------|----------|-----------|
-| P-01 | Arranque | Título con versión; sin crash | |
+| P-01 | Arranque | Título con versión; ventana **maximizada**; sin crash | |
 | P-02 | Tres radios de modo | Separar / Agrupar / Clasificar | |
 | P-03 | Cancelar Seleccionar PDF | Estado listo | |
 | P-04 | PDF válido | Páginas + sugerencias nombre/carpeta | |
