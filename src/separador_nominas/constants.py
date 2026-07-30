@@ -4,7 +4,10 @@ from __future__ import annotations
 
 APP_NAME: str = "Separador de Nóminas PDF"
 APP_EXECUTABLE_NAME: str = "SeparadorNominas"
-APP_VERSION: str = "2.0.0"
+APP_VERSION: str = "2.5.0-beta.1"
+APP_CHANNEL_LABEL: str = "BETA"
+APP_VERSION_DISPLAY: str = "2.5.0-beta.1"
+APP_IS_PRERELEASE: bool = True
 
 # Extensiones y nombres
 PDF_EXTENSION: str = ".pdf"
@@ -109,6 +112,11 @@ PROGRESS_COMPLETE: float = 100.0
 
 # Mensajes de estado (interfaz)
 STATUS_READY: str = "Preparado para comenzar."
+STATUS_BETA_NOTICE: str = (
+    "Esta es una versión beta destinada a pruebas.\n\n"
+    "Revisa los archivos generados antes de enviarlos.\n\n"
+    f"Versión {APP_VERSION_DISPLAY}"
+)
 STATUS_OPENING_PDF: str = "Abriendo y validando el PDF..."
 STATUS_PROCESSING_TEMPLATE: str = "Procesando página {current} de {total}..."
 STATUS_ANALYZING_TEMPLATE: str = "Analizando página {current} de {total}..."

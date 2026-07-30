@@ -14,8 +14,11 @@ from tkinter import filedialog, messagebox, ttk
 from separador_nominas.classification_service import set_export_mode
 from separador_nominas.classification_view import ClassificationView
 from separador_nominas.constants import (
+    APP_CHANNEL_LABEL,
+    APP_IS_PRERELEASE,
     APP_NAME,
     APP_VERSION,
+    APP_VERSION_DISPLAY,
     LOGGER_NAME,
     PROCESS_MODE_CLASSIFY,
     PROCESS_MODE_CLASSIFY_EXCEL,
@@ -25,6 +28,7 @@ from separador_nominas.constants import (
     PROGRESS_IDLE,
     STATUS_ANALYZING_SPREADSHEET,
     STATUS_ANALYZING_TEMPLATE,
+    STATUS_BETA_NOTICE,
     STATUS_CANCELLED_BY_USER,
     STATUS_CLASSIFY_EXCEL_HINT,
     STATUS_CLASSIFY_STEPS_HINT,
@@ -82,7 +86,10 @@ class SeparadorNominasApp:
 
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
-        self.root.title(f"{APP_NAME} — {APP_VERSION}")
+        title_suffix = (
+            f" — {APP_CHANNEL_LABEL}" if APP_IS_PRERELEASE else f" — {APP_VERSION}"
+        )
+        self.root.title(f"{APP_NAME}{title_suffix}")
         self.root.minsize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
 
         self._pdf_path = tk.StringVar(value="")
@@ -102,12 +109,28 @@ class SeparadorNominasApp:
         self._page_count: int | None = None
         self._last_destination: Path | None = None
         self._session_service = SessionService()
+        self._beta_notice_shown = False
 
         self._build_ui()
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
         self._on_mode_changed()
         self._set_controls_enabled(True)
         self._open_folder_button.configure(state=tk.DISABLED)
+        self._maybe_show_beta_notice()
+
+    def _maybe_show_beta_notice(self) -> None:
+        """Muestra el aviso beta una sola vez por sesión (sin persistencia)."""
+        if not APP_IS_PRERELEASE or self._beta_notice_shown:
+            return
+        self._beta_notice_shown = True
+        self.root.after(
+            200,
+            lambda: messagebox.showinfo(
+                f"{APP_NAME} — {APP_CHANNEL_LABEL}",
+                STATUS_BETA_NOTICE,
+                parent=self.root,
+            ),
+        )
 
     def _build_ui(self) -> None:
         """Construye los widgets de la interfaz."""
@@ -117,9 +140,21 @@ class SeparadorNominasApp:
         self.root.rowconfigure(0, weight=1)
         main.columnconfigure(1, weight=1)
 
-        title = ttk.Label(main, text=APP_NAME, font=("Segoe UI", 16, "bold"))
-        title.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 12))
-
+        title_text = (
+            f"{APP_NAME} — {APP_CHANNEL_LABEL}"
+            if APP_IS_PRERELEASE
+            else APP_NAME
+        )
+        header = ttk.Frame(main)
+        header.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 12))
+        ttk.Label(header, text=title_text, font=("Segoe UI", 16, "bold")).grid(
+            row=0, column=0, sticky="w"
+        )
+        ttk.Label(
+            header,
+            text=f"Versión {APP_VERSION_DISPLAY}",
+            font=("Segoe UI", 9),
+        ).grid(row=1, column=0, sticky="w", pady=(2, 0))
         # --- Archivo de origen ---
         source_frame = ttk.LabelFrame(main, text="Archivo de origen", padding=10)
         source_frame.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(0, 10))
