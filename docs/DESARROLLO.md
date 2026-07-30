@@ -62,8 +62,8 @@ Los tests viven en `tests/` y no deben depender de la GUI.
 - Type hints en APIs públicas.
 - Docstrings en módulos, clases y funciones públicas.
 - Mensajes de usuario en español.
-- Sin dependencias innecesarias.
-- Sin guardar contenido de nóminas en logs.
+- Sin dependencias innecesarias (runtime: `pypdf`, `openpyxl`, `xlrd==1.2.0`).
+- Sin guardar contenido de nóminas ni DNI/departamentos en logs.
 
 Ejecutar lint y tipos:
 

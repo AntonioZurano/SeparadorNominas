@@ -78,7 +78,7 @@ Por cada grupo con trabajadores:
 
 - **Separado:** `{DNI}_{Nombre}.pdf` dentro de `{Grupo}/`.
 - **Conjunto:** `Nominas_{Grupo}.pdf` con páginas en **orden original** del
-  PDF.
+  PDF (números de página crecientes a nivel global del grupo).
 
 No reconocidos / temporales sin asignar → `No_reconocidas/Pagina_XXX.pdf`.
 

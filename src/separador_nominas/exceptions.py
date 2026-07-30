@@ -85,3 +85,39 @@ class WorkerNotFoundError(SeparadorNominasError):
 
 class ClassificationExportError(SeparadorNominasError):
     """Error al exportar la clasificación."""
+
+
+class SpreadsheetNotSelectedError(SeparadorNominasError):
+    """No se ha seleccionado ningún archivo Excel."""
+
+
+class SpreadsheetNotFoundError(SeparadorNominasError):
+    """El archivo Excel no existe."""
+
+
+class InvalidSpreadsheetExtensionError(SeparadorNominasError):
+    """La extensión del Excel no está soportada."""
+
+
+class SpreadsheetReadError(SeparadorNominasError):
+    """No se ha podido leer el archivo Excel."""
+
+
+class SpreadsheetProtectedError(SeparadorNominasError):
+    """El Excel está protegido de forma incompatible."""
+
+
+class SpreadsheetEmptyError(SeparadorNominasError):
+    """La hoja seleccionada no contiene datos útiles."""
+
+
+class SpreadsheetSheetNotFoundError(SeparadorNominasError):
+    """La hoja indicada no existe en el libro."""
+
+
+class SpreadsheetTooLargeError(SeparadorNominasError):
+    """El Excel supera el límite de filas permitido."""
+
+
+class SpreadsheetColumnError(SeparadorNominasError):
+    """No se han podido identificar las columnas necesarias."""

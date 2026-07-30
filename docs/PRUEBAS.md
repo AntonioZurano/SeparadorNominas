@@ -10,7 +10,8 @@ La versión actual prioriza tests unitarios e integración sintética de la lóg
 - extracción de texto;
 - normalización y reconocimiento;
 - agrupación y escritura agrupada;
-- DNI/NIE, consolidación, grupos, exportación de clasificación, sesión.
+- DNI/NIE, consolidación, grupos, exportación de clasificación, sesión;
+- importación Excel (`.xlsx`/`.xls`), cruce por documento, No_clasificadas.
 
 Los tests de interfaz gráfica no son obligatorios en pytest. El checklist
 manual de GUI está en [`PRUEBAS_UI.md`](PRUEBAS_UI.md).
@@ -32,6 +33,9 @@ manual de GUI está en [`PRUEBAS_UI.md`](PRUEBAS_UI.md).
 | `classification_service.py` | `tests/test_classification_service.py` |
 | `group_export_service.py` | `tests/test_group_export_service.py` |
 | `session_service.py` | `tests/test_session_service.py` |
+| `spreadsheet_service.py` | `tests/test_spreadsheet_service.py` |
+| `department_normalization.py` | `tests/test_department_normalization.py` |
+| `department_assignment_service.py` | `tests/test_department_assignment_service.py` |
 | Integración clasificación | `tests/test_classification_integration.py` |
 
 Coberturas clave:
