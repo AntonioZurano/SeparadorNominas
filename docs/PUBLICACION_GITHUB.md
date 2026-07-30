@@ -15,7 +15,7 @@ Reglas:
 
 - Los binarios compilados **no** se suben mediante commits.
 - Las carpetas `dist/` y `release-assets/` son locales y están en `.gitignore`.
-- Cada Release está asociada a una **tag** de Git (`v1.1.0`, `v1.1.0-rc.1`, …).
+- Cada Release está asociada a una **tag** de Git (`v2.5.0-beta.1`, `v2.0.0`, …).
 - Las versiones de prueba pueden publicarse como **prereleases** cuando se ordene.
 
 ## Fuente de versión
@@ -37,7 +37,10 @@ SeparadorNominas-vVERSION-win64.exe.sha256
 Tag: vVERSION
 ```
 
-Ejemplo: `SeparadorNominas-v1.1.0-win64.exe`.
+Ejemplo: `SeparadorNominas-v2.5.0-beta.1-win64.exe`.
+
+El script `build.ps1` incluye hidden imports de `openpyxl`/`xlrd` para el
+modo Excel; ver [`COMPILACION_WINDOWS.md`](COMPILACION_WINDOWS.md).
 
 **Decisión:** no se publica un alias estable `SeparadorNominas-win64.exe`, para
 evitar ambigüedad sobre qué versión se descarga. Cada Release usa el nombre

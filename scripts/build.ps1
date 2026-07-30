@@ -66,6 +66,7 @@ if (Test-Path $Icon) {
 }
 
 Write-Host "Compilando con PyInstaller..."
+# openpyxl / xlrd se importan de forma diferida; hay que forzarlos en el exe.
 & $Python -m PyInstaller `
     --noconfirm `
     --clean `
@@ -73,6 +74,10 @@ Write-Host "Compilando con PyInstaller..."
     --windowed `
     --name "SeparadorNominas" `
     --paths (Join-Path $ProjectRoot "src") `
+    --hidden-import openpyxl `
+    --hidden-import openpyxl.cell._writer `
+    --hidden-import et_xmlfile `
+    --hidden-import xlrd `
     @IconArgs `
     $Entry
 
