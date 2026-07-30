@@ -1,6 +1,6 @@
 # Informe de pruebas — Beta 2.5.0
 
-Plantilla para registrar resultados de la beta **2.5.0-beta.1**.
+Plantilla para registrar resultados de la beta **2.5.0-beta.2**.
 Copiar esta sección por cada ronda de pruebas.
 
 **Importante:** no incluir nombres reales, DNI/NIE, salarios ni capturas de
@@ -13,7 +13,7 @@ nóminas. Describir fallos con datos sintéticos o códigos genéricos
 
 | Campo | Valor |
 |-------|--------|
-| Versión probada | 2.5.0-beta.1 |
+| Versión probada | 2.5.0-beta.2 |
 | Fecha | YYYY-MM-DD |
 | Probador | |
 | SO / arquitectura | Windows __ / 64-bit |
