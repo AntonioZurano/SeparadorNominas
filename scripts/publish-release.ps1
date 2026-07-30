@@ -71,8 +71,13 @@ function Test-ReleaseExists {
         [Parameter(Mandatory = $true)]
         [string]$TagName
     )
+    # gh escribe "release not found" en stderr; con Stop eso abortaría el script.
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     & gh release view $TagName 1>$null 2>$null
-    return ($LASTEXITCODE -eq 0)
+    $code = $LASTEXITCODE
+    $ErrorActionPreference = $prev
+    return ($code -eq 0)
 }
 
 function Test-ReleaseAssetExists {
@@ -82,8 +87,12 @@ function Test-ReleaseAssetExists {
         [Parameter(Mandatory = $true)]
         [string]$AssetName
     )
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     $json = & gh release view $TagName --json assets 2>$null
-    if ($LASTEXITCODE -ne 0) {
+    $code = $LASTEXITCODE
+    $ErrorActionPreference = $prev
+    if ($code -ne 0) {
         return $false
     }
     return ($json -match [regex]::Escape('"name":"' + $AssetName + '"') -or
