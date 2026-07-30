@@ -255,7 +255,7 @@ class SeparadorNominasApp:
         self._steps_hint.grid_remove()
 
         progress_row = ttk.Frame(process_frame)
-        progress_row.grid(row=2, column=0, sticky="ew", pady=(0, 8))
+        progress_row.grid(row=2, column=0, sticky="ew", pady=(0, 4))
         progress_row.columnconfigure(0, weight=1)
 
         self._progress = ttk.Progressbar(
@@ -264,34 +264,39 @@ class SeparadorNominasApp:
             maximum=PROGRESS_COMPLETE,
             mode="determinate",
         )
-        self._progress.grid(row=0, column=0, sticky="ew", padx=(0, 8))
+        self._progress.grid(row=0, column=0, sticky="ew")
 
-        self._confirm_frame = ttk.Frame(progress_row)
-        self._confirm_frame.grid(row=0, column=1, sticky="e")
+        # Fila propia para Generar/Cancelar: evita que el resumen largo
+        # empuje el segundo botón fuera del área visible.
+        self._confirm_frame = ttk.Frame(process_frame)
+        self._confirm_frame.grid(row=3, column=0, sticky="ew", pady=(0, 8))
+        self._confirm_frame.columnconfigure(0, weight=1)
         self._confirm_summary = tk.StringVar(value="")
         ttk.Label(
             self._confirm_frame,
             textvariable=self._confirm_summary,
             foreground="#333333",
-        ).grid(row=0, column=0, padx=(0, 8))
+            wraplength=520,
+            justify=tk.LEFT,
+        ).grid(row=0, column=0, sticky="w", padx=(0, 8))
         self._confirm_accept_button = ttk.Button(
             self._confirm_frame,
             text="Generar",
             command=self._on_confirm_accept,
             width=10,
         )
-        self._confirm_accept_button.grid(row=0, column=1, padx=(0, 4))
+        self._confirm_accept_button.grid(row=0, column=1, padx=(0, 4), sticky="e")
         self._confirm_cancel_button = ttk.Button(
             self._confirm_frame,
             text="Cancelar",
             command=self._on_confirm_cancel,
             width=10,
         )
-        self._confirm_cancel_button.grid(row=0, column=2)
+        self._confirm_cancel_button.grid(row=0, column=2, sticky="e")
         self._hide_confirm_actions()
 
         ttk.Label(process_frame, textvariable=self._status_text).grid(
-            row=3, column=0, sticky="w"
+            row=4, column=0, sticky="w"
         )
 
         # --- Resultado / clasificación ---

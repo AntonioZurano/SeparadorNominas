@@ -7,6 +7,14 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Corregido
+
+- Panel Generar/Cancelar: se muestra en una fila propia bajo la barra de
+  progreso para que **Cancelar** no quede fuera de la ventana al activarse
+  la confirmación (modo Excel y resto).
+- Vista Excel: reduce la altura del resumen para dejar visibles ambas
+  opciones de formato de salida.
+
 ### Añadido
 
 - Modo **Clasificar automáticamente mediante Excel** (objetivo v2.5.0, sin

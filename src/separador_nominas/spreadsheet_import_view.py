@@ -93,7 +93,7 @@ class SpreadsheetImportView(ttk.Frame):
         self._summary_box = tk.Text(
             summary,
             wrap=tk.WORD,
-            height=12,
+            height=8,
             relief=tk.SOLID,
             borderwidth=1,
             padx=6,
