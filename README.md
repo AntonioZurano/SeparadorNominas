@@ -4,7 +4,20 @@ Miniaplicación de escritorio para **Windows 10 y Windows 11** que separa un
 archivo PDF multipágina de nóminas: **una página por archivo**, **agrupación
 por trabajador** o **clasificación en grupos** (DNI/NIE + departamentos).
 
-**Versión actual: 2.0.0** (clasificación por grupos / DNI-NIE; Excel departamentos hacia 2.5.0)
+**Versión actual en desarrollo / beta: 2.5.0-beta.1** (Excel departamentos).
+**Estable en `main`: 2.0.0** (clasificación por grupos / DNI-NIE).
+
+## Versión beta 2.5.0
+
+La rama de preparación `release/2.5.0-beta.1` incorpora la clasificación
+automática mediante Excel. Cuando se publique la prerelease en GitHub,
+el ejecutable aparecerá marcado como *pre-release*.
+
+- Guía de pruebas: [`docs/PRUEBAS_BETA_2.5.0.md`](docs/PRUEBAS_BETA_2.5.0.md)
+- Informe: [`docs/INFORME_PRUEBAS_BETA.md`](docs/INFORME_PRUEBAS_BETA.md)
+- Detalle funcional: [`docs/IMPORTACION_EXCEL.md`](docs/IMPORTACION_EXCEL.md)
+
+Hasta la publicación autorizada, **no** hay descarga oficial de la beta.
 
 ## Para agentes de IA
 
@@ -225,7 +238,7 @@ de protección de datos. Consulta
 |---------|----------|
 | 1.1.0   | Reconocimiento y agrupación por trabajador (**implementada**) |
 | 2.0.0   | Clasificación por grupos / DNI-NIE (**implementada**) |
-| 2.5.0   | Clasificación automática mediante Excel (**en desarrollo**) |
+| 2.5.0   | Clasificación automática mediante Excel (**2.5.0-beta.1**) |
 | 2.1.0+  | Asociación trabajador ↔ correo (CSV/Excel) |
 | 3.0.0   | Borradores de correo con Outlook / Microsoft 365 |
 
@@ -245,4 +258,5 @@ normativa aplicable. La licencia MIT no exime de esas obligaciones.
 
 ## Versión actual
 
-`2.0.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
+`2.5.0-beta.1` (preparación) — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
+Estable en `main`: `2.0.0`.

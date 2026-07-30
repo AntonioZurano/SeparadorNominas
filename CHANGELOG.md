@@ -7,6 +7,24 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+## [2.5.0-beta.1] - 2026-07-30
+
+### Añadido
+
+- Modo **Clasificar automáticamente mediante Excel**: lectura `.xlsx`/`.xls`,
+  cruce por DNI/NIE, grupos automáticos por departamento, exportación
+  conjunta y carpeta `No_clasificadas/`.
+- Módulos: `spreadsheet_models`, `spreadsheet_service`,
+  `department_normalization`, `department_assignment_service`,
+  `spreadsheet_import_view`.
+- Dependencias: `openpyxl`, `xlrd==1.2.0` (lectura local sin Excel instalado).
+- Documentación: `docs/IMPORTACION_EXCEL.md`, guía y plantilla de pruebas
+  beta (`docs/PRUEBAS_BETA_2.5.0.md`, `docs/INFORME_PRUEBAS_BETA.md`),
+  plantilla de issue GitHub para la beta.
+- Indicador **BETA** en la UI y aviso informativo una vez por sesión.
+- Scripts de preparación/publicación de Release (`prepare-release.ps1`,
+  `publish-release.ps1`) y `docs/PUBLICACION_GITHUB.md`.
+
 ### Corregido
 
 - Panel Generar/Cancelar: se muestra en una fila propia bajo la barra de
@@ -14,21 +32,6 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
   la confirmación (modo Excel y resto).
 - Vista Excel: reduce la altura del resumen para dejar visibles ambas
   opciones de formato de salida.
-
-### Añadido
-
-- Modo **Clasificar automáticamente mediante Excel** (objetivo v2.5.0, sin
-  bump de `VERSION` aún): lectura `.xlsx`/`.xls`, cruce por DNI/NIE,
-  grupos automáticos por departamento, exportación conjunta y
-  `No_clasificadas/`.
-- Módulos: `spreadsheet_models`, `spreadsheet_service`,
-  `department_normalization`, `department_assignment_service`,
-  `spreadsheet_import_view`.
-- Dependencias: `openpyxl`, `xlrd==1.2.0` (lectura local sin Excel instalado).
-- Documentación: `docs/IMPORTACION_EXCEL.md`.
-
-### Corregido
-
 - Exportación conjunta por grupo: las páginas se escriben en **orden
   original global** del PDF (no por bloques de trabajador).
 

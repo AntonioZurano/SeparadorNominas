@@ -76,3 +76,8 @@ asignaciones entre ejecuciones. Los logs solo registran conteos.
 - Sin fuzzy matching ni corrección automática de DNI.
 - Sin persistencia de plantillas ni reglas.
 - Sin importación desde API / Microsoft 365 / Google Sheets.
+
+## Pruebas de la beta
+
+Checklist e informe: [`PRUEBAS_BETA_2.5.0.md`](PRUEBAS_BETA_2.5.0.md),
+[`INFORME_PRUEBAS_BETA.md`](INFORME_PRUEBAS_BETA.md).
