@@ -52,6 +52,12 @@ Clave: DNI/NIE normalizado (nunca por nombre).
 - Excel sin PDF → aviso en vista previa (no genera PDF vacío).
 - Página sin DNI → `No_clasificadas`.
 
+Tras **Analizar con Excel**, se abre una **ventana modal maximizada** con el
+resumen: departamentos a la izquierda y, a la derecha, DNI/NIE, nombre y
+páginas (similar al panel de clasificación por grupos). Al pulsar Continuar
+permanecen Generar/Cancelar en la ventana principal. Al pulsar **Generar**,
+el resumen de confirmación también se muestra en una ventana maximizada.
+
 ## Exportación
 
 Por defecto: un PDF conjunto por departamento, páginas en **orden

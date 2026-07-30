@@ -31,6 +31,9 @@ facilitar pruebas, mantenimiento y futuras ampliaciones.
 | `gui.py` | Interfaz Tkinter, modos, progreso, confirmación. |
 | `classification_view.py` | Panel de clasificación (grupos / trabajadores). |
 | `spreadsheet_import_view.py` | Panel Excel: hoja, columnas, vista previa. |
+| `excel_summary_dialog.py` | Modal resumen departamentos / DNI tras analizar. |
+| `summary_confirm_dialog.py` | Modal maximizado de confirmación al generar. |
+| `ui_geometry.py` | Utilidad para maximizar ventanas Tk. |
 | `pdf_service.py` | Separación de páginas con `pypdf` (modo clásico). |
 | `text_extraction_service.py` | Extracción de texto seleccionable por página. |
 | `recognition_rules.py` | Etiquetas, candidatos y filtros negativos. |

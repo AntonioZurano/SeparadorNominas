@@ -53,12 +53,16 @@ from separador_nominas.department_assignment_service import (
     apply_spreadsheet_to_session,
     format_excel_match_summary,
 )
+from separador_nominas.excel_summary_dialog import show_excel_match_summary_dialog
 from separador_nominas.exceptions import SeparadorNominasError, UnexpectedError
 from separador_nominas.filename_service import (
     suggest_base_name_from_pdf,
     suggest_output_directory,
 )
-from separador_nominas.group_export_service import export_classification_session
+from separador_nominas.group_export_service import (
+    export_classification_session,
+    format_classification_export_summary,
+)
 from separador_nominas.grouped_pdf_service import (
     analyze_payroll_pdf,
     format_grouping_summary,
@@ -75,6 +79,8 @@ from separador_nominas.spreadsheet_service import (
     peek_header_row,
     validate_spreadsheet_path,
 )
+from separador_nominas.summary_confirm_dialog import ask_summary_confirm
+from separador_nominas.ui_geometry import maximize_toplevel
 from separador_nominas.validators import inspect_pdf
 from separador_nominas.worker_recognition_service import analyze_classification_pdf
 
@@ -445,20 +451,10 @@ class SeparadorNominasApp:
             if session is None:
                 return
             if self._pending_excel_export:
-                state = self._session_service.spreadsheet_state
-                summary = "Se generarán los PDF por departamento."
-                if state and state.match_summary:
-                    summary = (
-                        f"Asignados: {state.match_summary.matched_workers}. "
-                        f"No clasificadas: "
-                        f"{state.match_summary.pages_unclassified} páginas."
-                    )
+                summary = format_classification_export_summary(session)
             else:
                 summary = self._classification_view.build_export_summary()
-            if not messagebox.askyesno(
-                APP_NAME,
-                f"{summary}\n\n¿Generar los archivos PDF ahora?",
-            ):
+            if not ask_summary_confirm(self.root, summary):
                 return
             destination_local = destination
             excel_mode = self._pending_excel_export
@@ -969,6 +965,7 @@ class SeparadorNominasApp:
             summary_label=label,
         )
         self.root.update_idletasks()
+        show_excel_match_summary_dialog(self.root, session, applied, imported)
 
     def _on_start(self) -> None:
         """Inicia el proceso según el modo seleccionado."""
@@ -1480,21 +1477,7 @@ def _maximize_main_window(root: tk.Tk) -> None:
     Usa el estado «zoomed» del gestor de ventanas (no fullscreen sin bordes),
     para que quepan los paneles de clasificación/Excel en pantallas normales.
     """
-    root.update_idletasks()
-    try:
-        root.state("zoomed")
-        return
-    except tk.TclError:
-        pass
-    try:
-        root.attributes("-zoomed", True)
-        return
-    except tk.TclError:
-        pass
-    # Último recurso: ocupar casi toda el área disponible.
-    width = root.winfo_screenwidth()
-    height = root.winfo_screenheight()
-    root.geometry(f"{width}x{height}+0+0")
+    maximize_toplevel(root)
 
 
 def run_app() -> None:
