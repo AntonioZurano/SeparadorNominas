@@ -30,7 +30,9 @@ puedes:
 Ejecuta `SeparadorNominas.exe` (o el script `scripts/run.ps1` si trabajas en
 modo desarrollo).
 
-Verás la ventana titulada **Separador de Nóminas PDF**.
+Verás la ventana titulada **Separador de Nóminas PDF**, abierta de forma
+**maximizada** para que quepan todos los controles (puedes restaurarla o
+cambiar el tamaño después).
 
 ### 2. Seleccionar el PDF
 

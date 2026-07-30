@@ -14,6 +14,7 @@ Relacionado: [`IMPORTACION_EXCEL.md`](IMPORTACION_EXCEL.md),
 - [ ] Windows 10/11
 - [ ] Ejecutable `SeparadorNominas-v2.5.0-beta.1-win64.exe` o `python -m separador_nominas.main`
 - [ ] Título de ventana con **BETA** y etiqueta `Versión 2.5.0-beta.1`
+- [ ] Ventana abierta **maximizada** (controles visibles sin recortar)
 - [ ] Aviso informativo al arrancar (una vez por sesión)
 
 ## Modos previos (no regresiones)

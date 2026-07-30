@@ -1473,6 +1473,30 @@ def open_folder(path: Path) -> None:
     subprocess.run(["xdg-open", str(resolved)], check=False)
 
 
+def _maximize_main_window(root: tk.Tk) -> None:
+    """
+    Maximiza la ventana principal al arrancar.
+
+    Usa el estado «zoomed» del gestor de ventanas (no fullscreen sin bordes),
+    para que quepan los paneles de clasificación/Excel en pantallas normales.
+    """
+    root.update_idletasks()
+    try:
+        root.state("zoomed")
+        return
+    except tk.TclError:
+        pass
+    try:
+        root.attributes("-zoomed", True)
+        return
+    except tk.TclError:
+        pass
+    # Último recurso: ocupar casi toda el área disponible.
+    width = root.winfo_screenwidth()
+    height = root.winfo_screenheight()
+    root.geometry(f"{width}x{height}+0+0")
+
+
 def run_app() -> None:
     """Crea la ventana principal y arranca el bucle de eventos."""
     root = tk.Tk()
@@ -1486,4 +1510,5 @@ def run_app() -> None:
         pass
 
     SeparadorNominasApp(root)
+    _maximize_main_window(root)
     root.mainloop()

@@ -7,6 +7,12 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Corregido
+
+- La ventana principal se abre **maximizada** al arrancar, para que quepan
+  los controles de clasificación y del modo Excel sin quedar fuera de vista.
+  Documentado en `docs/FUNCIONAMIENTO.md` y checklists de pruebas UI/beta.
+
 ## [2.5.0-beta.1] - 2026-07-30
 
 ### Añadido
