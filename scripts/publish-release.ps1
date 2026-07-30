@@ -58,9 +58,12 @@ function Test-RemoteTagExists {
         [Parameter(Mandatory = $true)]
         [string]$TagName
     )
-    & git ls-remote --tags origin $TagName 2>$null | Out-Null
-    $refs = & git ls-remote --tags origin $TagName
-    if ($LASTEXITCODE -ne 0) {
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    $refs = & git ls-remote --tags origin $TagName 2>$null
+    $code = $LASTEXITCODE
+    $ErrorActionPreference = $prev
+    if ($code -ne 0) {
         throw "No se ha podido consultar las tags remotas en origin."
     }
     return -not [string]::IsNullOrWhiteSpace(($refs | Out-String).Trim())
@@ -110,8 +113,12 @@ try {
         throw "GitHub CLI (gh) no está instalado o no está en el PATH."
     }
 
+    $prevAuth = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     & gh auth status 1>$null 2>$null
-    if ($LASTEXITCODE -ne 0) {
+    $authCode = $LASTEXITCODE
+    $ErrorActionPreference = $prevAuth
+    if ($authCode -ne 0) {
         throw "GitHub CLI no está autenticado. Ejecuta: gh auth login"
     }
 
@@ -144,7 +151,15 @@ try {
 
     Assert-GitClean
 
+    # git fetch escribe progreso en stderr; con Stop abortaría el script.
+    $prevEa = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     & git fetch origin --tags 1>$null 2>$null
+    $fetchCode = $LASTEXITCODE
+    $ErrorActionPreference = $prevEa
+    if ($fetchCode -ne 0) {
+        throw "No se ha podido actualizar tags desde origin."
+    }
     $tagExistsRemote = Test-RemoteTagExists -TagName $tagName
     if (-not $tagExistsRemote) {
         if ($DryRun) {
@@ -170,8 +185,12 @@ try {
         throw "No se ha podido obtener el commit HEAD."
     }
 
+    $prevRepo = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     $repoSlug = & gh repo view --json nameWithOwner -q .nameWithOwner 2>$null
-    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($repoSlug)) {
+    $repoCode = $LASTEXITCODE
+    $ErrorActionPreference = $prevRepo
+    if ($repoCode -ne 0 -or [string]::IsNullOrWhiteSpace($repoSlug)) {
         $repoSlug = $originUrl
     }
 
