@@ -32,11 +32,20 @@ hasta su integración.
 
 Detalle: [`CLASIFICACION_NOMINAS.md`](CLASIFICACION_NOMINAS.md).
 
-## Versión 2.1.0 / posterior (no implementada — listados)
+## Versión 2.5.0 (en desarrollo — Excel departamentos)
 
-Antes: roadmap 1.2.0. Aplazada tras priorizar la clasificación.
+- Importar Excel `.xlsx` / `.xls` con DNI/NIE → departamento.
+- Crear grupos automáticamente y exportar un PDF por departamento.
+- Gestión de no clasificados, conflictos y vista previa.
+- Sin persistencia; sin emparejar por nombre.
 
-- Importar listado CSV o Excel de trabajadores.
+Detalle: [`IMPORTACION_EXCEL.md`](IMPORTACION_EXCEL.md).
+
+## Versión 2.1.0 / posterior (no implementada — listados + correo)
+
+Antes: roadmap 1.2.0. Distinta de la 2.5.0 (departamentos).
+
+- Importar listado CSV o Excel de trabajadores **con correo**.
 - Asociar trabajador y correo electrónico.
 - Validar trabajadores sin correo.
 - Generar informe de coincidencias.

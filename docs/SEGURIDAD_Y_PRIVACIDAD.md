@@ -30,8 +30,9 @@ Cualquier integración futura (por ejemplo, correo) deberá:
 - Se lee el PDF de origen y se escriben PDF en la carpeta elegida
   (separación, agrupación por nombre, o carpetas por grupo de clasificación).
 - El texto extraído vive solo en memoria durante el análisis; no se persiste.
-- La clasificación (DNI, nombres, grupos) existe **solo en memoria** de la
-  sesión; se limpia al cerrar, al cambiar de PDF o al pulsar «Limpiar sesión».
+- La clasificación (DNI, nombres, grupos) y la importación Excel existen
+  **solo en memoria** de la sesión; se limpian al cerrar, al cambiar de PDF
+  o Excel, o al pulsar «Limpiar sesión».
 - No se crean copias innecesarias del documento completo.
 - Si se usan temporales del sistema, `temporary_files_service` intenta
   eliminarlos al limpiar (en Windows un archivo bloqueado puede fallar).

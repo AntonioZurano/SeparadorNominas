@@ -67,8 +67,13 @@ class ClassificationExportResult:
     groups_exported: int
     workers_exported: int
     unassigned_recognized_count: int
+    unclassified_files: tuple[Path, ...] = ()
 
     @property
     def files_created(self) -> int:
         """Número total de archivos PDF generados."""
-        return len(self.group_files) + len(self.unrecognized_files)
+        return (
+            len(self.group_files)
+            + len(self.unrecognized_files)
+            + len(self.unclassified_files)
+        )

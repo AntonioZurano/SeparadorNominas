@@ -7,6 +7,23 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Añadido
+
+- Modo **Clasificar automáticamente mediante Excel** (objetivo v2.5.0, sin
+  bump de `VERSION` aún): lectura `.xlsx`/`.xls`, cruce por DNI/NIE,
+  grupos automáticos por departamento, exportación conjunta y
+  `No_clasificadas/`.
+- Módulos: `spreadsheet_models`, `spreadsheet_service`,
+  `department_normalization`, `department_assignment_service`,
+  `spreadsheet_import_view`.
+- Dependencias: `openpyxl`, `xlrd==1.2.0` (lectura local sin Excel instalado).
+- Documentación: `docs/IMPORTACION_EXCEL.md`.
+
+### Corregido
+
+- Exportación conjunta por grupo: las páginas se escriben en **orden
+  original global** del PDF (no por bloques de trabajador).
+
 ## [2.0.0] - 2026-07-28
 
 ### Añadido

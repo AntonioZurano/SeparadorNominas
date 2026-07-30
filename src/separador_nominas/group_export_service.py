@@ -22,6 +22,8 @@ from separador_nominas.constants import (
     FILENAME_SEPARATOR,
     LOGGER_NAME,
     PDF_EXTENSION,
+    UNCLASSIFIED_COMBINED_STEM,
+    UNCLASSIFIED_FOLDER_NAME,
     UNRECOGNIZED_FOLDER_NAME,
     UNRECOGNIZED_PAGE_PREFIX,
 )
@@ -38,6 +40,7 @@ from separador_nominas.filename_service import (
 )
 from separador_nominas.name_normalization import to_safe_filename_stem
 from separador_nominas.pdf_service import open_pdf_reader
+from separador_nominas.spreadsheet_models import UnclassifiedMode
 from separador_nominas.validators import validate_destination_dir
 
 logger = logging.getLogger(LOGGER_NAME)
@@ -137,7 +140,11 @@ def _pages_for_unassigned_unrecognized(session: ClassificationSession) -> list[i
     return pages
 
 
-def _count_planned_writes(session: ClassificationSession) -> int:
+def _count_planned_writes(
+    session: ClassificationSession,
+    *,
+    unclassified_mode: UnclassifiedMode = "omit",
+) -> int:
     total = 0
     for group in session.groups.values():
         workers = _sorted_workers_for_group(session, group)
@@ -147,8 +154,21 @@ def _count_planned_writes(session: ClassificationSession) -> int:
             total += 1
         else:
             total += len(workers)
-    total += len(set(_pages_for_unassigned_unrecognized(session)))
+    if unclassified_mode == "combined_folder":
+        pages = _pages_for_unclassified(session)
+        if pages:
+            total += 1
+    else:
+        total += len(set(_pages_for_unassigned_unrecognized(session)))
     return total
+
+
+def _pages_for_unclassified(session: ClassificationSession) -> list[int]:
+    """Todas las páginas de trabajadores sin asignar (orden global después)."""
+    pages: list[int] = []
+    for wid in unassigned_worker_ids(session):
+        pages.extend(session.workers[wid].page_numbers)
+    return sorted(set(pages))
 
 
 def format_classification_export_summary(session: ClassificationSession) -> str:
@@ -199,12 +219,15 @@ def export_classification_session(
     *,
     progress_callback: WriteProgressCallback | None = None,
     create_destination: bool = True,
+    unclassified_mode: UnclassifiedMode = "omit",
 ) -> ClassificationExportResult:
     """
     Exporta grupos a carpetas.
 
-    - Reconocidos sin asignar: omitidos (conteo en resultado).
-    - No reconocidos / TEMP sin asignar: ``No_reconocidas/Pagina_XXX.pdf``.
+    - ``unclassified_mode="omit"`` (manual): reconocidos sin asignar omitidos;
+      no reconocidos/TEMP → ``No_reconocidas/Pagina_XXX.pdf``.
+    - ``unclassified_mode="combined_folder"`` (Excel): todas las páginas sin
+      asignar → ``No_clasificadas/Nominas_no_clasificadas.pdf`` (orden global).
     """
     dest_path = validate_destination_dir(
         destination_dir, create_if_missing=create_destination
@@ -213,9 +236,12 @@ def export_classification_session(
 
     group_files: list[Path] = []
     unrecognized_files: list[Path] = []
+    unclassified_files: list[Path] = []
     workers_exported: set[str] = set()
     written = 0
-    planned = max(_count_planned_writes(session), 1)
+    planned = max(
+        _count_planned_writes(session, unclassified_mode=unclassified_mode), 1
+    )
 
     for group in session.groups.values():
         workers = _sorted_workers_for_group(session, group)
@@ -227,8 +253,9 @@ def export_classification_session(
         if group.export_mode == "combined":
             pages: list[int] = []
             for worker in workers:
-                pages.extend(sorted(worker.page_numbers))
+                pages.extend(worker.page_numbers)
                 workers_exported.add(worker.worker_id)
+            pages = sorted(set(pages))
             stem = sanitize_base_name(f"Nominas_{group.safe_folder_name}")
             target = group_dir / f"{stem}{PDF_EXTENSION}"
             output_path = get_available_path(target)
@@ -256,39 +283,57 @@ def export_classification_session(
         if session.workers[wid].recognition_status == "recognized"
         and session.workers[wid].document_id
     )
-    pages_for_unrecognized = _pages_for_unassigned_unrecognized(session)
 
-    if pages_for_unrecognized:
-        unrecognized_dir = dest_path / UNRECOGNIZED_FOLDER_NAME
-        try:
-            unrecognized_dir.mkdir(parents=True, exist_ok=True)
-        except PermissionError as exc:
-            raise PermissionDeniedError(
-                "No se ha podido crear la carpeta de páginas no reconocidas.\n"
-                "Comprueba que tienes permisos de escritura en la carpeta seleccionada."
-            ) from exc
-        except OSError as exc:
-            raise PdfWriteError(
-                "No se ha podido crear la carpeta de páginas no reconocidas."
-            ) from exc
-
-        width = digit_width_for_pages(session.page_count)
-        for page_number in sorted(set(pages_for_unrecognized)):
-            number = f"{page_number:0{width}d}"
-            filename = f"{UNRECOGNIZED_PAGE_PREFIX}_{number}{PDF_EXTENSION}"
-            target = unrecognized_dir / filename
+    if unclassified_mode == "combined_folder":
+        pages_unclassified = _pages_for_unclassified(session)
+        if pages_unclassified:
+            unclassified_dir = _ensure_group_dir(
+                dest_path, UNCLASSIFIED_FOLDER_NAME
+            )
+            stem = sanitize_base_name(UNCLASSIFIED_COMBINED_STEM)
+            target = unclassified_dir / f"{stem}{PDF_EXTENSION}"
             output_path = get_available_path(target)
-            _write_pages(reader, (page_number,), output_path)
-            unrecognized_files.append(output_path)
+            _write_pages(reader, pages_unclassified, output_path)
+            unclassified_files.append(output_path)
             written += 1
             if progress_callback is not None:
                 progress_callback(written, planned, output_path)
+            unassigned_recognized_count = 0
+    else:
+        pages_for_unrecognized = _pages_for_unassigned_unrecognized(session)
+        if pages_for_unrecognized:
+            unrecognized_dir = dest_path / UNRECOGNIZED_FOLDER_NAME
+            try:
+                unrecognized_dir.mkdir(parents=True, exist_ok=True)
+            except PermissionError as exc:
+                raise PermissionDeniedError(
+                    "No se ha podido crear la carpeta de páginas no reconocidas.\n"
+                    "Comprueba que tienes permisos de escritura en la carpeta seleccionada."
+                ) from exc
+            except OSError as exc:
+                raise PdfWriteError(
+                    "No se ha podido crear la carpeta de páginas no reconocidas."
+                ) from exc
+
+            width = digit_width_for_pages(session.page_count)
+            for page_number in sorted(set(pages_for_unrecognized)):
+                number = f"{page_number:0{width}d}"
+                filename = f"{UNRECOGNIZED_PAGE_PREFIX}_{number}{PDF_EXTENSION}"
+                target = unrecognized_dir / filename
+                output_path = get_available_path(target)
+                _write_pages(reader, (page_number,), output_path)
+                unrecognized_files.append(output_path)
+                written += 1
+                if progress_callback is not None:
+                    progress_callback(written, planned, output_path)
 
     logger.info(
         "Exportación de clasificación: %s archivos de grupo, "
-        "%s no reconocidas, %s reconocidos sin asignar omitidos",
+        "%s no reconocidas, %s no clasificadas, "
+        "%s reconocidos sin asignar omitidos",
         len(group_files),
         len(unrecognized_files),
+        len(unclassified_files),
         unassigned_recognized_count,
     )
 
@@ -300,4 +345,5 @@ def export_classification_session(
         groups_exported=len({p.parent for p in group_files}),
         workers_exported=len(workers_exported),
         unassigned_recognized_count=unassigned_recognized_count,
+        unclassified_files=tuple(unclassified_files),
     )

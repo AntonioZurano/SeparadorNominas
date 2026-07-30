@@ -14,8 +14,12 @@ facilitar pruebas, mantenimiento y futuras ampliaciones.
       ├───────────▶│ grouped_pdf_service.py  │  (modo group)
       │            └─────────────────────────┘
       │            ┌─────────────────────────┐
-      └───────────▶│ worker_recognition +    │  (modo classify)
-                   │ classification + export │
+      ├───────────▶│ worker_recognition +    │  (modo classify)
+      │            │ classification + export │
+      │            └─────────────────────────┘
+      │            ┌─────────────────────────┐
+      └───────────▶│ spreadsheet +           │  (modo classify_excel)
+                   │ department_assignment   │
                    └─────────────────────────┘
 ```
 
@@ -26,6 +30,7 @@ facilitar pruebas, mantenimiento y futuras ampliaciones.
 | `main.py` | Punto de entrada, logging y arranque de la GUI. |
 | `gui.py` | Interfaz Tkinter, modos, progreso, confirmación. |
 | `classification_view.py` | Panel de clasificación (grupos / trabajadores). |
+| `spreadsheet_import_view.py` | Panel Excel: hoja, columnas, vista previa. |
 | `pdf_service.py` | Separación de páginas con `pypdf` (modo clásico). |
 | `text_extraction_service.py` | Extracción de texto seleccionable por página. |
 | `recognition_rules.py` | Etiquetas, candidatos y filtros negativos. |
@@ -38,6 +43,10 @@ facilitar pruebas, mantenimiento y futuras ampliaciones.
 | `classification_models.py` | Modelos de sesión, trabajador y grupo. |
 | `classification_service.py` | Grupos y asignaciones en memoria. |
 | `group_export_service.py` | Exportación separada / conjunta por grupo. |
+| `spreadsheet_models.py` | Modelos de importación Excel. |
+| `spreadsheet_service.py` | Lectura `.xlsx`/`.xls`, hojas y columnas. |
+| `department_normalization.py` | Clave y carpeta segura de departamentos. |
+| `department_assignment_service.py` | Cruce Excel↔PDF y auto-grupos. |
 | `session_service.py` | Ciclo de vida de la sesión (solo memoria). |
 | `temporary_files_service.py` | Temporales del sistema y limpieza. |
 | `recognition_models.py` | Dataclasses de análisis y resultado (modo group). |
@@ -109,7 +118,8 @@ Detalle de producto: [`CLASIFICACION_NOMINAS.md`](CLASIFICACION_NOMINAS.md).
 ## Cómo ampliar el proyecto
 
 - OCR local → capa opcional antes del reconocimiento.
-- CSV/Excel → versión 2.1+ del roadmap.
+- CSV/Excel con correo → versión 2.1+ del roadmap.
+- Excel de departamentos → versión 2.5.0 (`IMPORTACION_EXCEL.md`).
 - Outlook / M365 → versión 3.0 del roadmap, capa aislada.
 
 Mantén siempre:

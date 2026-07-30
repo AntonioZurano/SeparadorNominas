@@ -13,15 +13,50 @@ FILENAME_SEPARATOR: str = "_"
 COLLISION_START_INDEX: int = 2
 UNRECOGNIZED_FOLDER_NAME: str = "No_reconocidas"
 UNRECOGNIZED_PAGE_PREFIX: str = "Pagina"
+UNCLASSIFIED_FOLDER_NAME: str = "No_clasificadas"
+UNCLASSIFIED_COMBINED_STEM: str = "Nominas_no_clasificadas"
 
 # Modos de procesamiento (GUI)
 PROCESS_MODE_SPLIT: str = "split"
 PROCESS_MODE_GROUP: str = "group"
 PROCESS_MODE_CLASSIFY: str = "classify"
+PROCESS_MODE_CLASSIFY_EXCEL: str = "classify_excel"
 
 # Exportación por grupo (modo clasificación)
 EXPORT_MODE_SEPARATE: str = "separate"
 EXPORT_MODE_COMBINED: str = "combined"
+
+# Importación Excel
+SPREADSHEET_EXTENSIONS: tuple[str, ...] = (".xlsx", ".xls")
+MAX_SPREADSHEET_ROWS: int = 10_000
+MAX_SPREADSHEET_SHEETS: int = 50
+DOCUMENT_HEADER_ALIASES: frozenset[str] = frozenset(
+    {
+        "dni",
+        "nif",
+        "nie",
+        "documento",
+        "dni/nie",
+        "dni-nie",
+        "identificador",
+        "doc",
+        "documento identidad",
+        "documento de identidad",
+    }
+)
+DEPARTMENT_HEADER_ALIASES: frozenset[str] = frozenset(
+    {
+        "departamento",
+        "area",
+        "área",
+        "seccion",
+        "sección",
+        "grupo",
+        "centro",
+        "delegacion",
+        "delegación",
+    }
+)
 
 # Etiquetas típicas de nómina (orden de prioridad)
 EMPLOYEE_NAME_LABELS: tuple[str, ...] = (
@@ -105,6 +140,13 @@ STATUS_CLASSIFY_STEPS_HINT: str = (
     "Orden sugerido: 1 PDF → 2 Carpeta → 3 Analizar → 4 Crear grupo → "
     "5 Añadir al grupo → 6 Generar → 7 Abrir carpeta"
 )
+STATUS_CLASSIFY_EXCEL_HINT: str = (
+    "Orden sugerido: PDF → Excel → hoja/columnas → Analizar → "
+    "revisar resumen → Carpeta → Generar"
+)
+STATUS_ANALYZING_SPREADSHEET: str = "Analizando el archivo Excel..."
+STATUS_MATCHING_DEPARTMENTS: str = "Relacionando trabajadores y departamentos..."
+
 
 # Logging
 LOG_FORMAT: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
