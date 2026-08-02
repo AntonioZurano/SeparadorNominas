@@ -21,4 +21,10 @@ Recomendaciones del icono:
 - Diseño simple y legible en tamaños pequeños.
 - Evitar texto largo dentro del icono.
 
+## Capturas de documentación
+
+| Archivo | Uso |
+|---------|-----|
+| `pantalla-principal.jpg` | Captura de la UI principal en el [`README.md`](../README.md) |
+
 No incluyas en esta carpeta PDFs reales ni datos personales.

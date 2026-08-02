@@ -7,6 +7,11 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Añadido
+
+- Captura de la pantalla principal (`assets/pantalla-principal.jpg`) en el
+  README.
+
 ## [2.5.0] - 2026-08-02
 
 ### Añadido
