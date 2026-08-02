@@ -7,6 +7,76 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-08-02
+
+### Añadido
+
+- Modo **Clasificar automáticamente mediante Excel**: lectura `.xlsx`/`.xls`,
+  cruce por DNI/NIE, grupos automáticos por departamento, exportación
+  conjunta y carpeta `No_clasificadas/`.
+- Módulos: `spreadsheet_models`, `spreadsheet_service`,
+  `department_normalization`, `department_assignment_service`,
+  `spreadsheet_import_view`, `excel_summary_dialog`,
+  `summary_confirm_dialog`, `ui_geometry`.
+- Dependencias: `openpyxl`, `xlrd==1.2.0` (lectura local sin Excel instalado).
+- Documentación: `docs/IMPORTACION_EXCEL.md`, guías de pruebas beta,
+  scripts de publicación GitHub Releases.
+- Ventana principal maximizada al arrancar.
+- Modal maximizado de resumen tras Analizar con Excel (departamentos / DNI).
+- Confirmación Generar en ventana maximizada.
+
+### Corregido
+
+- Panel Generar/Cancelar visible (fila propia bajo la barra de progreso).
+- Exportación conjunta: páginas en orden original global del PDF.
+- Tooling de publicación: tolerancia a stderr de `git`/`gh` en PowerShell.
+
+Incluye el contenido validado en las prereleases `2.5.0-beta.1` y
+`2.5.0-beta.2`. Guía de publicación pendiente de autorización:
+[`docs/PUBLICACION_v2.5.0.md`](docs/PUBLICACION_v2.5.0.md).
+
+## [2.5.0-beta.2] - 2026-07-30
+
+### Corregido
+
+- La ventana principal se abre **maximizada** al arrancar, para que quepan
+  los controles de clasificación y del modo Excel sin quedar fuera de vista.
+- Tras **Analizar con Excel**, se muestra una **ventana modal maximizada**
+  con el resumen de departamentos y trabajadores (DNI/NIE, nombre, páginas),
+  similar al panel de clasificación por grupos.
+- La confirmación al pulsar **Generar** también usa una ventana maximizada
+  con el resumen (en lugar del diálogo pequeño).
+- Scripts de publicación: tolerancia a stderr de `git`/`gh` en PowerShell
+  para no abortar DryRun/publicación cuando la Release aún no existe.
+
+## [2.5.0-beta.1] - 2026-07-30
+
+### Añadido
+
+- Modo **Clasificar automáticamente mediante Excel**: lectura `.xlsx`/`.xls`,
+  cruce por DNI/NIE, grupos automáticos por departamento, exportación
+  conjunta y carpeta `No_clasificadas/`.
+- Módulos: `spreadsheet_models`, `spreadsheet_service`,
+  `department_normalization`, `department_assignment_service`,
+  `spreadsheet_import_view`.
+- Dependencias: `openpyxl`, `xlrd==1.2.0` (lectura local sin Excel instalado).
+- Documentación: `docs/IMPORTACION_EXCEL.md`, guía y plantilla de pruebas
+  beta (`docs/PRUEBAS_BETA_2.5.0.md`, `docs/INFORME_PRUEBAS_BETA.md`),
+  plantilla de issue GitHub para la beta.
+- Indicador **BETA** en la UI y aviso informativo una vez por sesión.
+- Scripts de preparación/publicación de Release (`prepare-release.ps1`,
+  `publish-release.ps1`) y `docs/PUBLICACION_GITHUB.md`.
+
+### Corregido
+
+- Panel Generar/Cancelar: se muestra en una fila propia bajo la barra de
+  progreso para que **Cancelar** no quede fuera de la ventana al activarse
+  la confirmación (modo Excel y resto).
+- Vista Excel: reduce la altura del resumen para dejar visibles ambas
+  opciones de formato de salida.
+- Exportación conjunta por grupo: las páginas se escriben en **orden
+  original global** del PDF (no por bloques de trabajador).
+
 ## [2.0.0] - 2026-07-28
 
 ### Añadido

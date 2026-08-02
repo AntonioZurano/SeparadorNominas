@@ -88,7 +88,10 @@ El script:
 2. Ejecuta los tests.
 3. Detiene la compilación si fallan.
 4. Limpia `build/` y `dist/`.
-5. Lanza PyInstaller en modo `--onefile --windowed`.
+5. Lanza PyInstaller en modo `--onefile --windowed`, con
+   `--hidden-import` para `openpyxl`, `openpyxl.cell._writer`, `et_xmlfile` y
+   `xlrd` (importación diferida del modo Excel; sin ellos el `.exe` fallaría
+   al abrir hojas de cálculo).
 
 ## 5. Compilación manual (alternativa)
 
@@ -100,6 +103,10 @@ pyinstaller `
   --windowed `
   --name SeparadorNominas `
   --paths src `
+  --hidden-import openpyxl `
+  --hidden-import openpyxl.cell._writer `
+  --hidden-import et_xmlfile `
+  --hidden-import xlrd `
   src\separador_nominas\main.py
 ```
 
@@ -114,6 +121,10 @@ pyinstaller `
   --name SeparadorNominas `
   --icon assets\icon.ico `
   --paths src `
+  --hidden-import openpyxl `
+  --hidden-import openpyxl.cell._writer `
+  --hidden-import et_xmlfile `
+  --hidden-import xlrd `
   src\separador_nominas\main.py
 ```
 

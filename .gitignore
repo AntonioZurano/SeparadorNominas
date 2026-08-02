@@ -101,6 +101,12 @@ nominas_salida/
 *.dll
 *.msi
 
+# Checksums locales de release
+*.sha256
+
+# Assets temporales de publicación (no versionar)
+release-assets/
+
 # Temporales
 tmp/
 temp/

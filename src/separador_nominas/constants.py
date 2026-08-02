@@ -4,7 +4,10 @@ from __future__ import annotations
 
 APP_NAME: str = "Separador de Nóminas PDF"
 APP_EXECUTABLE_NAME: str = "SeparadorNominas"
-APP_VERSION: str = "2.0.0"
+APP_VERSION: str = "2.5.0"
+APP_CHANNEL_LABEL: str = ""
+APP_VERSION_DISPLAY: str = "2.5.0"
+APP_IS_PRERELEASE: bool = False
 
 # Extensiones y nombres
 PDF_EXTENSION: str = ".pdf"
@@ -13,15 +16,50 @@ FILENAME_SEPARATOR: str = "_"
 COLLISION_START_INDEX: int = 2
 UNRECOGNIZED_FOLDER_NAME: str = "No_reconocidas"
 UNRECOGNIZED_PAGE_PREFIX: str = "Pagina"
+UNCLASSIFIED_FOLDER_NAME: str = "No_clasificadas"
+UNCLASSIFIED_COMBINED_STEM: str = "Nominas_no_clasificadas"
 
 # Modos de procesamiento (GUI)
 PROCESS_MODE_SPLIT: str = "split"
 PROCESS_MODE_GROUP: str = "group"
 PROCESS_MODE_CLASSIFY: str = "classify"
+PROCESS_MODE_CLASSIFY_EXCEL: str = "classify_excel"
 
 # Exportación por grupo (modo clasificación)
 EXPORT_MODE_SEPARATE: str = "separate"
 EXPORT_MODE_COMBINED: str = "combined"
+
+# Importación Excel
+SPREADSHEET_EXTENSIONS: tuple[str, ...] = (".xlsx", ".xls")
+MAX_SPREADSHEET_ROWS: int = 10_000
+MAX_SPREADSHEET_SHEETS: int = 50
+DOCUMENT_HEADER_ALIASES: frozenset[str] = frozenset(
+    {
+        "dni",
+        "nif",
+        "nie",
+        "documento",
+        "dni/nie",
+        "dni-nie",
+        "identificador",
+        "doc",
+        "documento identidad",
+        "documento de identidad",
+    }
+)
+DEPARTMENT_HEADER_ALIASES: frozenset[str] = frozenset(
+    {
+        "departamento",
+        "area",
+        "área",
+        "seccion",
+        "sección",
+        "grupo",
+        "centro",
+        "delegacion",
+        "delegación",
+    }
+)
 
 # Etiquetas típicas de nómina (orden de prioridad)
 EMPLOYEE_NAME_LABELS: tuple[str, ...] = (
@@ -74,6 +112,11 @@ PROGRESS_COMPLETE: float = 100.0
 
 # Mensajes de estado (interfaz)
 STATUS_READY: str = "Preparado para comenzar."
+STATUS_BETA_NOTICE: str = (
+    "Esta es una versión beta destinada a pruebas.\n\n"
+    "Revisa los archivos generados antes de enviarlos.\n\n"
+    f"Versión {APP_VERSION_DISPLAY}"
+)
 STATUS_OPENING_PDF: str = "Abriendo y validando el PDF..."
 STATUS_PROCESSING_TEMPLATE: str = "Procesando página {current} de {total}..."
 STATUS_ANALYZING_TEMPLATE: str = "Analizando página {current} de {total}..."
@@ -105,6 +148,13 @@ STATUS_CLASSIFY_STEPS_HINT: str = (
     "Orden sugerido: 1 PDF → 2 Carpeta → 3 Analizar → 4 Crear grupo → "
     "5 Añadir al grupo → 6 Generar → 7 Abrir carpeta"
 )
+STATUS_CLASSIFY_EXCEL_HINT: str = (
+    "Orden sugerido: PDF → Excel → hoja/columnas → Analizar → "
+    "revisar resumen → Carpeta → Generar"
+)
+STATUS_ANALYZING_SPREADSHEET: str = "Analizando el archivo Excel..."
+STATUS_MATCHING_DEPARTMENTS: str = "Relacionando trabajadores y departamentos..."
+
 
 # Logging
 LOG_FORMAT: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"

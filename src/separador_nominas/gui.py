@@ -11,24 +11,33 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
+from separador_nominas.classification_service import set_export_mode
 from separador_nominas.classification_view import ClassificationView
 from separador_nominas.constants import (
+    APP_CHANNEL_LABEL,
+    APP_IS_PRERELEASE,
     APP_NAME,
     APP_VERSION,
+    APP_VERSION_DISPLAY,
     LOGGER_NAME,
     PROCESS_MODE_CLASSIFY,
+    PROCESS_MODE_CLASSIFY_EXCEL,
     PROCESS_MODE_GROUP,
     PROCESS_MODE_SPLIT,
     PROGRESS_COMPLETE,
     PROGRESS_IDLE,
+    STATUS_ANALYZING_SPREADSHEET,
     STATUS_ANALYZING_TEMPLATE,
+    STATUS_BETA_NOTICE,
     STATUS_CANCELLED_BY_USER,
+    STATUS_CLASSIFY_EXCEL_HINT,
+    STATUS_CLASSIFY_STEPS_HINT,
     STATUS_CLASSIFYING,
     STATUS_CLEAR_SESSION_CONFIRM,
-    STATUS_CLASSIFY_STEPS_HINT,
     STATUS_COMPLETED,
     STATUS_CONFIRM_PROMPT,
     STATUS_ERROR,
+    STATUS_MATCHING_DEPARTMENTS,
     STATUS_OPENING_PDF,
     STATUS_PROCESSING_TEMPLATE,
     STATUS_READY,
@@ -40,12 +49,20 @@ from separador_nominas.constants import (
     WINDOW_MIN_HEIGHT,
     WINDOW_MIN_WIDTH,
 )
+from separador_nominas.department_assignment_service import (
+    apply_spreadsheet_to_session,
+    format_excel_match_summary,
+)
+from separador_nominas.excel_summary_dialog import show_excel_match_summary_dialog
 from separador_nominas.exceptions import SeparadorNominasError, UnexpectedError
 from separador_nominas.filename_service import (
     suggest_base_name_from_pdf,
     suggest_output_directory,
 )
-from separador_nominas.group_export_service import export_classification_session
+from separador_nominas.group_export_service import (
+    export_classification_session,
+    format_classification_export_summary,
+)
 from separador_nominas.grouped_pdf_service import (
     analyze_payroll_pdf,
     format_grouping_summary,
@@ -54,6 +71,16 @@ from separador_nominas.grouped_pdf_service import (
 from separador_nominas.pdf_service import SplitResult, split_pdf
 from separador_nominas.recognition_models import GroupingAnalysis, GroupingProcessResult
 from separador_nominas.session_service import SessionService
+from separador_nominas.spreadsheet_import_view import SpreadsheetImportView
+from separador_nominas.spreadsheet_models import SpreadsheetClassificationState
+from separador_nominas.spreadsheet_service import (
+    import_department_assignments,
+    list_sheet_names,
+    peek_header_row,
+    validate_spreadsheet_path,
+)
+from separador_nominas.summary_confirm_dialog import ask_summary_confirm
+from separador_nominas.ui_geometry import maximize_toplevel
 from separador_nominas.validators import inspect_pdf
 from separador_nominas.worker_recognition_service import analyze_classification_pdf
 
@@ -65,10 +92,14 @@ class SeparadorNominasApp:
 
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
-        self.root.title(f"{APP_NAME} — {APP_VERSION}")
+        title_suffix = (
+            f" — {APP_CHANNEL_LABEL}" if APP_IS_PRERELEASE else f" — {APP_VERSION}"
+        )
+        self.root.title(f"{APP_NAME}{title_suffix}")
         self.root.minsize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
 
         self._pdf_path = tk.StringVar(value="")
+        self._excel_path = tk.StringVar(value="")
         self._destination_path = tk.StringVar(value="")
         self._base_name = tk.StringVar(value="")
         self._process_mode = tk.StringVar(value=PROCESS_MODE_SPLIT)
@@ -80,15 +111,32 @@ class SeparadorNominasApp:
         self._pending_analysis: GroupingAnalysis | None = None
         self._pending_destination: str | None = None
         self._pending_classify_export = False
+        self._pending_excel_export = False
         self._page_count: int | None = None
         self._last_destination: Path | None = None
         self._session_service = SessionService()
+        self._beta_notice_shown = False
 
         self._build_ui()
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
         self._on_mode_changed()
         self._set_controls_enabled(True)
         self._open_folder_button.configure(state=tk.DISABLED)
+        self._maybe_show_beta_notice()
+
+    def _maybe_show_beta_notice(self) -> None:
+        """Muestra el aviso beta una sola vez por sesión (sin persistencia)."""
+        if not APP_IS_PRERELEASE or self._beta_notice_shown:
+            return
+        self._beta_notice_shown = True
+        self.root.after(
+            200,
+            lambda: messagebox.showinfo(
+                f"{APP_NAME} — {APP_CHANNEL_LABEL}",
+                STATUS_BETA_NOTICE,
+                parent=self.root,
+            ),
+        )
 
     def _build_ui(self) -> None:
         """Construye los widgets de la interfaz."""
@@ -98,9 +146,21 @@ class SeparadorNominasApp:
         self.root.rowconfigure(0, weight=1)
         main.columnconfigure(1, weight=1)
 
-        title = ttk.Label(main, text=APP_NAME, font=("Segoe UI", 16, "bold"))
-        title.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 12))
-
+        title_text = (
+            f"{APP_NAME} — {APP_CHANNEL_LABEL}"
+            if APP_IS_PRERELEASE
+            else APP_NAME
+        )
+        header = ttk.Frame(main)
+        header.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 12))
+        ttk.Label(header, text=title_text, font=("Segoe UI", 16, "bold")).grid(
+            row=0, column=0, sticky="w"
+        )
+        ttk.Label(
+            header,
+            text=f"Versión {APP_VERSION_DISPLAY}",
+            font=("Segoe UI", 9),
+        ).grid(row=1, column=0, sticky="w", pady=(2, 0))
         # --- Archivo de origen ---
         source_frame = ttk.LabelFrame(main, text="Archivo de origen", padding=10)
         source_frame.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(0, 10))
@@ -116,6 +176,22 @@ class SeparadorNominasApp:
             source_frame, text="Seleccionar PDF", command=self._on_select_pdf
         )
         self._pdf_button.grid(row=1, column=2, sticky="e")
+
+        self._excel_label = ttk.Label(
+            source_frame, text="Archivo Excel de departamentos"
+        )
+        self._excel_label.grid(row=2, column=0, columnspan=3, sticky="w", pady=(10, 4))
+        self._excel_entry = ttk.Entry(
+            source_frame, textvariable=self._excel_path, state="readonly"
+        )
+        self._excel_entry.grid(row=3, column=0, columnspan=2, sticky="ew", padx=(0, 8))
+        self._excel_button = ttk.Button(
+            source_frame, text="Seleccionar Excel", command=self._on_select_excel
+        )
+        self._excel_button.grid(row=3, column=2, sticky="e")
+        self._excel_label.grid_remove()
+        self._excel_entry.grid_remove()
+        self._excel_button.grid_remove()
 
         # --- Carpeta de destino ---
         dest_frame = ttk.LabelFrame(main, text="Carpeta de destino", padding=10)
@@ -158,6 +234,13 @@ class SeparadorNominasApp:
             value=PROCESS_MODE_CLASSIFY,
             command=self._on_mode_changed,
         ).grid(row=2, column=0, sticky="w", pady=(4, 0))
+        ttk.Radiobutton(
+            mode_frame,
+            text="Clasificar automáticamente mediante Excel",
+            variable=self._process_mode,
+            value=PROCESS_MODE_CLASSIFY_EXCEL,
+            command=self._on_mode_changed,
+        ).grid(row=3, column=0, sticky="w", pady=(4, 0))
 
         # --- Configuración de nombres ---
         names_frame = ttk.LabelFrame(
@@ -213,7 +296,7 @@ class SeparadorNominasApp:
         self._steps_hint.grid_remove()
 
         progress_row = ttk.Frame(process_frame)
-        progress_row.grid(row=2, column=0, sticky="ew", pady=(0, 8))
+        progress_row.grid(row=2, column=0, sticky="ew", pady=(0, 4))
         progress_row.columnconfigure(0, weight=1)
 
         self._progress = ttk.Progressbar(
@@ -222,34 +305,39 @@ class SeparadorNominasApp:
             maximum=PROGRESS_COMPLETE,
             mode="determinate",
         )
-        self._progress.grid(row=0, column=0, sticky="ew", padx=(0, 8))
+        self._progress.grid(row=0, column=0, sticky="ew")
 
-        self._confirm_frame = ttk.Frame(progress_row)
-        self._confirm_frame.grid(row=0, column=1, sticky="e")
+        # Fila propia para Generar/Cancelar: evita que el resumen largo
+        # empuje el segundo botón fuera del área visible.
+        self._confirm_frame = ttk.Frame(process_frame)
+        self._confirm_frame.grid(row=3, column=0, sticky="ew", pady=(0, 8))
+        self._confirm_frame.columnconfigure(0, weight=1)
         self._confirm_summary = tk.StringVar(value="")
         ttk.Label(
             self._confirm_frame,
             textvariable=self._confirm_summary,
             foreground="#333333",
-        ).grid(row=0, column=0, padx=(0, 8))
+            wraplength=520,
+            justify=tk.LEFT,
+        ).grid(row=0, column=0, sticky="w", padx=(0, 8))
         self._confirm_accept_button = ttk.Button(
             self._confirm_frame,
             text="Generar",
             command=self._on_confirm_accept,
             width=10,
         )
-        self._confirm_accept_button.grid(row=0, column=1, padx=(0, 4))
+        self._confirm_accept_button.grid(row=0, column=1, padx=(0, 4), sticky="e")
         self._confirm_cancel_button = ttk.Button(
             self._confirm_frame,
             text="Cancelar",
             command=self._on_confirm_cancel,
             width=10,
         )
-        self._confirm_cancel_button.grid(row=0, column=2)
+        self._confirm_cancel_button.grid(row=0, column=2, sticky="e")
         self._hide_confirm_actions()
 
         ttk.Label(process_frame, textvariable=self._status_text).grid(
-            row=3, column=0, sticky="w"
+            row=4, column=0, sticky="w"
         )
 
         # --- Resultado / clasificación ---
@@ -295,6 +383,13 @@ class SeparadorNominasApp:
         self._classification_view.grid(row=0, column=0, sticky="nsew", pady=(0, 8))
         self._classification_view.grid_remove()
 
+        self._spreadsheet_view = SpreadsheetImportView(
+            result_frame,
+            on_changed=self._on_classification_changed,
+        )
+        self._spreadsheet_view.grid(row=0, column=0, sticky="nsew", pady=(0, 8))
+        self._spreadsheet_view.grid_remove()
+
         self._open_folder_button = ttk.Button(
             result_frame,
             text="Abrir carpeta de destino",
@@ -308,6 +403,7 @@ class SeparadorNominasApp:
         self._pending_analysis = None
         self._pending_destination = None
         self._pending_classify_export = False
+        self._pending_excel_export = False
         self._confirm_summary.set("")
         self._confirm_frame.grid_remove()
         self._confirm_accept_button.configure(state=tk.DISABLED)
@@ -319,12 +415,14 @@ class SeparadorNominasApp:
         destination: str,
         *,
         classify: bool = False,
+        excel: bool = False,
         summary_label: str = "",
     ) -> None:
         """Muestra Generar/Cancelar junto a la barra sin diálogo modal."""
         self._pending_analysis = analysis
         self._pending_destination = destination
         self._pending_classify_export = classify
+        self._pending_excel_export = excel
         self._awaiting_confirm = True
         if summary_label:
             self._confirm_summary.set(summary_label)
@@ -348,17 +446,18 @@ class SeparadorNominasApp:
         if destination is None:
             return
 
-        if self._pending_classify_export:
+        if self._pending_classify_export or self._pending_excel_export:
             session = self._session_service.session
             if session is None:
                 return
-            summary = self._classification_view.build_export_summary()
-            if not messagebox.askyesno(
-                APP_NAME,
-                f"{summary}\n\n¿Generar los archivos PDF ahora?",
-            ):
+            if self._pending_excel_export:
+                summary = format_classification_export_summary(session)
+            else:
+                summary = self._classification_view.build_export_summary()
+            if not ask_summary_confirm(self.root, summary):
                 return
             destination_local = destination
+            excel_mode = self._pending_excel_export
             self._hide_confirm_actions()
             self._status_text.set(STATUS_WRITING_CLASSIFICATION)
             self._progress_value.set(PROGRESS_IDLE)
@@ -369,7 +468,7 @@ class SeparadorNominasApp:
             self.root.update_idletasks()
             worker = threading.Thread(
                 target=self._run_write_classification,
-                args=(destination_local,),
+                args=(destination_local, excel_mode),
                 daemon=True,
             )
             worker.start()
@@ -421,6 +520,16 @@ class SeparadorNominasApp:
     def _on_mode_changed(self) -> None:
         """Ajusta controles según el modo seleccionado."""
         mode = self._process_mode.get()
+        show_excel = mode == PROCESS_MODE_CLASSIFY_EXCEL
+        if show_excel:
+            self._excel_label.grid()
+            self._excel_entry.grid()
+            self._excel_button.grid()
+        else:
+            self._excel_label.grid_remove()
+            self._excel_entry.grid_remove()
+            self._excel_button.grid_remove()
+
         if mode == PROCESS_MODE_GROUP:
             self._split_button.configure(text="Reconocer y agrupar")
             self._names_hint.configure(
@@ -451,6 +560,22 @@ class SeparadorNominasApp:
             else:
                 self._clear_session_button.grid_remove()
                 self._show_result_text_area()
+        elif mode == PROCESS_MODE_CLASSIFY_EXCEL:
+            self._names_hint.configure(
+                text=(
+                    "Relaciona DNI/NIE del PDF con el Excel de departamentos "
+                    "y genera un PDF por departamento. Sin persistencia."
+                )
+            )
+            if not self._is_processing:
+                self._base_name_entry.configure(state=tk.DISABLED)
+            self._set_classify_excel_step_labels(True)
+            if self._session_service.has_session():
+                self._clear_session_button.grid()
+                self._show_spreadsheet_area()
+            else:
+                self._clear_session_button.grid_remove()
+                self._show_result_text_area()
         else:
             self._names_hint.configure(
                 text="Ejemplo: Nominas_Julio_2026 → Nominas_Julio_2026_001.pdf"
@@ -475,8 +600,11 @@ class SeparadorNominasApp:
         else:
             self._pdf_button.configure(text="Seleccionar PDF")
             self._folder_button.configure(text="Seleccionar carpeta")
-            if self._process_mode.get() == PROCESS_MODE_GROUP:
+            mode = self._process_mode.get()
+            if mode == PROCESS_MODE_GROUP:
                 self._split_button.configure(text="Reconocer y agrupar")
+            elif mode == PROCESS_MODE_CLASSIFY_EXCEL:
+                self._split_button.configure(text="Analizar con Excel")
             else:
                 self._split_button.configure(text="Separar nóminas")
             self._confirm_accept_button.configure(text="Generar", width=10)
@@ -485,13 +613,35 @@ class SeparadorNominasApp:
             self._steps_hint.grid_remove()
             self._classification_view.set_step_labels(False)
 
+    def _set_classify_excel_step_labels(self, enabled: bool) -> None:
+        """Etiquetas del flujo Excel."""
+        if enabled:
+            self._pdf_button.configure(text="Seleccionar PDF")
+            self._excel_button.configure(text="Seleccionar Excel")
+            self._folder_button.configure(text="Seleccionar carpeta")
+            self._split_button.configure(text="Analizar con Excel")
+            self._confirm_accept_button.configure(text="Generar", width=10)
+            self._open_folder_button.configure(text="Abrir carpeta de destino")
+            self._steps_hint.configure(text=STATUS_CLASSIFY_EXCEL_HINT)
+            self._steps_hint.grid()
+            self._classification_view.set_step_labels(False)
+        else:
+            self._set_classify_step_labels(False)
+
     def _show_result_text_area(self) -> None:
         self._classification_view.grid_remove()
+        self._spreadsheet_view.grid_remove()
         self._result_text_frame.grid()
 
     def _show_classification_area(self) -> None:
         self._result_text_frame.grid_remove()
+        self._spreadsheet_view.grid_remove()
         self._classification_view.grid()
+
+    def _show_spreadsheet_area(self) -> None:
+        self._result_text_frame.grid_remove()
+        self._classification_view.grid_remove()
+        self._spreadsheet_view.grid()
 
     def _on_classification_changed(self) -> None:
         """Actualiza el resumen de confirmación si está visible."""
@@ -610,6 +760,7 @@ class SeparadorNominasApp:
         if self._session_service.has_session():
             self._session_service.clear_session()
             self._classification_view.set_session(None)
+            self._spreadsheet_view.clear()
             self._clear_session_button.grid_remove()
             self._hide_confirm_actions()
         self._pdf_path.set(str(path))
@@ -644,6 +795,178 @@ class SeparadorNominasApp:
 
         self._destination_path.set(selected)
 
+    def _on_select_excel(self) -> None:
+        """Abre el diálogo de selección de Excel y carga metadatos."""
+        if self._is_processing:
+            return
+        selected = filedialog.askopenfilename(
+            title="Seleccionar Excel de departamentos",
+            filetypes=[
+                ("Excel", "*.xlsx *.xls"),
+                ("Excel 2007+", "*.xlsx"),
+                ("Excel 97-2003", "*.xls"),
+                ("Todos los archivos", "*.*"),
+            ],
+        )
+        if not selected:
+            return
+        try:
+            path = validate_spreadsheet_path(selected)
+            sheets = list_sheet_names(path)
+            sheet = sheets[0]
+            _used, headers = peek_header_row(path, sheet_name=sheet)
+            self._excel_path.set(str(path))
+            self._spreadsheet_view.set_workbook_meta(
+                sheets, selected_sheet=sheet, headers=headers
+            )
+            self._session_service.set_spreadsheet_state(
+                SpreadsheetClassificationState(source_spreadsheet=path)
+            )
+            self._status_text.set(
+                f"Excel seleccionado: {len(sheets)} hoja"
+                f"{'s' if len(sheets) != 1 else ''}."
+            )
+            self._show_spreadsheet_area()
+        except SeparadorNominasError as exc:
+            self._show_error(exc.user_message)
+        except Exception:  # noqa: BLE001
+            logger.exception("Error al abrir Excel")
+            self._show_error(
+                "No se ha podido abrir el archivo Excel.\n"
+                "Comprueba que no esté dañado ni protegido."
+            )
+
+    def _start_classify_excel_process(self) -> None:
+        """Analiza PDF + Excel y prepara la clasificación automática."""
+        pdf = self._pdf_path.get().strip()
+        excel = self._excel_path.get().strip()
+        destination = self._destination_path.get().strip()
+        if not excel:
+            self._show_error("No se ha seleccionado ningún archivo Excel.")
+            return
+
+        if self._session_service.has_session():
+            if not messagebox.askyesno(
+                APP_NAME,
+                STATUS_REANALYZE_CLASSIFY_CONFIRM,
+            ):
+                return
+
+        sheet = self._spreadsheet_view.selected_sheet()
+        mapping = self._spreadsheet_view.selected_column_mapping()
+
+        self._is_processing = True
+        self._set_controls_enabled(False)
+        self._hide_confirm_actions()
+        self._stop_indeterminate_progress()
+        self._progress_value.set(PROGRESS_IDLE)
+        self._show_result_text_area()
+        self._set_result_text("")
+        self._status_text.set(STATUS_ANALYZING_SPREADSHEET)
+        logger.info("Inicio del análisis Excel + PDF")
+
+        worker = threading.Thread(
+            target=self._run_classify_excel_analyze,
+            args=(pdf, excel, destination, sheet, mapping),
+            daemon=True,
+        )
+        worker.start()
+
+    def _run_classify_excel_analyze(
+        self,
+        pdf: str,
+        excel: str,
+        destination: str,
+        sheet: str | None,
+        mapping: object,
+    ) -> None:
+        """Hilo: importa Excel, analiza PDF y aplica asignaciones."""
+        try:
+            imported = import_department_assignments(
+                excel,
+                sheet_name=sheet,
+                column_mapping=mapping,  # type: ignore[arg-type]
+            )
+            self.root.after(
+                0, lambda: self._status_text.set(STATUS_MATCHING_DEPARTMENTS)
+            )
+            session = analyze_classification_pdf(
+                pdf,
+                progress_callback=self._schedule_analyze_progress,
+            )
+            applied = apply_spreadsheet_to_session(session, imported)
+            summary = format_excel_match_summary(session, applied, imported)
+            self.root.after(
+                0,
+                lambda: self._on_classify_excel_ready(
+                    session, imported, applied, summary, destination, excel
+                ),
+            )
+        except SeparadorNominasError as exc:
+            logger.error("Error de dominio: %s", type(exc).__name__)
+            message = exc.user_message
+            self.root.after(0, lambda: self._on_process_error(message))
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("Error inesperado: %s", type(exc).__name__)
+            message = UnexpectedError(
+                "Se ha producido un error inesperado.\n"
+                "Inténtalo de nuevo o contacta con el administrador."
+            ).user_message
+            self.root.after(0, lambda: self._on_process_error(message))
+
+    def _on_classify_excel_ready(
+        self,
+        session: object,
+        imported: object,
+        applied: object,
+        summary: str,
+        destination: str,
+        excel: str,
+    ) -> None:
+        """Muestra la vista previa tras el cruce Excel-PDF."""
+        from separador_nominas.classification_models import ClassificationSession
+        from separador_nominas.department_assignment_service import (
+            AssignmentApplyResult,
+        )
+        from separador_nominas.spreadsheet_models import SpreadsheetImportResult
+
+        assert isinstance(session, ClassificationSession)
+        assert isinstance(imported, SpreadsheetImportResult)
+        assert isinstance(applied, AssignmentApplyResult)
+
+        self._session_service.set_session(session)
+        state = SpreadsheetClassificationState(
+            source_spreadsheet=Path(excel),
+            sheet_name=imported.sheet_name,
+            import_result=imported,
+            match_summary=applied.summary,
+            unresolved_conflict_docs={
+                c.document_id for c in applied.unresolved_conflicts
+            },
+        )
+        self._session_service.set_spreadsheet_state(state)
+        self._spreadsheet_view.set_summary_text(summary)
+        self._stop_indeterminate_progress()
+        self._progress_value.set(PROGRESS_COMPLETE)
+        self._status_text.set(STATUS_WAITING_CONFIRMATION)
+        self._is_processing = False
+        self._show_spreadsheet_area()
+        self._clear_session_button.grid()
+        self._set_controls_enabled(True)
+        label = (
+            f"{STATUS_CONFIRM_PROMPT}  "
+            f"{applied.summary.matched_workers} asignados / "
+            f"{applied.summary.pages_unclassified} no clasif."
+        )
+        self._show_confirm_actions(
+            None,
+            destination,
+            excel=True,
+            summary_label=label,
+        )
+        self.root.update_idletasks()
+        show_excel_match_summary_dialog(self.root, session, applied, imported)
+
     def _on_start(self) -> None:
         """Inicia el proceso según el modo seleccionado."""
         if self._is_processing:
@@ -654,6 +977,8 @@ class SeparadorNominasApp:
             self._start_group_process()
         elif mode == PROCESS_MODE_CLASSIFY:
             self._start_classify_process()
+        elif mode == PROCESS_MODE_CLASSIFY_EXCEL:
+            self._start_classify_excel_process()
         else:
             self._start_split_process()
 
@@ -818,7 +1143,9 @@ class SeparadorNominasApp:
         self._restore_classify_generate_button(destination)
         self.root.update_idletasks()
 
-    def _run_write_classification(self, destination: str) -> None:
+    def _run_write_classification(
+        self, destination: str, excel_mode: bool = False
+    ) -> None:
         """Exporta la clasificación fuera del hilo de la interfaz."""
         session = self._session_service.session
         if session is None:
@@ -830,11 +1157,23 @@ class SeparadorNominasApp:
             )
             return
         try:
+            if excel_mode:
+                from separador_nominas.classification_models import ExportMode
+
+                mode = self._spreadsheet_view.export_mode()
+                export_mode: ExportMode = (
+                    "separate" if mode == "separate" else "combined"
+                )
+                for group in session.groups.values():
+                    set_export_mode(session, group.group_id, export_mode)
             result = export_classification_session(
                 session,
                 destination,
                 progress_callback=self._schedule_write_progress,
                 create_destination=True,
+                unclassified_mode=(
+                    "combined_folder" if excel_mode else "omit"
+                ),
             )
             self.root.after(0, lambda: self._on_classify_success(result))
         except SeparadorNominasError as exc:
@@ -883,6 +1222,8 @@ class SeparadorNominasApp:
             return
         self._session_service.clear_session()
         self._classification_view.set_session(None)
+        self._spreadsheet_view.clear()
+        self._excel_path.set("")
         self._hide_confirm_actions()
         self._clear_session_button.grid_remove()
         self._show_result_text_area()
@@ -1129,6 +1470,16 @@ def open_folder(path: Path) -> None:
     subprocess.run(["xdg-open", str(resolved)], check=False)
 
 
+def _maximize_main_window(root: tk.Tk) -> None:
+    """
+    Maximiza la ventana principal al arrancar.
+
+    Usa el estado «zoomed» del gestor de ventanas (no fullscreen sin bordes),
+    para que quepan los paneles de clasificación/Excel en pantallas normales.
+    """
+    maximize_toplevel(root)
+
+
 def run_app() -> None:
     """Crea la ventana principal y arranca el bucle de eventos."""
     root = tk.Tk()
@@ -1142,4 +1493,5 @@ def run_app() -> None:
         pass
 
     SeparadorNominasApp(root)
+    _maximize_main_window(root)
     root.mainloop()

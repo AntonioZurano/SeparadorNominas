@@ -7,6 +7,7 @@ from pathlib import Path
 
 from separador_nominas.classification_models import ClassificationSession
 from separador_nominas.constants import LOGGER_NAME
+from separador_nominas.spreadsheet_models import SpreadsheetClassificationState
 from separador_nominas.temporary_files_service import TemporaryFilesService
 
 logger = logging.getLogger(LOGGER_NAME)
@@ -21,12 +22,24 @@ class SessionService:
         temporary_files: TemporaryFilesService | None = None,
     ) -> None:
         self._session: ClassificationSession | None = None
+        self._spreadsheet_state: SpreadsheetClassificationState | None = None
         self.temporary_files = temporary_files or TemporaryFilesService()
 
     @property
     def session(self) -> ClassificationSession | None:
         """Sesión actual o ``None``."""
         return self._session
+
+    @property
+    def spreadsheet_state(self) -> SpreadsheetClassificationState | None:
+        """Estado temporal del modo Excel o ``None``."""
+        return self._spreadsheet_state
+
+    def set_spreadsheet_state(
+        self, state: SpreadsheetClassificationState | None
+    ) -> None:
+        """Sustituye o limpia el estado Excel en memoria."""
+        self._spreadsheet_state = state
 
     def set_session(self, session: ClassificationSession) -> ClassificationSession:
         """
@@ -45,11 +58,12 @@ class SessionService:
         return session
 
     def clear_session(self) -> None:
-        """Vacía trabajadores, grupos y referencias; limpia temporales."""
+        """Vacía trabajadores, grupos, Excel y referencias; limpia temporales."""
         if self._session is not None:
             self._session.workers.clear()
             self._session.groups.clear()
             self._session = None
+        self._spreadsheet_state = None
         self.temporary_files.cleanup()
         logger.info("Sesión de clasificación limpiada")
 

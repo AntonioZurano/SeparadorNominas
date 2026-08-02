@@ -1,7 +1,7 @@
 # Roadmap
 
-Estado actual: **versión 2.0.0** (estable). Incluye separación, agrupación por
-trabajador y clasificación por grupos (DNI/NIE).
+Estado actual: **versión 2.5.0** (estable: Excel departamentos + UX).
+Estable en `main` tras merge autorizado.
 
 Las versiones siguientes están **expresamente no implementadas** en `main`
 hasta su integración.
@@ -32,11 +32,34 @@ hasta su integración.
 
 Detalle: [`CLASIFICACION_NOMINAS.md`](CLASIFICACION_NOMINAS.md).
 
-## Versión 2.1.0 / posterior (no implementada — listados)
+## Versión 2.5.0 (Excel departamentos)
 
-Antes: roadmap 1.2.0. Aplazada tras priorizar la clasificación.
+### 2.5.0 (estable)
 
-- Importar listado CSV o Excel de trabajadores.
+- Importación Excel `.xlsx` / `.xls` (DNI/NIE → departamento).
+- Grupos automáticos; `No_clasificadas/`; orden global de páginas.
+- Ventana y modales de resumen/confirmación maximizados.
+- Sin indicador BETA en la UI de producción.
+
+Publicación del `.exe`: [`PUBLICACION_v2.5.0.md`](PUBLICACION_v2.5.0.md)
+(solo con autorización).
+
+### 2.5.0-beta.1 / 2.5.0-beta.2 (prereleases históricas)
+
+Validadas antes de la estable; ver changelog.
+
+### Siguientes hitos (planificados)
+
+| Hito | Objetivo |
+|------|----------|
+| **2.1.0+** | CSV/Excel con correo (distinto de departamentos) |
+| **3.0.0** | Borradores Outlook / Microsoft 365 |
+
+## Versión 2.1.0 / posterior (no implementada — listados + correo)
+
+Antes: roadmap 1.2.0. Distinta de la 2.5.0 (departamentos).
+
+- Importar listado CSV o Excel de trabajadores **con correo**.
 - Asociar trabajador y correo electrónico.
 - Validar trabajadores sin correo.
 - Generar informe de coincidencias.

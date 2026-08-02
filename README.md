@@ -4,7 +4,18 @@ Miniaplicación de escritorio para **Windows 10 y Windows 11** que separa un
 archivo PDF multipágina de nóminas: **una página por archivo**, **agrupación
 por trabajador** o **clasificación en grupos** (DNI/NIE + departamentos).
 
-**Versión actual: 2.0.0** (clasificación por grupos / DNI-NIE)
+**Versión actual: 2.5.0** (clasificación por grupos + Excel departamentos).
+
+## Versión 2.5.0
+
+Incluye la clasificación automática mediante Excel validada en las betas
+`2.5.0-beta.1` y `2.5.0-beta.2`, más correcciones de UX (ventana y modales
+maximizados).
+
+- Detalle funcional: [`docs/IMPORTACION_EXCEL.md`](docs/IMPORTACION_EXCEL.md)
+- Publicación del ejecutable (pendiente de autorización):
+  [`docs/PUBLICACION_v2.5.0.md`](docs/PUBLICACION_v2.5.0.md)
+- Historial: [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Para agentes de IA
 
@@ -31,8 +42,8 @@ Esta aplicación permite:
 
 1. Abrir el PDF completo.
 2. Elegir una carpeta de destino.
-3. Separar una página por archivo, reconocer y agrupar por trabajador, **o**
-   clasificar trabajadores en grupos (DNI/NIE).
+3. Separar una página por archivo, reconocer y agrupar por trabajador,
+   clasificar en grupos (DNI/NIE) **o** clasificar automáticamente mediante Excel.
 
 Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
 
@@ -225,6 +236,7 @@ de protección de datos. Consulta
 |---------|----------|
 | 1.1.0   | Reconocimiento y agrupación por trabajador (**implementada**) |
 | 2.0.0   | Clasificación por grupos / DNI-NIE (**implementada**) |
+| 2.5.0   | Clasificación automática mediante Excel (**implementada**) |
 | 2.1.0+  | Asociación trabajador ↔ correo (CSV/Excel) |
 | 3.0.0   | Borradores de correo con Outlook / Microsoft 365 |
 
@@ -244,4 +256,4 @@ normativa aplicable. La licencia MIT no exime de esas obligaciones.
 
 ## Versión actual
 
-`2.0.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
+`2.5.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).

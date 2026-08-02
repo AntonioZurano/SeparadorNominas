@@ -1,0 +1,84 @@
+name: Informe de error (beta 2.5)
+description: Reportar un fallo de la versión beta 2.5.0 (Excel / clasificación)
+title: "[beta 2.5] "
+labels: ["beta", "bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por probar la beta.
+
+        **No adjuntes nóminas reales, Excel con datos personales, DNI/NIE,
+        nombres, salarios ni capturas que muestren datos personales.**
+        Usa ejemplos sintéticos o describe el fallo de forma anónima.
+
+  - type: input
+    id: version
+    attributes:
+      label: Versión exacta
+      description: Por ejemplo 2.5.0-beta.1 (visible en la ventana)
+      placeholder: 2.5.0-beta.1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Cómo ejecutaste la app
+      options:
+        - Ejecutable Windows (Release / prerelease)
+        - Build local (PyInstaller)
+        - Código fuente (`python -m separador_nominas.main`)
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Sistema operativo
+      placeholder: Windows 11 64-bit
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Modo de proceso
+      options:
+        - Clasificar automáticamente mediante Excel
+        - Clasificar trabajadores en grupos
+        - Agrupar por trabajador
+        - Separar una página por archivo
+        - Otro / no seguro
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      description: Sin datos personales. Ejemplo — "PDF sintético 10 páginas + xlsx con 2 departamentos".
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamiento esperado
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamiento observado
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacidad
+      options:
+        - label: Confirmo que este informe no incluye datos personales ni archivos reales de nóminas
+          required: true

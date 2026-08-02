@@ -12,7 +12,9 @@ puedes:
 - **Reconocer y agrupar** las páginas del mismo trabajador en un solo PDF
   (cuando el PDF tiene texto seleccionable); o
 - **Clasificar en grupos** (departamentos/reglas) detectando DNI/NIE y nombre,
-  con exportación por trabajador o en un PDF conjunto por grupo.
+  con exportación por trabajador o en un PDF conjunto por grupo; o
+- **Clasificar automáticamente mediante Excel** (listado DNI/NIE →
+  departamento) generando un PDF por departamento.
 
 ## Antes de empezar
 
@@ -28,7 +30,9 @@ puedes:
 Ejecuta `SeparadorNominas.exe` (o el script `scripts/run.ps1` si trabajas en
 modo desarrollo).
 
-Verás la ventana titulada **Separador de Nóminas PDF**.
+Verás la ventana titulada **Separador de Nóminas PDF**, abierta de forma
+**maximizada** para que quepan todos los controles (puedes restaurarla o
+cambiar el tamaño después).
 
 ### 2. Seleccionar el PDF
 
