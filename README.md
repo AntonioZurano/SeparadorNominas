@@ -78,11 +78,8 @@ Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
 
 ## Esquema de la interfaz
 
-Captura de la ventana principal (v2.5.0), con el modo Excel seleccionado:
-
-![Pantalla principal de Separador de Nóminas PDF](assets/pantalla-principal.jpg)
-
-Esquema simplificado:
+La captura de la ventana principal está al inicio de este README
+(`assets/pantalla-principal.jpg`). Esquema simplificado:
 
 ```text
 ┌──────────────────────────────────────────────────────────┐
