@@ -7,6 +7,34 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-08-02
+
+### Añadido
+
+- Modo **Clasificar automáticamente mediante Excel**: lectura `.xlsx`/`.xls`,
+  cruce por DNI/NIE, grupos automáticos por departamento, exportación
+  conjunta y carpeta `No_clasificadas/`.
+- Módulos: `spreadsheet_models`, `spreadsheet_service`,
+  `department_normalization`, `department_assignment_service`,
+  `spreadsheet_import_view`, `excel_summary_dialog`,
+  `summary_confirm_dialog`, `ui_geometry`.
+- Dependencias: `openpyxl`, `xlrd==1.2.0` (lectura local sin Excel instalado).
+- Documentación: `docs/IMPORTACION_EXCEL.md`, guías de pruebas beta,
+  scripts de publicación GitHub Releases.
+- Ventana principal maximizada al arrancar.
+- Modal maximizado de resumen tras Analizar con Excel (departamentos / DNI).
+- Confirmación Generar en ventana maximizada.
+
+### Corregido
+
+- Panel Generar/Cancelar visible (fila propia bajo la barra de progreso).
+- Exportación conjunta: páginas en orden original global del PDF.
+- Tooling de publicación: tolerancia a stderr de `git`/`gh` en PowerShell.
+
+Incluye el contenido validado en las prereleases `2.5.0-beta.1` y
+`2.5.0-beta.2`. Guía de publicación pendiente de autorización:
+[`docs/PUBLICACION_v2.5.0.md`](docs/PUBLICACION_v2.5.0.md).
+
 ## [2.5.0-beta.2] - 2026-07-30
 
 ### Corregido

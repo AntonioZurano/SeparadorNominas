@@ -20,8 +20,8 @@ Caso de uso:
 3. El usuario elige el PDF, la carpeta de destino y el modo de proceso.
 4. La app genera archivos individuales o agrupados **sin subir nada a Internet**.
 
-**Versión actual:** `2.5.0-beta.2` (prerelease; ver `VERSION`).
-Estable en `main`: `2.0.0`.
+**Versión actual:** `2.5.0` (ver `VERSION`).
+Estable en `main` tras merge autorizado de esta versión.
 
 **Licencia:** MIT. Procesa documentos sensibles; el usuario es responsable del
 tratamiento conforme a la normativa de protección de datos.
@@ -69,13 +69,14 @@ Dependencias mínimas a propósito. No añadir librerías sin necesidad clara.
 - UX: selección azul, pasos 1–7, confirmación al reanalizar.
 - Detalle: [`docs/CLASIFICACION_NOMINAS.md`](docs/CLASIFICACION_NOMINAS.md).
 
-## Alcance de la v2.5.0 (beta en preparación)
+## Alcance de la v2.5.0 (implementada)
 
 - Clasificación automática mediante Excel (DNI/NIE → departamento).
 - Lectura local `.xlsx` / `.xls`; grupos automáticos; `No_clasificadas/`.
-- Código integrado en `development`; prerelease `2.5.0-beta.2`.
+- Ventana y modales de resumen maximizados; sin canal BETA en UI estable.
 - Detalle: [`docs/IMPORTACION_EXCEL.md`](docs/IMPORTACION_EXCEL.md).
-- Pruebas beta: [`docs/PRUEBAS_BETA_2.5.0.md`](docs/PRUEBAS_BETA_2.5.0.md).
+- Publicación del `.exe`: [`docs/PUBLICACION_v2.5.0.md`](docs/PUBLICACION_v2.5.0.md)
+  (solo con autorización).
 
 ## Fuera de alcance (NO implementar sin petición explícita)
 
@@ -99,7 +100,7 @@ Detalle: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 | **1.0.1** | **Implementada** | Documentación para agentes de IA |
 | **1.1.0** | **Implementada** | Extraer texto, reconocer nombre, agrupar por trabajador |
 | **2.0.0** | **Implementada** | Clasificación por grupos / DNI-NIE |
-| **2.5.0** | Beta `2.5.0-beta.2` | Clasificación automática mediante Excel |
+| **2.5.0** | **Implementada** | Clasificación automática mediante Excel |
 | **2.1.0+** | No implementada | CSV/Excel con correo, asociar trabajador↔correo |
 | **3.0.0** | No implementada | Borradores de correo, Outlook/M365 |
 | Mejoras | No implementadas | OCR local, firma del exe, instalador, cifrado, multidioma |
@@ -290,6 +291,7 @@ pytest -q
 | `docs/PRUEBAS_BETA_2.5.0.md` | Checklist manual de la beta 2.5 |
 | `docs/INFORME_PRUEBAS_BETA.md` | Plantilla de informe de pruebas beta |
 | `docs/PUBLICACION_GITHUB.md` | Preparación y publicación de Releases |
+| `docs/PUBLICACION_v2.5.0.md` | Checklist Release estable v2.5.0 (autorización) |
 | `docs/ROADMAP.md` | Versiones futuras |
 | `CHANGELOG.md` | Historial de cambios |
 

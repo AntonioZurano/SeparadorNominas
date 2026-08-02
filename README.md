@@ -4,18 +4,18 @@ Miniaplicación de escritorio para **Windows 10 y Windows 11** que separa un
 archivo PDF multipágina de nóminas: **una página por archivo**, **agrupación
 por trabajador** o **clasificación en grupos** (DNI/NIE + departamentos).
 
-**Versión actual en desarrollo / beta: 2.5.0-beta.2** (Excel departamentos).
-**Estable en `main`: 2.0.0** (clasificación por grupos / DNI-NIE).
+**Versión actual: 2.5.0** (clasificación por grupos + Excel departamentos).
 
-## Versión beta 2.5.0
+## Versión 2.5.0
 
-La prerelease **2.5.0-beta.2** incorpora la clasificación automática mediante
-Excel y correcciones de UX (ventana y modales maximizados). El ejecutable
-aparece en GitHub Releases como *pre-release*.
+Incluye la clasificación automática mediante Excel validada en las betas
+`2.5.0-beta.1` y `2.5.0-beta.2`, más correcciones de UX (ventana y modales
+maximizados).
 
-- Guía de pruebas: [`docs/PRUEBAS_BETA_2.5.0.md`](docs/PRUEBAS_BETA_2.5.0.md)
-- Informe: [`docs/INFORME_PRUEBAS_BETA.md`](docs/INFORME_PRUEBAS_BETA.md)
 - Detalle funcional: [`docs/IMPORTACION_EXCEL.md`](docs/IMPORTACION_EXCEL.md)
+- Publicación del ejecutable (pendiente de autorización):
+  [`docs/PUBLICACION_v2.5.0.md`](docs/PUBLICACION_v2.5.0.md)
+- Historial: [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Para agentes de IA
 
@@ -236,7 +236,7 @@ de protección de datos. Consulta
 |---------|----------|
 | 1.1.0   | Reconocimiento y agrupación por trabajador (**implementada**) |
 | 2.0.0   | Clasificación por grupos / DNI-NIE (**implementada**) |
-| 2.5.0   | Clasificación automática mediante Excel (**2.5.0-beta.2**) |
+| 2.5.0   | Clasificación automática mediante Excel (**implementada**) |
 | 2.1.0+  | Asociación trabajador ↔ correo (CSV/Excel) |
 | 3.0.0   | Borradores de correo con Outlook / Microsoft 365 |
 
@@ -256,5 +256,4 @@ normativa aplicable. La licencia MIT no exime de esas obligaciones.
 
 ## Versión actual
 
-`2.5.0-beta.2` (prerelease) — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
-Estable en `main`: `2.0.0`.
+`2.5.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).

@@ -1,7 +1,7 @@
 # Roadmap
 
-Estado actual: **versión 2.5.0-beta.2** (prerelease Excel + fixes UX).
-Estable en `main`: **2.0.0** (separación, agrupación y clasificación manual).
+Estado actual: **versión 2.5.0** (estable: Excel departamentos + UX).
+Estable en `main` tras merge autorizado.
 
 Las versiones siguientes están **expresamente no implementadas** en `main`
 hasta su integración.
@@ -34,30 +34,26 @@ Detalle: [`CLASIFICACION_NOMINAS.md`](CLASIFICACION_NOMINAS.md).
 
 ## Versión 2.5.0 (Excel departamentos)
 
-### 2.5.0-beta.1 (publicada)
+### 2.5.0 (estable)
 
-- Importar Excel `.xlsx` / `.xls` con DNI/NIE → departamento.
-- Crear grupos automáticamente y exportar un PDF por departamento.
-- Gestión de no clasificados, conflictos y vista previa.
-- Sin persistencia; sin emparejar por nombre.
-- Indicador BETA en UI; checklist e informe de pruebas beta.
+- Importación Excel `.xlsx` / `.xls` (DNI/NIE → departamento).
+- Grupos automáticos; `No_clasificadas/`; orden global de páginas.
+- Ventana y modales de resumen/confirmación maximizados.
+- Sin indicador BETA en la UI de producción.
 
-### 2.5.0-beta.2 (prerelease actual)
+Publicación del `.exe`: [`PUBLICACION_v2.5.0.md`](PUBLICACION_v2.5.0.md)
+(solo con autorización).
 
-- Ventana principal maximizada al arrancar.
-- Modal maximizado tras Analizar con Excel (departamentos / DNI).
-- Confirmación Generar en ventana maximizada.
-- Mejoras de tooling de publicación GitHub Releases.
+### 2.5.0-beta.1 / 2.5.0-beta.2 (prereleases históricas)
 
-Detalle: [`IMPORTACION_EXCEL.md`](IMPORTACION_EXCEL.md),
-[`PRUEBAS_BETA_2.5.0.md`](PRUEBAS_BETA_2.5.0.md).
+Validadas antes de la estable; ver changelog.
 
 ### Siguientes hitos (planificados)
 
 | Hito | Objetivo |
 |------|----------|
-| **2.5.0-rc.1** | Candidato a estable tras pruebas |
-| **2.5.0** | Estable en `main` (solo con autorización) |
+| **2.1.0+** | CSV/Excel con correo (distinto de departamentos) |
+| **3.0.0** | Borradores Outlook / Microsoft 365 |
 
 ## Versión 2.1.0 / posterior (no implementada — listados + correo)
 
