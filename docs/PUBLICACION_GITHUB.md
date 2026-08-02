@@ -37,7 +37,10 @@ SeparadorNominas-vVERSION-win64.exe.sha256
 Tag: vVERSION
 ```
 
-Ejemplo: `SeparadorNominas-v2.5.0-beta.1-win64.exe`.
+Ejemplo: `SeparadorNominas-v2.5.0-win64.exe`.
+
+Checklist de la estable **2.5.0** (tag, build, publish, UTF-8):
+[`PUBLICACION_v2.5.0.md`](PUBLICACION_v2.5.0.md).
 
 El script `build.ps1` incluye hidden imports de `openpyxl`/`xlrd` para el
 modo Excel; ver [`COMPILACION_WINDOWS.md`](COMPILACION_WINDOWS.md).
