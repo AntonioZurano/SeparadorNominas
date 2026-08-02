@@ -6,6 +6,8 @@ por trabajador** o **clasificación en grupos** (DNI/NIE + departamentos).
 
 **Versión actual: 2.5.0** (clasificación por grupos + Excel departamentos).
 
+![Pantalla principal de Separador de Nóminas PDF 2.5.0](assets/pantalla-principal.jpg)
+
 ## Versión 2.5.0
 
 Incluye la clasificación automática mediante Excel validada en las betas
@@ -75,6 +77,12 @@ Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
 - Validaciones y mensajes de error comprensibles.
 
 ## Esquema de la interfaz
+
+Captura de la ventana principal (v2.5.0), con el modo Excel seleccionado:
+
+![Pantalla principal de Separador de Nóminas PDF](assets/pantalla-principal.jpg)
+
+Esquema simplificado:
 
 ```text
 ┌──────────────────────────────────────────────────────────┐
