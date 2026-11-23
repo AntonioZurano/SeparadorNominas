@@ -68,6 +68,7 @@ from separador_nominas.grouped_pdf_service import (
     format_grouping_summary,
     write_grouped_pdfs,
 )
+from separador_nominas.logging_utils import log_unexpected_error
 from separador_nominas.pdf_service import SplitResult, split_pdf
 from separador_nominas.recognition_models import GroupingAnalysis, GroupingProcessResult
 from separador_nominas.session_service import SessionService
@@ -740,10 +741,7 @@ class SeparadorNominasApp:
             message = exc.user_message
             self.root.after(0, lambda: self._on_pdf_inspect_error(message))
         except Exception as exc:  # noqa: BLE001
-            logger.exception(
-                "Error inesperado al seleccionar PDF: %s",
-                type(exc).__name__,
-            )
+            log_unexpected_error(logger, "inspect_pdf", exc)
             self.root.after(
                 0,
                 lambda: self._on_pdf_inspect_error(
@@ -829,8 +827,8 @@ class SeparadorNominasApp:
             self._show_spreadsheet_area()
         except SeparadorNominasError as exc:
             self._show_error(exc.user_message)
-        except Exception:  # noqa: BLE001
-            logger.exception("Error al abrir Excel")
+        except Exception as exc:  # noqa: BLE001
+            log_unexpected_error(logger, "open_excel", exc)
             self._show_error(
                 "No se ha podido abrir el archivo Excel.\n"
                 "Comprueba que no esté dañado ni protegido."
@@ -907,7 +905,7 @@ class SeparadorNominasApp:
             message = exc.user_message
             self.root.after(0, lambda: self._on_process_error(message))
         except Exception as exc:  # noqa: BLE001
-            logger.exception("Error inesperado: %s", type(exc).__name__)
+            log_unexpected_error(logger, "classify_excel_analyze", exc)
             message = UnexpectedError(
                 "Se ha producido un error inesperado.\n"
                 "Inténtalo de nuevo o contacta con el administrador."
@@ -1118,7 +1116,7 @@ class SeparadorNominasApp:
             message = exc.user_message
             self.root.after(0, lambda: self._on_process_error(message))
         except Exception as exc:  # noqa: BLE001
-            logger.exception("Error inesperado: %s", type(exc).__name__)
+            log_unexpected_error(logger, "classify_analyze", exc)
             message = UnexpectedError(
                 "Se ha producido un error inesperado.\n"
                 "Inténtalo de nuevo o contacta con el administrador."
@@ -1181,7 +1179,7 @@ class SeparadorNominasApp:
             message = exc.user_message
             self.root.after(0, lambda: self._on_process_error(message))
         except Exception as exc:  # noqa: BLE001
-            logger.exception("Error inesperado: %s", type(exc).__name__)
+            log_unexpected_error(logger, "write_classification", exc)
             message = UnexpectedError(
                 "Se ha producido un error inesperado.\n"
                 "Inténtalo de nuevo o contacta con el administrador."
@@ -1252,7 +1250,7 @@ class SeparadorNominasApp:
             message = exc.user_message
             self.root.after(0, lambda: self._on_process_error(message))
         except Exception as exc:  # noqa: BLE001
-            logger.exception("Error inesperado: %s", type(exc).__name__)
+            log_unexpected_error(logger, "split_pdf", exc)
             message = UnexpectedError(
                 "Se ha producido un error inesperado.\n"
                 "Inténtalo de nuevo o contacta con el administrador."
@@ -1275,7 +1273,7 @@ class SeparadorNominasApp:
             message = exc.user_message
             self.root.after(0, lambda: self._on_process_error(message))
         except Exception as exc:  # noqa: BLE001
-            logger.exception("Error inesperado: %s", type(exc).__name__)
+            log_unexpected_error(logger, "analyze_group", exc)
             message = UnexpectedError(
                 "Se ha producido un error inesperado.\n"
                 "Inténtalo de nuevo o contacta con el administrador."
@@ -1311,7 +1309,7 @@ class SeparadorNominasApp:
             message = exc.user_message
             self.root.after(0, lambda: self._on_process_error(message))
         except Exception as exc:  # noqa: BLE001
-            logger.exception("Error inesperado: %s", type(exc).__name__)
+            log_unexpected_error(logger, "write_groups", exc)
             message = UnexpectedError(
                 "Se ha producido un error inesperado.\n"
                 "Inténtalo de nuevo o contacta con el administrador."
