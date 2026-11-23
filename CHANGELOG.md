@@ -12,6 +12,17 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 - Captura de la pantalla principal (`assets/pantalla-principal.jpg`) en el
   README.
 
+### Cambiado
+
+- README reorganizado para portfolio: descarga de la Release v2.5.0, cuatro
+  modos, privacidad matizada, stack/arquitectura y sección de agentes de IA
+  al final.
+- `docs/PUBLICACION_v2.5.0.md` pasa a registro de la Release ya publicada
+  (hechos comprobados vs procedimiento histórico previsto no verificable).
+- Aclaración en el registro del repositorio: la Release `v2.5.0` existe en
+  GitHub; esta actualización documental **no** modifica las notas adjuntas
+  a esa Release en GitHub (pueden diferir del texto actual del changelog).
+
 ## [2.5.0] - 2026-08-02
 
 ### Añadido
@@ -37,8 +48,12 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 - Tooling de publicación: tolerancia a stderr de `git`/`gh` en PowerShell.
 
 Incluye el contenido validado en las prereleases `2.5.0-beta.1` y
-`2.5.0-beta.2`. Guía de publicación pendiente de autorización:
-[`docs/PUBLICACION_v2.5.0.md`](docs/PUBLICACION_v2.5.0.md).
+`2.5.0-beta.2`. Enlace a la Release en GitHub:
+[v2.5.0](https://github.com/AntonioZurano/SeparadorNominas/releases/tag/v2.5.0).
+Registro documental en el repositorio:
+[`docs/PUBLICACION_v2.5.0.md`](docs/PUBLICACION_v2.5.0.md)
+(actualizado en [Unreleased]; no sustituye las notas originales de la
+Release en GitHub).
 
 ## [2.5.0-beta.2] - 2026-07-30
 
