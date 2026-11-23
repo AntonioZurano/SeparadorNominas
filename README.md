@@ -1,117 +1,119 @@
 # Separador de Nóminas PDF
 
-Miniaplicación de escritorio para **Windows 10 y Windows 11** que separa un
-archivo PDF multipágina de nóminas: **una página por archivo**, **agrupación
-por trabajador** o **clasificación en grupos** (DNI/NIE + departamentos).
+Miniaplicación de escritorio para **Windows 10 y Windows 11** que procesa un
+PDF multipágina de nóminas en local: separa páginas, agrupa por trabajador o
+clasifica por grupos y departamentos.
 
-**Versión actual: 2.5.0** (clasificación por grupos + Excel departamentos).
+**Versión actual: 2.5.0**
 
 ![Pantalla principal de Separador de Nóminas PDF 2.5.0](assets/pantalla-principal.jpg)
-
-## Versión 2.5.0
-
-Incluye la clasificación automática mediante Excel validada en las betas
-`2.5.0-beta.1` y `2.5.0-beta.2`, más correcciones de UX (ventana y modales
-maximizados).
-
-- Detalle funcional: [`docs/IMPORTACION_EXCEL.md`](docs/IMPORTACION_EXCEL.md)
-- Publicación del ejecutable (pendiente de autorización):
-  [`docs/PUBLICACION_v2.5.0.md`](docs/PUBLICACION_v2.5.0.md)
-- Historial: [`CHANGELOG.md`](CHANGELOG.md)
-
-## Para agentes de IA
-
-Si eres un asistente o agente que abre este repositorio, empieza por
-**[`AGENTS.md`](AGENTS.md)**: describe el propósito, el alcance, el roadmap, la
-arquitectura/privacidad y el **flujo Git obligatorio**. También hay reglas en
-[`.cursor/rules/`](.cursor/rules/) para Cursor.
-
-## Contribuir / flujo Git
-
-- `main`: solo versiones estables.
-- `development`: integración y pruebas.
-- Cada tarea: rama hija de `development` (`feature/…`, `fix/…`, etc.).
-- Merges, tags y pushes: solo con autorización expresa.
-
-Detalle: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Problema que resuelve
 
 La asesoría suele entregar un único PDF donde cada página es la nómina de un
-trabajador. Separar esas páginas a mano es lento y propenso a errores.
+trabajador (a veces varias del mismo). Separar o repartir esas páginas a mano
+es lento y propenso a errores.
 
-Esta aplicación permite:
+Esta aplicación permite abrir el PDF, elegir una carpeta de destino y aplicar
+uno de los cuatro modos de proceso. Todo se ejecuta **en el equipo del
+usuario**, sin subir archivos a un servicio en la nube de la aplicación.
 
-1. Abrir el PDF completo.
-2. Elegir una carpeta de destino.
-3. Separar una página por archivo, reconocer y agrupar por trabajador,
-   clasificar en grupos (DNI/NIE) **o** clasificar automáticamente mediante Excel.
+## Descarga para Windows
 
-Todo el proceso se ejecuta **en local**, sin subir archivos ni datos a Internet.
+La versión estable **2.5.0** está publicada en GitHub Releases:
 
-## Funciones de la versión 2.0.0
+- [Release SeparadorNominas v2.5.0](https://github.com/AntonioZurano/SeparadorNominas/releases/tag/v2.5.0)
+  (publicada el 2026-08-02)
+- Ejecutable: [`SeparadorNominas-v2.5.0-win64.exe`](https://github.com/AntonioZurano/SeparadorNominas/releases/download/v2.5.0/SeparadorNominas-v2.5.0-win64.exe)
+- Checksum: [`SeparadorNominas-v2.5.0-win64.exe.sha256`](https://github.com/AntonioZurano/SeparadorNominas/releases/download/v2.5.0/SeparadorNominas-v2.5.0-win64.exe.sha256)
 
-- Modo **Clasificar trabajadores en grupos** (sesión solo en memoria).
-- Detección de DNI/NIE, grupos/reglas, exportación separada o conjunta.
-- UX: selección con fondo azul, pasos 1–7, confirmación al reanalizar,
-  modal al añadir que indica el grupo.
-- Guía: [`docs/CLASIFICACION_NOMINAS.md`](docs/CLASIFICACION_NOMINAS.md).
+El archivo `.sha256` sirve para **comprobar la integridad** del ejecutable
+descargado (que el fichero no se haya corrompido al transferir). **No** es una
+firma digital ni una prueba independiente de autoría. El ejecutable **no está
+firmado**; Windows puede mostrar avisos de SmartScreen o del antivirus en
+equipos con políticas estrictas.
 
-## Funciones de la versión 1.1.0
+Manual de uso: [`docs/FUNCIONAMIENTO.md`](docs/FUNCIONAMIENTO.md).
+Registro de la publicación: [`docs/PUBLICACION_v2.5.0.md`](docs/PUBLICACION_v2.5.0.md).
 
-- Todo lo de la 1.0.x (separación página a página).
-- Modo **Reconocer y agrupar por trabajador** (texto seleccionable, sin OCR).
-- Resumen y confirmación antes de guardar los PDF agrupados.
-- Un PDF por trabajador; páginas no reconocidas en `No_reconocidas/`.
-- Protección frente a sobrescritura accidental de archivos.
+## Modos de uso (2.5.0)
 
-## Funciones de la versión 1.0.0
+| Modo | Qué hace |
+|------|----------|
+| **Separar una página por archivo** | Genera un PDF por página, con numeración adaptativa y protección ante sobrescritura. |
+| **Reconocer y agrupar por trabajador** | Extrae texto local (sin OCR), reconoce el nombre y agrupa páginas con la misma clave normalizada exacta. Pide confirmación antes de escribir. Las no reconocidas van a `No_reconocidas/`. |
+| **Clasificar trabajadores en grupos** | Detecta y valida DNI/NIE, consolida páginas por documento y permite crear grupos y asignar trabajadores (sesión en memoria). Exportación separada o conjunta. |
+| **Clasificar automáticamente mediante Excel** | Cruza DNI/NIE del PDF con un Excel local (`.xlsx` / `.xls`) de departamentos, crea grupos automáticos y deja sin cruce en `No_clasificadas/`. |
 
-- Selección de un archivo PDF de origen.
-- Selección de carpeta de destino.
-- Nombre base editable para los archivos generados.
-- Separación de una página por archivo (sin rasterizar).
-- Numeración automática con ceros a la izquierda según el total de páginas.
-- Barra de progreso y mensajes de estado en español.
-- Aviso al finalizar y botón para abrir la carpeta de destino.
-- Validaciones y mensajes de error comprensibles.
+Detalle:
 
-## Esquema de la interfaz
+- Clasificación manual: [`docs/CLASIFICACION_NOMINAS.md`](docs/CLASIFICACION_NOMINAS.md)
+- Excel departamentos: [`docs/IMPORTACION_EXCEL.md`](docs/IMPORTACION_EXCEL.md)
 
-La captura de la ventana principal está al inicio de este README
-(`assets/pantalla-principal.jpg`). Esquema simplificado:
+## Requisitos e inicio rápido (usuario)
 
-```text
-┌──────────────────────────────────────────────────────────┐
-│  Separador de Nóminas PDF                                │
-├──────────────────────────────────────────────────────────┤
-│  Archivo de origen                                       │
-│  [ C:\...\Nominas_Julio_2026.pdf          ] [Seleccionar]│
-├──────────────────────────────────────────────────────────┤
-│  Carpeta de destino                                      │
-│  [ C:\...\Nominas_Julio_2026_separadas    ] [Seleccionar]│
-├──────────────────────────────────────────────────────────┤
-│  Modo: (•) Separar una página / ( ) Agrupar trabajador   │
-├──────────────────────────────────────────────────────────┤
-│  Nombre base (solo modo separación)                      │
-│  [ Nominas_Julio_2026                                    ]│
-├──────────────────────────────────────────────────────────┤
-│  [ Separar / Reconocer y agrupar ]                       │
-│  [████████████░░░░░░░░░░░░]                              │
-│  Analizando página 4 de 18...                            │
-├──────────────────────────────────────────────────────────┤
-│  Resultado / resumen de reconocimiento                   │
-│  [ Abrir carpeta de destino ]                            │
-└──────────────────────────────────────────────────────────┘
-```
+- Windows 10 u 11.
+- El PDF de nóminas y, si usas el modo Excel, el listado de departamentos.
+- No hace falta instalar Python para usar el `.exe` de la Release.
 
-## Requisitos para desarrollo
+Pasos habituales:
 
-- Windows 10/11 (recomendado para ejecución y compilación del `.exe`).
-- Python **3.11** o superior.
-- PowerShell 5.1 o superior (para los scripts de `scripts/`).
+1. Descarga el ejecutable desde la Release v2.5.0.
+2. Ábrelo (puede tardar unos segundos al arrancar: empaquetado monofichero).
+3. Selecciona el PDF, la carpeta de destino y el modo.
+4. Revisa el resumen o la pantalla de clasificación cuando el modo lo pida y
+   genera los archivos.
 
-## Instalación
+Guía paso a paso: [`docs/FUNCIONAMIENTO.md`](docs/FUNCIONAMIENTO.md).
+
+## Privacidad y tratamiento de datos
+
+- El procesamiento de la aplicación es **local** en el equipo del usuario: no
+  hay backend propio ni telemetría en el código de la app.
+- Los datos de clasificación (trabajadores, grupos, cruce con Excel) viven en
+  **memoria de sesión** y se limpian al cerrar, al limpiar la sesión o al
+  cambiar de PDF según el flujo de la interfaz.
+- **Sí se escriben** PDF (y carpetas) en la ubicación de destino que elijas:
+  ese resultado lo custodia quien usa la aplicación.
+- Los registros técnicos no deben incluir el contenido de las nóminas, nombres
+  ni DNI; ver política en
+  [`docs/SEGURIDAD_Y_PRIVACIDAD.md`](docs/SEGURIDAD_Y_PRIVACIDAD.md).
+
+Este repositorio público contiene **código y documentación**, no nóminas
+reales. Quien procese ficheros personales es responsable del tratamiento
+conforme al **RGPD** y la **LOPDGDD** (y demás normativa aplicable). La
+licencia MIT no sustituye esas obligaciones.
+
+## Limitaciones conocidas
+
+- No realiza OCR: los PDF escaneados sin texto seleccionable no permiten
+  reconocer nombres ni documentos de forma fiable.
+- No usa coincidencia difusa (*fuzzy*): solo clave de nombre normalizada
+  exacta o DNI/NIE según el modo.
+- No incluye editor interactivo de coincidencias.
+- No envía correos ni se integra con Outlook / Microsoft 365.
+- No incluye instalador MSI ni firma digital del ejecutable.
+
+## Tecnologías y arquitectura
+
+| Pieza | Tecnología |
+|-------|------------|
+| Lenguaje | Python ≥ 3.11 |
+| Interfaz | Tkinter |
+| PDF | pypdf (sin rasterizar) |
+| Excel | openpyxl (`.xlsx`), xlrd 1.2.0 (`.xls`) |
+| Pruebas | pytest (+ cobertura configurada) |
+| Calidad (opcional en local) | ruff, mypy |
+| Empaquetado | PyInstaller → ejecutable Windows |
+
+La interfaz (`gui.py` y vistas) está separada de la lógica de dominio
+(servicios PDF, reconocimiento, clasificación, Excel). Detalle de módulos:
+[`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
+
+## Desarrollo y pruebas
+
+Entorno recomendado para contribuir o depurar: Windows 10/11 con Python 3.11+
+y PowerShell. También se puede desarrollar en WSL/Linux con el mismo código.
 
 ```powershell
 cd SeparadorNominas
@@ -119,70 +121,70 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements-dev.txt
 pip install -e .
+.\scripts\run.ps1
 ```
 
-O bien:
+O, de una vez:
 
 ```powershell
 .\scripts\run.ps1
 ```
 
-## Ejecución
+En WSL / Linux (con el entorno virtual activo):
 
-```powershell
-.\scripts\run.ps1
-```
-
-Alternativa manual:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
+```bash
 python -m separador_nominas.main
 ```
 
-## Ejecución de tests
+### Tests
+
+Hay una batería de tests de lógica bajo `tests/` (PDF, agrupación,
+clasificación, Excel, privacidad de logs). La GUI Tkinter no forma parte de
+esa automatización; existe un checklist manual en
+[`docs/PRUEBAS.md`](docs/PRUEBAS.md) y [`docs/PRUEBAS_UI.md`](docs/PRUEBAS_UI.md).
 
 ```powershell
 .\scripts\test.ps1
 ```
 
-O manualmente:
+O:
 
 ```powershell
 pytest --cov=separador_nominas --cov-report=term-missing
 ```
 
-Herramientas de calidad (opcionales):
+Herramientas opcionales (si están instaladas en el entorno de desarrollo):
 
 ```powershell
 ruff check src tests
 mypy
 ```
 
-## Compilación del `.exe`
+No hay workflows de GitHub Actions configurados en este repositorio; la
+calidad depende de la ejecución local (por ejemplo, `scripts/test.ps1` o
+`scripts/build.ps1` antes de empaquetar).
 
-En Windows:
+### Compilación del `.exe` (desarrolladores)
 
 ```powershell
 .\scripts\build.ps1
 ```
 
-Para **actualizar desde GitHub, recompilar y abrir** la app (útil si desarrollas
-en WSL y pruebas en Windows):
+Resultado esperado en `dist/SeparadorNominas.exe`. Detalles:
+[`docs/COMPILACION_WINDOWS.md`](docs/COMPILACION_WINDOWS.md).
 
-```powershell
-Set-Location C:\Dev\SeparadorNominas
-.\scripts\sync-build-run.ps1
-```
+## Roadmap resumido
 
-Resultado esperado:
+| Versión | Objetivo |
+|---------|----------|
+| 1.1.0   | Reconocimiento y agrupación por trabajador (**implementada**) |
+| 2.0.0   | Clasificación por grupos / DNI-NIE (**implementada**) |
+| 2.5.0   | Clasificación automática mediante Excel (**implementada**) |
+| 2.1.0+  | Asociación trabajador ↔ correo (CSV/Excel) — **no implementada** |
+| 3.0.0   | Borradores de correo con Outlook / Microsoft 365 — **no implementada** |
 
-```text
-dist/
-└── SeparadorNominas.exe
-```
-
-Detalles en [docs/COMPILACION_WINDOWS.md](docs/COMPILACION_WINDOWS.md).
+Detalle: [`docs/ROADMAP.md`](docs/ROADMAP.md). Historial de cambios:
+[`CHANGELOG.md`](CHANGELOG.md).
 
 ## Estructura del proyecto
 
@@ -192,9 +194,9 @@ SeparadorNominas/
 ├── CONTRIBUTING.md          # Flujo Git y contribución
 ├── .cursor/rules/           # Reglas Cursor (contexto persistente)
 ├── src/separador_nominas/   # Código de la aplicación
-├── tests/                   # Tests unitarios
-├── assets/                  # Recursos (icono opcional)
-├── docs/                    # Documentación (incluye ROADMAP)
+├── tests/                   # Tests de lógica
+├── assets/                  # Icono y capturas de documentación
+├── docs/                    # Documentación (arquitectura, uso, roadmap…)
 ├── scripts/                 # Scripts PowerShell
 ├── requirements.txt
 ├── requirements-dev.txt
@@ -203,49 +205,14 @@ SeparadorNominas/
 └── README.md
 ```
 
-## Seguridad y privacidad
+## Contribuir
 
-- Procesamiento 100 % local.
-- Sin telemetría ni conexiones externas.
-- Sin almacenamiento del contenido de las nóminas en logs.
-- El usuario es responsable del tratamiento conforme a la normativa de
-  protección de datos aplicable (RGPD y normativa local).
+- `main`: solo versiones estables.
+- `development`: integración y pruebas.
+- Cada tarea: rama hija de `development` (`feature/…`, `fix/…`, `docs/…`, etc.).
+- Merges, tags y pushes: solo con autorización expresa.
 
-Más detalle en [docs/SEGURIDAD_Y_PRIVACIDAD.md](docs/SEGURIDAD_Y_PRIVACIDAD.md).
-
-## Aviso de protección de datos
-
-Este repositorio público contiene **únicamente código fuente y documentación**.
-**No incluye nóminas reales ni otros datos personales.**
-
-La aplicación puede usarse para procesar documentos laborales sensibles en el
-equipo del usuario. Quien la utilice con ficheros reales actúa como
-responsable (o encargado, según el caso) del tratamiento y debe cumplir el
-**RGPD** y la **LOPDGDD** (España), así como cualquier normativa aplicable.
-
-La licencia MIT regula el uso del software; **no sustituye** las obligaciones
-de protección de datos. Consulta
-[docs/SEGURIDAD_Y_PRIVACIDAD.md](docs/SEGURIDAD_Y_PRIVACIDAD.md).
-
-## Limitaciones actuales
-
-- No realiza OCR (PDFs escaneados no permiten reconocer el nombre).
-- No usa fuzzy matching: solo clave de nombre normalizada exacta.
-- No incluye editor interactivo de coincidencias.
-- No envía correos ni se integra con Outlook / Microsoft 365.
-- No incluye instalador ni firma digital del ejecutable.
-
-## Roadmap resumido
-
-| Versión | Objetivo |
-|---------|----------|
-| 1.1.0   | Reconocimiento y agrupación por trabajador (**implementada**) |
-| 2.0.0   | Clasificación por grupos / DNI-NIE (**implementada**) |
-| 2.5.0   | Clasificación automática mediante Excel (**implementada**) |
-| 2.1.0+  | Asociación trabajador ↔ correo (CSV/Excel) |
-| 3.0.0   | Borradores de correo con Outlook / Microsoft 365 |
-
-Detalle completo en [docs/ROADMAP.md](docs/ROADMAP.md).
+Detalle: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Licencia
 
@@ -253,12 +220,12 @@ Distribuido bajo licencia **MIT**. Consulta el archivo [LICENSE](LICENSE).
 
 Copyright (c) 2026 Antonio Zurano Blázquez.
 
-El software se proporciona «tal cual» (*as is*), sin garantías. Este
-repositorio **no incluye datos personales**. Si utilizas la aplicación con
-nóminas u otros documentos con datos personales, eres responsable de su
-tratamiento conforme al **RGPD** y la **LOPDGDD**, y a cualquier otra
-normativa aplicable. La licencia MIT no exime de esas obligaciones.
+El software se proporciona «tal cual» (*as is*), sin garantías.
 
-## Versión actual
+## Para agentes de IA
 
-`2.5.0` — ver [VERSION](VERSION) y [CHANGELOG.md](CHANGELOG.md).
+Si eres un asistente o agente que abre este repositorio, empieza por
+**[`AGENTS.md`](AGENTS.md)** (propósito, alcance, roadmap, arquitectura,
+privacidad y flujo Git). También hay reglas en
+[`.cursor/rules/`](.cursor/rules/) para Cursor. Puntero corto:
+[`docs/CONTEXTO_IA.md`](docs/CONTEXTO_IA.md).
