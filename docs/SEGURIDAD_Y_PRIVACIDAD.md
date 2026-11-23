@@ -45,18 +45,33 @@ El registro técnico puede incluir:
 - inicio/fin de la aplicación;
 - inicio/fin del proceso;
 - número de páginas;
-- tipo general de error.
+- tipo general de error (nombre de la clase de excepción);
+- identificador fijo de operación ante un error inesperado
+  (p. ej. `inspect_pdf`, `split_pdf`), definido por la aplicación.
+
+Ante errores inesperados en los manejadores cubiertos (`gui` / arranque),
+el registro usa `log_unexpected_error`: solo operación y tipo, **sin**
+`str(exc)`, `repr(exc)`, `args` ni traceback/`exc_info`. Los errores de
+dominio en esos flujos se registran, cuando aplica, solo con el tipo.
 
 El registro **no** debe incluir:
 
 - contenido del PDF;
 - nombres de trabajadores;
-- DNI;
+- DNI/NIE;
 - importes salariales;
-- cualquier dato personal extraído.
+- rutas de archivos ni nombres de fichero del usuario;
+- cualquier dato personal extraído;
+- trazas de pila que puedan incorporar lo anterior vía el mensaje de la
+  excepción o de su causa.
 
 Preferencia: logging a consola en desarrollo; sin archivo permanente salvo
 necesidad justificada.
+
+Esta política describe el comportamiento de los puntos de registro de la
+aplicación cubiertos por las pruebas de privacidad de logs. No garantiza
+que librerías externas u otros canales del sistema no puedan emitir
+mensajes propios.
 
 ## Protección de datos
 

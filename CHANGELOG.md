@@ -11,9 +11,15 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 - Captura de la pantalla principal (`assets/pantalla-principal.jpg`) en el
   README.
+- Helper `logging_utils.log_unexpected_error` y pruebas de no regresión
+  (`tests/test_logging_privacy.py`) para errores inesperados sin volcar
+  rutas ni datos sintéticos sensibles en el texto formateado del log.
 
 ### Cambiado
 
+- Registro de errores inesperados en `gui` y arranque (`main`): operación
+  fija + tipo de excepción, sin `exc_info`/traceback ni mensaje de la
+  excepción (véase `docs/SEGURIDAD_Y_PRIVACIDAD.md`).
 - README reorganizado para portfolio: descarga de la Release v2.5.0, cuatro
   modos, privacidad matizada, stack/arquitectura y sección de agentes de IA
   al final.

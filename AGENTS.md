@@ -137,6 +137,7 @@ Código en `src/separador_nominas/`:
 | `filename_service.py` | Nombres y rutas |
 | `validators.py` | Validaciones |
 | `exceptions.py` | Errores de dominio (mensajes en español) |
+| `logging_utils.py` | Log de errores inesperados sin volcar datos de usuario |
 | `constants.py` | Constantes |
 
 Reglas duras:

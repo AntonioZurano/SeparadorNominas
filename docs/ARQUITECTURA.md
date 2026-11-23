@@ -56,6 +56,7 @@ facilitar pruebas, mantenimiento y futuras ampliaciones.
 | `filename_service.py` | Saneamiento de nombres, numeración y anti-sobrescritura. |
 | `validators.py` | Validación de PDF, carpeta y nombre base. |
 | `exceptions.py` | Excepciones de dominio con mensajes en español. |
+| `logging_utils.py` | Registro de errores inesperados (operación + tipo, sin traceback). |
 | `constants.py` | Constantes de UI, nombres, etiquetas y límites. |
 
 ## Flujo de datos (modo separación)
