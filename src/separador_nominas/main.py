@@ -12,6 +12,7 @@ from separador_nominas.constants import (
     LOG_FORMAT,
     LOGGER_NAME,
 )
+from separador_nominas.logging_utils import log_unexpected_error
 
 
 def configure_logging(*, to_console: bool = True) -> None:
@@ -62,8 +63,8 @@ def main() -> int:
             )
             return 1
         raise
-    except Exception:  # noqa: BLE001
-        logger.exception("Error inesperado al arrancar la aplicación")
+    except Exception as exc:  # noqa: BLE001
+        log_unexpected_error(logger, "main_startup", exc)
         return 1
 
     logger.info("Aplicación finalizada")
